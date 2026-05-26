@@ -513,10 +513,18 @@ function attachDeleteEvents() {
             const type = newBtn.getAttribute('data-delete-type');
             const id = newBtn.getAttribute('data-delete-id');
             
+            const typeMap = {
+                'company': 'companies',
+                'sede': 'sedes',
+                'trabajador': 'trabajadores',
+                'movilidad': 'movilidades'
+            };
+            const endpoint = typeMap[type] || `${type}s`;
+            
             const confirmed = await showConfirmModal('Eliminar Registro', `¿Estás seguro de eliminar este registro (${type})?`);
             if (confirmed) {
                 try {
-                    const response = await fetch(`/api/${type}s/${id}`, { method: 'DELETE' });
+                    const response = await fetch(`/api/${endpoint}/${id}`, { method: 'DELETE' });
                     if (!response.ok) {
                         const errData = await response.json().catch(() => ({}));
                         throw new Error(errData.error || 'Error del servidor');
