@@ -395,14 +395,14 @@ body {
 .badge-version {
     font-size: 0.55rem;
     font-weight: 800;
-    color: var(--brand-primary);
-    background: var(--brand-primary-pale);
+    color: var(--brand-secondary);
+    background: var(--brand-secondary-pale);
     padding: 2px 8px;
     border-radius: var(--radius-full);
     display: inline-block;
     margin-top: 2px;
     letter-spacing: 0.5px;
-    border: 1px solid var(--border-medium);
+    border: 1px solid var(--pastel-violet-border);
 }
 
 .header-center {
@@ -1191,7 +1191,7 @@ body {
     background: var(--brand-gradient-soft);
     display: flex; align-items: center; justify-content: center;
     border: 2px solid var(--border-medium);
-    color: var(--brand-primary);
+    color: var(--brand-secondary);
     box-shadow: var(--shadow-glow);
     animation: float 3s ease-in-out infinite;
 }

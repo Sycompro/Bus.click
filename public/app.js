@@ -272,9 +272,15 @@ function populateSedeSelectors() {
 function applyCompanyBrandTheme() {
     const activeCompany = state.companies.find(c => c.id === state.activeCompanyId);
     if (activeCompany && activeCompany.color) {
-        document.documentElement.style.setProperty('--brand-primary', activeCompany.color);
-        document.documentElement.style.setProperty('--brand-primary-glow', `${activeCompany.color}35`);
-        document.documentElement.style.setProperty('--brand-primary-light', lightenColor(activeCompany.color, 15));
+        let color = activeCompany.color;
+        // Si el color es un rojo brillante o fucsia de alerta, lo normalizamos a un naranja de transporte muy elegante
+        const lowerColor = color.toLowerCase();
+        if (lowerColor === '#ef4444' || lowerColor === '#ff0000' || lowerColor === '#dc2626' || lowerColor === '#f43f5e' || lowerColor === '#db2777') {
+            color = '#f97316';
+        }
+        document.documentElement.style.setProperty('--brand-primary', color);
+        document.documentElement.style.setProperty('--brand-primary-glow', `${color}35`);
+        document.documentElement.style.setProperty('--brand-primary-light', lightenColor(color, 15));
     }
 }
 

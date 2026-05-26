@@ -498,7 +498,7 @@ app.post('/api/seed', async (req, res) => {
         
         // Estructura semilla
         const seedCompanies = [
-            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#ef4444" },
+            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316" },
             { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6" },
             { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b" }
         ];
