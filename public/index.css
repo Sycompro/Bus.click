@@ -2851,4 +2851,109 @@ body {
     font-weight: 500;
 }
 
+/* ─── CREDENCIALES PREMIUM CON BOTÓN DE COPIAR ─── */
+.credentials-badge-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.35rem;
+}
+
+.credential-badge-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: monospace;
+    transition: all var(--transition-normal);
+    border: 1px solid transparent;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+.credential-badge-premium.user-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    border-color: rgba(3, 105, 161, 0.08);
+}
+
+.credential-badge-premium.user-badge:hover {
+    background: #bae6fd;
+    border-color: rgba(3, 105, 161, 0.2);
+}
+
+.credential-badge-premium.lock-badge {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: rgba(71, 85, 105, 0.08);
+}
+
+.credential-badge-premium.lock-badge:hover {
+    background: #e2e8f0;
+    border-color: rgba(71, 85, 105, 0.2);
+}
+
+.credential-badge-premium.success-copy {
+    background: #d1fae5 !important;
+    color: #065f46 !important;
+    border-color: rgba(6, 95, 70, 0.2) !important;
+    animation: pulse-green 0.3s ease-out;
+}
+
+@keyframes pulse-green {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.btn-copy-cred {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: currentColor;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.65;
+    transition: all var(--transition-normal);
+}
+
+.credential-badge-premium:hover .btn-copy-cred {
+    opacity: 1;
+}
+
+.btn-copy-cred i {
+    width: 11px;
+    height: 11px;
+}
+
+/* Botón premium de regeneración manual si está vacío */
+.btn-generate-cred-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.6rem;
+    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.65rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.btn-generate-cred-inline:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.25);
+    background: linear-gradient(135deg, #4338ca, #4f46e5);
+}
+
 

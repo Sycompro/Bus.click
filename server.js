@@ -204,7 +204,21 @@ app.get('/api/companies', async (req, res) => {
     if (usePostgres) {
         try {
             const { rows } = await pool.query('SELECT * FROM companies ORDER BY created_at ASC');
-            res.json(rows.map(r => ({ 
+            const repairedRows = [];
+            for (let r of rows) {
+                if (!r.username || r.username.trim() === "" || !r.password || r.password.trim() === "") {
+                    const cleanSlug = r.name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15) || 'empresa';
+                    const randomNum = Math.floor(100 + Math.random() * 900);
+                    const generatedUser = r.username && r.username.trim() !== "" ? r.username : cleanSlug;
+                    const generatedPass = r.password && r.password.trim() !== "" ? r.password : (cleanSlug.slice(0, 3) + randomNum);
+                    
+                    await pool.query('UPDATE companies SET username = $1, password = $2 WHERE id = $3', [generatedUser, generatedPass, r.id]);
+                    r.username = generatedUser;
+                    r.password = generatedPass;
+                }
+                repairedRows.push(r);
+            }
+            res.json(repairedRows.map(r => ({ 
                 id: r.id, 
                 name: r.name, 
                 ruc: r.ruc, 
@@ -220,9 +234,14 @@ app.get('/api/companies', async (req, res) => {
     } else {
         // Asegurar que existan credenciales para empresas en el fallback JSON local
         localDb.companies.forEach(c => {
-            if (!c.username) c.username = c.id;
-            if (!c.password) c.password = "123";
+            if (!c.username || c.username.trim() === "" || !c.password || c.password.trim() === "") {
+                const cleanSlug = c.name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15) || 'empresa';
+                const randomNum = Math.floor(100 + Math.random() * 900);
+                c.username = c.username && c.username.trim() !== "" ? c.username : cleanSlug;
+                c.password = c.password && c.password.trim() !== "" ? c.password : (cleanSlug.slice(0, 3) + randomNum);
+            }
         });
+        saveLocalDb();
         res.json(localDb.companies.map(c => ({
             ...c,
             paymentMethods: c.paymentMethods || ['Efectivo', 'Yape/Plin']
@@ -306,12 +325,74 @@ app.put('/api/companies/:id/payment-methods', async (req, res) => {
     }
 });
 
+app.put('/api/companies/:id/credentials', async (req, res) => {
+    const { id } = req.params;
+    const { username, password } = req.body;
+
+    if (usePostgres) {
+        try {
+            await pool.query('UPDATE companies SET username = $1, password = $2 WHERE id = $3', [username, password, id]);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const company = localDb.companies.find(c => c.id === id);
+        if (company) {
+            company.username = username;
+            company.password = password;
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: "Company not found" });
+        }
+    }
+});
+
+app.put('/api/sedes/:id/credentials', async (req, res) => {
+    const { id } = req.params;
+    const { username, password } = req.body;
+
+    if (usePostgres) {
+        try {
+            await pool.query('UPDATE sedes SET username = $1, password = $2 WHERE id = $3', [username, password, id]);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const sede = localDb.sedes.find(s => s.id === id);
+        if (sede) {
+            sede.username = username;
+            sede.password = password;
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: "Sede not found" });
+        }
+    }
+});
+
 // --- SEDES ---
 app.get('/api/sedes', async (req, res) => {
     if (usePostgres) {
         try {
             const { rows } = await pool.query('SELECT * FROM sedes ORDER BY created_at ASC');
-            res.json(rows.map(r => ({ 
+            const repairedRows = [];
+            for (let r of rows) {
+                if (!r.username || r.username.trim() === "" || !r.password || r.password.trim() === "") {
+                    const cleanSlug = 'sede_' + (r.name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15) || 'sede');
+                    const randomNum = Math.floor(100 + Math.random() * 900);
+                    const generatedUser = r.username && r.username.trim() !== "" ? r.username : cleanSlug;
+                    const generatedPass = r.password && r.password.trim() !== "" ? r.password : (cleanSlug.slice(0, 3) + randomNum);
+                    
+                    await pool.query('UPDATE sedes SET username = $1, password = $2 WHERE id = $3', [generatedUser, generatedPass, r.id]);
+                    r.username = generatedUser;
+                    r.password = generatedPass;
+                }
+                repairedRows.push(r);
+            }
+            res.json(repairedRows.map(r => ({ 
                 id: r.id, 
                 companyId: r.company_id, 
                 name: r.name, 
@@ -326,9 +407,14 @@ app.get('/api/sedes', async (req, res) => {
     } else {
         // Asegurar que existan credenciales para sedes en el fallback JSON local
         localDb.sedes.forEach(s => {
-            if (!s.username) s.username = s.id;
-            if (!s.password) s.password = "123";
+            if (!s.username || s.username.trim() === "" || !s.password || s.password.trim() === "") {
+                const cleanSlug = 'sede_' + (s.name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15) || 'sede');
+                const randomNum = Math.floor(100 + Math.random() * 900);
+                s.username = s.username && s.username.trim() !== "" ? s.username : cleanSlug;
+                s.password = s.password && s.password.trim() !== "" ? s.password : (cleanSlug.slice(0, 3) + randomNum);
+            }
         });
+        saveLocalDb();
         res.json(localDb.sedes);
     }
 });

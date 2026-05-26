@@ -386,18 +386,40 @@ function renderCompaniesList() {
         const sedesCount = state.sedes.filter(s => s.companyId === company.id).length;
         const movCount = state.movilidades.filter(m => m.companyId === company.id).length;
         
+        const username = company.username || '';
+        const password = company.password || '';
+        
+        let credsHtml = '';
+        if (!username && !password) {
+            credsHtml = `
+                <div style="margin-top: 0.35rem;">
+                    <button type="button" class="btn-generate-cred-inline" onclick="generateAndSaveCompanyCredentials('${company.id}', '${company.name.replace(/'/g, "\\'")}', this)">
+                        <i data-lucide="key" style="width: 10px; height: 10px;"></i> Generar Credenciales
+                    </button>
+                </div>
+            `;
+        } else {
+            credsHtml = `
+                <div class="credentials-badge-container">
+                    <div class="credential-badge-premium user-badge" onclick="copyTextToClipboard('${username}', this)" title="Haz clic para copiar el usuario">
+                        <i data-lucide="user" style="width: 10px; height: 10px;"></i>
+                        <span>${username}</span>
+                        <span class="btn-copy-cred"><i data-lucide="copy"></i></span>
+                    </div>
+                    <div class="credential-badge-premium lock-badge" onclick="copyTextToClipboard('${password}', this)" title="Haz clic para copiar la contraseña">
+                        <i data-lucide="lock" style="width: 10px; height: 10px;"></i>
+                        <span>${password}</span>
+                        <span class="btn-copy-cred"><i data-lucide="copy"></i></span>
+                    </div>
+                </div>
+            `;
+        }
+        
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="font-bold">
                 <div style="font-size: var(--text-sm); font-weight: 700; color: #0f172a;">${company.name}</div>
-                <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 0.25rem;">
-                    <span style="font-size: 0.65rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
-                        <i data-lucide="user" style="width: 10px; height: 10px;"></i> ${company.username || 'sin_usuario'}
-                    </span>
-                    <span style="font-size: 0.65rem; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
-                        <i data-lucide="lock" style="width: 10px; height: 10px;"></i> ${company.password || 'sin_clave'}
-                    </span>
-                </div>
+                ${credsHtml}
             </td>
             <td>${company.ruc}</td>
             <td>
@@ -432,18 +454,40 @@ function renderSedesList() {
     }
     
     filteredSedes.forEach(sede => {
+        const username = sede.username || '';
+        const password = sede.password || '';
+        
+        let credsHtml = '';
+        if (!username && !password) {
+            credsHtml = `
+                <div style="margin-top: 0.35rem;">
+                    <button type="button" class="btn-generate-cred-inline" onclick="generateAndSaveSedeCredentials('${sede.id}', '${sede.name.replace(/'/g, "\\'")}', this)">
+                        <i data-lucide="key" style="width: 10px; height: 10px;"></i> Generar Credenciales
+                    </button>
+                </div>
+            `;
+        } else {
+            credsHtml = `
+                <div class="credentials-badge-container">
+                    <div class="credential-badge-premium user-badge" onclick="copyTextToClipboard('${username}', this)" title="Haz clic para copiar el usuario">
+                        <i data-lucide="user" style="width: 10px; height: 10px;"></i>
+                        <span>${username}</span>
+                        <span class="btn-copy-cred"><i data-lucide="copy"></i></span>
+                    </div>
+                    <div class="credential-badge-premium lock-badge" onclick="copyTextToClipboard('${password}', this)" title="Haz clic para copiar la contraseña">
+                        <i data-lucide="lock" style="width: 10px; height: 10px;"></i>
+                        <span>${password}</span>
+                        <span class="btn-copy-cred"><i data-lucide="copy"></i></span>
+                    </div>
+                </div>
+            `;
+        }
+        
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="font-bold">
                 <div style="font-size: var(--text-sm); font-weight: 700; color: #0f172a;">${sede.name}</div>
-                <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 0.25rem;">
-                    <span style="font-size: 0.65rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
-                        <i data-lucide="user" style="width: 10px; height: 10px;"></i> ${sede.username || 'sin_usuario'}
-                    </span>
-                    <span style="font-size: 0.65rem; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
-                        <i data-lucide="lock" style="width: 10px; height: 10px;"></i> ${sede.password || 'sin_clave'}
-                    </span>
-                </div>
+                ${credsHtml}
             </td>
             <td>${sede.city}</td>
             <td>${sede.address}</td>
@@ -2213,6 +2257,107 @@ function generateCompanyCredentialsSuggestions(name) {
     }
     if (!compPass.dataset.dirty) {
         compPass.value = `${initials}${randomNum}`;
+    }
+}
+
+// --- FUNCIONALIDAD GLOBAL DE COPIAR CREDENCIALES AL PORTAPAPELES ---
+async function copyTextToClipboard(text, element) {
+    if (!text) return;
+    
+    try {
+        await navigator.clipboard.writeText(text);
+        
+        // Efecto visual en el badge
+        element.classList.add('success-copy');
+        
+        // Cambiar temporalmente el icono de copiar
+        const copyIcon = element.querySelector('.btn-copy-cred i');
+        let originalIcon = 'copy';
+        if (copyIcon) {
+            originalIcon = copyIcon.getAttribute('data-lucide') || 'copy';
+            copyIcon.setAttribute('data-lucide', 'check');
+            lucide.createIcons();
+        }
+        
+        showToast("¡Copiado con éxito!", "success");
+        
+        setTimeout(() => {
+            element.classList.remove('success-copy');
+            if (copyIcon) {
+                copyIcon.setAttribute('data-lucide', originalIcon);
+                lucide.createIcons();
+            }
+        }, 1500);
+    } catch (err) {
+        console.error("No se pudo copiar al portapapeles:", err);
+        showToast("Error al copiar. Selecciona el texto manualmente.", "error");
+    }
+}
+
+// --- GENERACIÓN Y GUARDADO DE CREDENCIALES COMPLEMENTARIAS ---
+async function generateAndSaveCompanyCredentials(id, name, button) {
+    button.disabled = true;
+    button.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i> Generando...';
+    lucide.createIcons();
+    
+    const cleanSlug = slugify(name) || 'empresa';
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const username = cleanSlug;
+    const password = `${cleanSlug.slice(0, 3)}${randomNum}`;
+    
+    try {
+        const res = await fetch(`/api/companies/${id}/credentials`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        }).then(r => r.json());
+        
+        if (res.success) {
+            showToast("Credenciales creadas y guardadas.", "success");
+            await reloadAllApiData();
+        } else {
+            showToast("No se pudieron guardar las credenciales: " + res.error, "error");
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error de conexión al guardar credenciales.", "error");
+    } finally {
+        button.disabled = false;
+        button.innerHTML = '<i data-lucide="key" style="width: 10px; height: 10px;"></i> Generar Credenciales';
+        lucide.createIcons();
+    }
+}
+
+async function generateAndSaveSedeCredentials(id, name, button) {
+    button.disabled = true;
+    button.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i> Generando...';
+    lucide.createIcons();
+    
+    const cleanSlug = 'sede_' + (slugify(name) || 'sede');
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const username = cleanSlug;
+    const password = `${cleanSlug.slice(5, 8)}${randomNum}`; // Usar parte del slug
+    
+    try {
+        const res = await fetch(`/api/sedes/${id}/credentials`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        }).then(r => r.json());
+        
+        if (res.success) {
+            showToast("Credenciales de sede creadas y guardadas.", "success");
+            await reloadAllApiData();
+        } else {
+            showToast("No se pudieron guardar las credenciales de sede: " + res.error, "error");
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error de conexión al guardar credenciales.", "error");
+    } finally {
+        button.disabled = false;
+        button.innerHTML = '<i data-lucide="key" style="width: 10px; height: 10px;"></i> Generar Credenciales';
+        lucide.createIcons();
     }
 }
 
