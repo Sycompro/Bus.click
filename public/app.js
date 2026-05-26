@@ -32,6 +32,86 @@ const MOCK_NAMES = [
 ];
 
 // ==========================================
+// SISTEMA DE CONFIRMACIÓN MODAL Y TOASTS PREMIUM
+// ==========================================
+function showToast(message, type = 'success') {
+    let container = document.querySelector('.toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'toast-container';
+        document.body.appendChild(container);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${type}`;
+
+    let iconName = 'check-circle';
+    if (type === 'error') iconName = 'alert-triangle';
+    if (type === 'info') iconName = 'info';
+
+    toast.innerHTML = `
+        <div class="toast-icon">
+            <i data-lucide="${iconName}"></i>
+        </div>
+        <div class="toast-message">${message}</div>
+    `;
+
+    container.appendChild(toast);
+    lucide.createIcons();
+
+    setTimeout(() => {
+        toast.classList.add('hide');
+        toast.addEventListener('animationend', () => {
+            toast.remove();
+        });
+    }, 3500);
+}
+
+function showConfirmModal(title, message) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-overlay';
+
+        overlay.innerHTML = `
+            <div class="confirm-card">
+                <div class="confirm-header-icon">
+                    <i data-lucide="alert-triangle"></i>
+                </div>
+                <div class="confirm-title">${title}</div>
+                <div class="confirm-message">${message}</div>
+                <div class="confirm-actions">
+                    <button class="btn btn-confirm-no" id="btn-confirm-cancel">Cancelar</button>
+                    <button class="btn btn-confirm-yes" id="btn-confirm-ok">Confirmar</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+        lucide.createIcons();
+
+        const btnOk = overlay.querySelector('#btn-confirm-ok');
+        const btnCancel = overlay.querySelector('#btn-confirm-cancel');
+
+        btnOk.addEventListener('click', () => {
+            overlay.remove();
+            resolve(true);
+        });
+
+        btnCancel.addEventListener('click', () => {
+            overlay.remove();
+            resolve(false);
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+                resolve(false);
+            }
+        });
+    });
+}
+
+// ==========================================
 // 2. INICIALIZACIÓN DE LA APLICACIÓN
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -256,13 +336,13 @@ async function seedDefaultRailwayData() {
         const res = await fetch('/api/seed', { method: 'POST' }).then(r => r.json());
         if (res.success) {
             await reloadAllApiData();
-            alert("¡Datos semilla creados en tu Base de Datos de Railway exitosamente!");
+            showToast("¡Datos semilla creados en tu Base de Datos de Railway exitosamente!", "success");
         } else {
-            alert("Error al cargar datos semilla: " + res.error);
+            showToast("Error al cargar datos semilla: " + res.error, "error");
         }
     } catch (err) {
         console.error("Error al sembrar datos:", err);
-        alert("Ocurrió un error cargando los datos semilla.");
+        showToast("Ocurrió un error cargando los datos semilla.", "error");
     } finally {
         seedBtn.disabled = false;
         seedBtn.innerHTML = '<i data-lucide="database-backup"></i> Cargar Datos Semilla en Railway';
@@ -433,12 +513,15 @@ function attachDeleteEvents() {
             const type = newBtn.getAttribute('data-delete-type');
             const id = newBtn.getAttribute('data-delete-id');
             
-            if (confirm(`¿Estás seguro de eliminar este registro (${type})?`)) {
+            const confirmed = await showConfirmModal('Eliminar Registro', `¿Estás seguro de eliminar este registro (${type})?`);
+            if (confirmed) {
                 try {
                     await fetch(`/api/${type}s/${id}`, { method: 'DELETE' });
                     await reloadAllApiData();
+                    showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} eliminado correctamente.`, 'success');
                 } catch (e) {
                     console.error("Error al borrar:", e);
+                    showToast('Ocurrió un error al intentar eliminar el registro.', 'error');
                 }
             }
         });
@@ -761,9 +844,16 @@ function renderSeatsGrid(vehicle) {
                     cellEl.appendChild(tooltip);
                     
                     cellEl.addEventListener('click', async () => {
-                        if (confirm(`La reserva de este asiento está a nombre de ${ticket.passengerName}.\n¿Deseas cancelarla/liberarla de la base de datos?`)) {
-                            await fetch(`/api/tickets/${ticket.id}`, { method: 'DELETE' });
-                            await reloadAllApiData();
+                        const confirmed = await showConfirmModal('Liberar Reserva', `La reserva de este asiento está a nombre de ${ticket.passengerName}.<br><br>¿Deseas cancelarla y liberarla de la base de datos?`);
+                        if (confirmed) {
+                            try {
+                                await fetch(`/api/tickets/${ticket.id}`, { method: 'DELETE' });
+                                await reloadAllApiData();
+                                showToast('Reserva liberada correctamente.', 'success');
+                            } catch (e) {
+                                console.error(e);
+                                showToast('Error al intentar liberar la reserva.', 'error');
+                            }
                         }
                     });
                 }
@@ -822,7 +912,7 @@ async function handleRegisterSale(e) {
     const price = parseFloat(document.getElementById('sale-price').value);
     
     if (!dni || !name) {
-        alert("Completa todos los campos obligatorios.");
+        showToast("Completa todos los campos obligatorios.", "error");
         return;
     }
     
@@ -853,12 +943,14 @@ async function handleRegisterSale(e) {
         closeSaleModal();
         await reloadAllApiData();
         
+        showToast(status === 'Ocupado' ? "Boleto emitido con éxito." : "Reserva registrada con éxito.", "success");
+        
         if (status === 'Ocupado') {
             showTicket(res.id, ticketData);
         }
     } catch (e) {
         console.error("Error al registrar venta en API:", e);
-        alert("Ocurrió un error guardando el boleto.");
+        showToast("Ocurrió un error guardando el boleto.", "error");
     }
 }
 
@@ -895,7 +987,7 @@ function closeTicketModal() {
 function handleSearchDni() {
     const dniInput = document.getElementById('sale-dni');
     if (dniInput.value.length < 8) {
-        alert("Por favor ingresa un número de DNI válido de 8 dígitos para simular.");
+        showToast("Por favor ingresa un número de DNI válido de 8 dígitos para simular.", "error");
         return;
     }
     
@@ -1034,7 +1126,7 @@ function setupUIEventListeners() {
             
             await createCompany(name, ruc, logo, color);
             formCompany.reset();
-            alert("Empresa registrada con éxito.");
+            showToast("Empresa registrada con éxito.", "success");
         });
         
         document.getElementById('company-color').addEventListener('input', (e) => {
@@ -1052,7 +1144,7 @@ function setupUIEventListeners() {
             
             await createSede(state.activeCompanyId, name, city, address);
             formSede.reset();
-            alert("Sede registrada con éxito.");
+            showToast("Sede registrada con éxito.", "success");
         });
     }
 
@@ -1067,13 +1159,13 @@ function setupUIEventListeners() {
             const sedeId = document.getElementById('trabajador-sede').value;
             
             if (!sedeId) {
-                alert("Por favor selecciona una sede válida.");
+                showToast("Por favor selecciona una sede válida.", "error");
                 return;
             }
             
             await createTrabajador(state.activeCompanyId, sedeId, name, lastname, dni, role);
             formTrabajador.reset();
-            alert("Trabajador registrado con éxito.");
+            showToast("Trabajador registrado con éxito.", "success");
         });
     }
 
@@ -1090,13 +1182,13 @@ function setupUIEventListeners() {
             const price = document.getElementById('movilidad-price').value;
             
             if (!sedeId) {
-                alert("Por favor selecciona una sede base.");
+                showToast("Por favor selecciona una sede base.", "error");
                 return;
             }
             
             await createMovilidad(state.activeCompanyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price);
             formMovilidad.reset();
-            alert("Vehículo incorporado a la flota con éxito.");
+            showToast("Vehículo incorporado a la flota con éxito.", "success");
         });
     }
 
