@@ -14,6 +14,46 @@
 <body class="panel-establecimiento-view">
 
     <div id="app-container" class="app-container">
+        <!-- BARRA LATERAL IZQUIERDA (SIDEBAR) -->
+        <aside id="sidebar-menu" class="sidebar-premium">
+            <div class="sidebar-brand">
+                <div class="brand-logo-container">
+                    <div id="sidebar-logo-icon" class="brand-icon"><i data-lucide="bus"></i></div>
+                    <div class="brand-text">
+                        <h2 id="sidebar-company-name">Bus.click</h2>
+                        <span class="badge-version">TERMINAL DE VENTAS</span>
+                    </div>
+                </div>
+                <button id="btn-toggle-sidebar" class="btn-toggle-sidebar">
+                    <i data-lucide="chevron-left" id="toggle-icon"></i>
+                </button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-nav-target="apartado-ventas">
+                        <a href="#" class="nav-link">
+                            <i data-lucide="ticket"></i>
+                            <span class="nav-label">Ventas / Pasajes</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-nav-target="apartado-admin">
+                        <a href="admin.html" class="nav-link">
+                            <i data-lucide="building-2"></i>
+                            <span class="nav-label">Administración</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-sidebar-logout" class="btn-logout">
+                    <i data-lucide="log-out"></i>
+                    <span class="nav-label">Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENEDOR PRINCIPAL DERECHO -->
+        <div class="main-layout-wrapper">
         <!-- HEADER TERMINAL DE VENTAS -->
         <header class="main-header glass">
             <div class="header-left">
@@ -167,6 +207,7 @@
                 </section>
             </main>
         </div>
+        </div> <!-- Cierre de main-layout-wrapper -->
 
         <!-- MODAL VENTA -->
         <div id="modal-sale-register" class="modal-overlay hidden">

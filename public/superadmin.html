@@ -15,88 +15,122 @@
 <body class="panel-super-admin-view">
 
     <div id="app-container" class="app-container">
-        <!-- HEADER SUPER ADMIN -->
-        <header class="main-header glass">
-            <div class="header-left">
-                <div class="brand">
+        <!-- BARRA LATERAL IZQUIERDA (SIDEBAR) -->
+        <aside id="sidebar-menu" class="sidebar-premium">
+            <div class="sidebar-brand">
+                <div class="brand-logo-container">
                     <div class="brand-icon"><i data-lucide="shield-check"></i></div>
                     <div class="brand-text">
-                        <h1>Bus.click</h1>
-                        <span class="badge-version">SUPER ADMIN PORTAL</span>
+                        <h2>Bus.click</h2>
+                        <span class="badge-version">SUPER ADMIN</span>
                     </div>
                 </div>
-            </div>
-            <div class="header-center"></div>
-            <div class="header-right">
-                <div class="firebase-status-pill glass">
-                    <span class="status-dot ping-active"></span>
-                    <span class="status-text">Cloud Sync Active</span>
-                </div>
-                <button id="btn-logout" class="btn-logout" style="margin-left: 0.75rem;">
-                    <i data-lucide="log-out"></i> Salir
+                <button id="btn-toggle-sidebar" class="btn-toggle-sidebar">
+                    <i data-lucide="chevron-left" id="toggle-icon"></i>
                 </button>
             </div>
-        </header>
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-nav-target="apartado-ecosistema">
+                        <a href="#" class="nav-link">
+                            <i data-lucide="globe"></i>
+                            <span class="nav-label">Ecosistema Global</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-sidebar-logout" class="btn-logout">
+                    <i data-lucide="log-out"></i>
+                    <span class="nav-label">Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
 
-        <div class="app-layout">
-            <main class="main-content">
-                <section id="panel-super-admin" class="panel-section">
-                    <div class="panel-header-block">
-                        <div>
-                            <h2>🌐 Gestión Global de Ecosistema</h2>
-                            <p class="section-desc">Crea y monitorea todas las empresas integradas en la plataforma.</p>
-                        </div>
-                        <div class="header-actions" style="display: flex; gap: 0.75rem;">
-                            <button id="btn-open-create-company-modal" class="btn btn-primary btn-sparkle">
-                                <i data-lucide="plus-circle"></i> Registrar Empresa
-                            </button>
-                            <button id="btn-seed-data" class="btn btn-secondary btn-sparkle">
-                                <i data-lucide="database-backup"></i> Cargar Datos Semilla
-                            </button>
+        <!-- CONTENEDOR PRINCIPAL DERECHO -->
+        <div class="main-layout-wrapper">
+            <!-- HEADER SUPER ADMIN -->
+            <header class="main-header glass">
+                <div class="header-left">
+                    <div class="brand">
+                        <div class="brand-icon"><i data-lucide="shield-check"></i></div>
+                        <div class="brand-text">
+                            <h1>Bus.click</h1>
+                            <span class="badge-version">SUPER ADMIN PORTAL</span>
                         </div>
                     </div>
-
-                    <div class="metrics-grid">
-                        <div class="metric-card glass">
-                            <div class="metric-icon bg-indigo-500-10"><i data-lucide="building"></i></div>
-                            <div class="metric-info"><h3>Empresas</h3><p class="metric-value" id="stat-super-companies">0</p></div>
-                        </div>
-                        <div class="metric-card glass">
-                            <div class="metric-icon bg-emerald-500-10"><i data-lucide="milestone"></i></div>
-                            <div class="metric-info"><h3>Sedes</h3><p class="metric-value" id="stat-super-sedes">0</p></div>
-                        </div>
-                        <div class="metric-card glass">
-                            <div class="metric-icon bg-pink-500-10"><i data-lucide="truck"></i></div>
-                            <div class="metric-info"><h3>Flota Total</h3><p class="metric-value" id="stat-super-vehicles">0</p></div>
-                        </div>
-                        <div class="metric-card glass">
-                            <div class="metric-icon bg-amber-500-10"><i data-lucide="ticket"></i></div>
-                            <div class="metric-info"><h3>Ventas Hoy</h3><p class="metric-value" id="stat-super-tickets">0</p></div>
-                        </div>
+                </div>
+                <div class="header-center"></div>
+                <div class="header-right">
+                    <div class="firebase-status-pill glass">
+                        <span class="status-dot ping-active"></span>
+                        <span class="status-text">Cloud Sync Active</span>
                     </div>
+                    <button id="btn-logout" class="btn-logout" style="margin-left: 0.75rem;">
+                        <i data-lucide="log-out"></i> Salir
+                    </button>
+                </div>
+            </header>
 
-                    <div class="list-container-card glass mt-6" style="width: 100%;">
-                        <h3 class="card-title"><i data-lucide="list"></i> Directorio de Empresas</h3>
-                        <div class="table-scroll-container">
-                            <table class="table-premium">
-                                <thead>
-                                    <tr>
-                                        <th>Empresa</th>
-                                        <th>RUC</th>
-                                        <th>Color</th>
-                                        <th>Sedes</th>
-                                        <th>Flota</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-companies-body"></tbody>
-                            </table>
+            <div class="app-layout">
+                <main class="main-content">
+                    <section id="panel-super-admin" class="panel-section">
+                        <div class="panel-header-block">
+                            <div>
+                                <h2>🌐 Gestión Global de Ecosistema</h2>
+                                <p class="section-desc">Crea y monitorea todas las empresas integradas en la plataforma.</p>
+                            </div>
+                            <div class="header-actions" style="display: flex; gap: 0.75rem;">
+                                <button id="btn-open-create-company-modal" class="btn btn-primary btn-sparkle">
+                                    <i data-lucide="plus-circle"></i> Registrar Empresa
+                                </button>
+                                <button id="btn-seed-data" class="btn btn-secondary btn-sparkle">
+                                    <i data-lucide="database-backup"></i> Cargar Datos Semilla
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </section>
-            </main>
+
+                        <div class="metrics-grid">
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-indigo-500-10"><i data-lucide="building"></i></div>
+                                <div class="metric-info"><h3>Empresas</h3><p class="metric-value" id="stat-super-companies">0</p></div>
+                            </div>
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-emerald-500-10"><i data-lucide="milestone"></i></div>
+                                <div class="metric-info"><h3>Sedes</h3><p class="metric-value" id="stat-super-sedes">0</p></div>
+                            </div>
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-pink-500-10"><i data-lucide="truck"></i></div>
+                                <div class="metric-info"><h3>Flota Total</h3><p class="metric-value" id="stat-super-vehicles">0</p></div>
+                            </div>
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-amber-500-10"><i data-lucide="ticket"></i></div>
+                                <div class="metric-info"><h3>Ventas Hoy</h3><p class="metric-value" id="stat-super-tickets">0</p></div>
+                            </div>
+                        </div>
+
+                        <div class="list-container-card glass mt-6" style="width: 100%;">
+                            <h3 class="card-title"><i data-lucide="list"></i> Directorio de Empresas</h3>
+                            <div class="table-scroll-container">
+                                <table class="table-premium">
+                                    <thead>
+                                        <tr>
+                                            <th>Empresa</th>
+                                            <th>RUC</th>
+                                            <th>Color</th>
+                                            <th>Sedes</th>
+                                            <th>Flota</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-companies-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            </div>
         </div>
-    </div>
 
     <!-- OVERLAY DE LOGIN CON GOOGLE PARA SUPER ADMIN -->
     <div id="superadmin-login-overlay" class="login-overlay-premium">

@@ -14,37 +14,77 @@
 <body class="panel-admin-empresa-view">
 
     <div id="app-container" class="app-container">
-        <!-- HEADER ADMIN EMPRESA -->
-        <header class="main-header glass">
-            <div class="header-left">
-                <div class="brand">
-                    <div class="brand-icon"><i data-lucide="building-2"></i></div>
+        <!-- BARRA LATERAL IZQUIERDA (SIDEBAR) -->
+        <aside id="sidebar-menu" class="sidebar-premium">
+            <div class="sidebar-brand">
+                <div class="brand-logo-container">
+                    <div id="sidebar-logo-icon" class="brand-icon"><i data-lucide="building-2"></i></div>
                     <div class="brand-text">
-                        <h1>Bus.click</h1>
-                        <span class="badge-version">ADMINISTRADOR DE EMPRESA</span>
+                        <h2 id="sidebar-company-name">Bus.click</h2>
+                        <span class="badge-version">ADMINISTRADOR</span>
                     </div>
                 </div>
-            </div>
-            
-            <div class="header-center">
-                <div class="company-selector-container">
-                    <i data-lucide="building-2" class="icon-subtle"></i>
-                    <select id="header-company-select" class="select-premium"></select>
-                </div>
-            </div>
-
-            <div class="header-right">
-                <div class="firebase-status-pill glass">
-                    <span class="status-dot ping-active"></span>
-                    <span class="status-text">Consola de Control</span>
-                </div>
-                <button id="btn-logout" class="btn-logout" style="margin-left: 0.75rem;">
-                    <i data-lucide="log-out"></i> Salir
+                <button id="btn-toggle-sidebar" class="btn-toggle-sidebar">
+                    <i data-lucide="chevron-left" id="toggle-icon"></i>
                 </button>
             </div>
-        </header>
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-nav-target="apartado-organizacion">
+                        <a href="#" class="nav-link">
+                            <i data-lucide="building-2"></i>
+                            <span class="nav-label">Organización</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" data-nav-target="apartado-ventas">
+                        <a href="index.html" class="nav-link">
+                            <i data-lucide="ticket"></i>
+                            <span class="nav-label">Ventas / Pasajes</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-sidebar-logout" class="btn-logout">
+                    <i data-lucide="log-out"></i>
+                    <span class="nav-label">Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
 
-        <div class="app-layout">
+        <!-- CONTENEDOR PRINCIPAL DERECHO -->
+        <div class="main-layout-wrapper">
+            <!-- HEADER ADMIN EMPRESA -->
+            <header class="main-header glass">
+                <div class="header-left">
+                    <div class="brand">
+                        <div class="brand-icon"><i data-lucide="building-2"></i></div>
+                        <div class="brand-text">
+                            <h1>Bus.click</h1>
+                            <span class="badge-version">ADMINISTRADOR DE EMPRESA</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-center">
+                    <div class="company-selector-container">
+                        <i data-lucide="building-2" class="icon-subtle"></i>
+                        <select id="header-company-select" class="select-premium"></select>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <div class="firebase-status-pill glass">
+                        <span class="status-dot ping-active"></span>
+                        <span class="status-text">Consola de Control</span>
+                    </div>
+                    <button id="btn-logout" class="btn-logout" style="margin-left: 0.75rem;">
+                        <i data-lucide="log-out"></i> Salir
+                    </button>
+                </div>
+            </header>
+
+            <div class="app-layout">
             <main class="main-content">
                 <section id="panel-admin-empresa" class="panel-section">
                     <div class="panel-header-block">
@@ -149,8 +189,8 @@
                         </div>
                     </div>
                 </section>
-            </main>
         </div>
+    </div>
 
     <!-- OVERLAY DE LOGIN DE EMPRESA -->
     <div id="admin-login-overlay" class="login-overlay-premium">

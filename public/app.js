@@ -120,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initApp() {
     setupUIEventListeners();
+    initSidebarBehavior();
     
     // Sincronizar dropdowns personalizados
     syncCustomDropdowns();
@@ -159,6 +160,7 @@ async function reloadAllApiData() {
         renderCompaniesList();
         updateSuperStats();
         updateEstabUI();
+        applyCompanyBrandTheme();
         
         if (state.activeVehicleId) {
             renderSeatingMaqueta(state.activeVehicleId);
@@ -307,8 +309,35 @@ function populateSedeSelectors() {
 
 // Aplicar colores de la empresa de forma dinámica con variables CSS
 function applyCompanyBrandTheme() {
-    // La paleta del sistema Bus.click se mantiene estática e integrada con color índigo y lavanda 
-    // para garantizar una visualización sumamente profesional y consistente de todos los controles de venta.
+    // Inyectar la marca de la empresa activa en el sidebar (para roles admin y sede)
+    const activeCompany = state.companies.find(c => String(c.id) === String(state.activeCompanyId));
+    if (!activeCompany) return;
+
+    const sidebarName = document.getElementById('sidebar-company-name');
+    const sidebarIcon = document.getElementById('sidebar-logo-icon');
+    const headerBrandText = document.querySelector('.main-header .brand-text h1');
+
+    if (sidebarName) {
+        sidebarName.textContent = activeCompany.name || 'Bus.click';
+    }
+
+    if (headerBrandText && (state.currentRole === 'admin-empresa' || state.currentRole === 'establecimiento')) {
+        headerBrandText.textContent = activeCompany.name || 'Bus.click';
+    }
+
+    // Aplicar color corporativo al sidebar
+    const brandColor = activeCompany.color || '#6366f1';
+    if (sidebarIcon) {
+        sidebarIcon.style.background = `linear-gradient(135deg, ${brandColor}, ${lightenColor(brandColor, 15)})`;
+    }
+
+    // Actualizar variables CSS de marca para elementos activos del sidebar
+    const sidebar = document.getElementById('sidebar-menu');
+    if (sidebar) {
+        sidebar.style.setProperty('--brand-sidebar-color', brandColor);
+        sidebar.style.setProperty('--brand-sidebar-pale', brandColor + '14');
+        sidebar.style.setProperty('--brand-sidebar-border', brandColor + '28');
+    }
 }
 
 function lightenColor(color, percent) {
@@ -1635,6 +1664,102 @@ function initGenericModal(modalId, btnOpenId, btnCloseId, formId) {
             }
         });
     }
+}
+
+/**
+ * Inicializa el comportamiento colapsable del sidebar premium.
+ * Gestiona expansión/contracción, persistencia en localStorage,
+ * rotación del icono toggle, y vincula el botón de cerrar sesión del sidebar.
+ */
+function initSidebarBehavior() {
+    const sidebar = document.getElementById('sidebar-menu');
+    const btnToggle = document.getElementById('btn-toggle-sidebar');
+    const toggleIcon = document.getElementById('toggle-icon');
+    const btnSidebarLogout = document.getElementById('btn-sidebar-logout');
+
+    if (!sidebar) return;
+
+    // Restaurar estado desde localStorage
+    const savedState = localStorage.getItem('bus-click-sidebar-state');
+    if (savedState === 'expanded') {
+        sidebar.classList.add('expanded');
+        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-left');
+    } else {
+        sidebar.classList.remove('expanded');
+        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-right');
+    }
+    lucide.createIcons();
+
+    // Botón de toggle
+    if (btnToggle) {
+        btnToggle.addEventListener('click', () => {
+            const isExpanded = sidebar.classList.toggle('expanded');
+            localStorage.setItem('bus-click-sidebar-state', isExpanded ? 'expanded' : 'collapsed');
+
+            // Animar icono de flecha
+            if (toggleIcon) {
+                toggleIcon.setAttribute('data-lucide', isExpanded ? 'chevron-left' : 'chevron-right');
+                lucide.createIcons();
+            }
+        });
+    }
+
+    // Expandir al pasar el cursor (hover), solo en desktop
+    sidebar.addEventListener('mouseenter', () => {
+        if (window.innerWidth > 900 && !sidebar.classList.contains('expanded')) {
+            sidebar.classList.add('expanded', 'hover-expand');
+            if (toggleIcon) {
+                toggleIcon.setAttribute('data-lucide', 'chevron-left');
+                lucide.createIcons();
+            }
+        }
+    });
+
+    sidebar.addEventListener('mouseleave', () => {
+        if (sidebar.classList.contains('hover-expand')) {
+            sidebar.classList.remove('expanded', 'hover-expand');
+            // Restaurar al estado guardado
+            const saved = localStorage.getItem('bus-click-sidebar-state');
+            if (saved === 'expanded') {
+                sidebar.classList.add('expanded');
+                if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-left');
+            } else {
+                if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-right');
+            }
+            lucide.createIcons();
+        }
+    });
+
+    // Vincular botón de cerrar sesión del sidebar
+    if (btnSidebarLogout) {
+        btnSidebarLogout.addEventListener('click', () => {
+            const mainLogoutBtn = document.getElementById('btn-logout');
+            if (mainLogoutBtn) {
+                mainLogoutBtn.click();
+            } else {
+                // Fallback: limpiar sesión directamente
+                localStorage.removeItem('busclick-session');
+                window.location.reload();
+            }
+        });
+    }
+
+    // Navegación del sidebar: items con data-nav-target que NO son enlaces externos
+    const navItems = sidebar.querySelectorAll('.nav-item[data-nav-target]');
+    navItems.forEach(item => {
+        const link = item.querySelector('.nav-link');
+        // Si el link tiene href real (no "#"), permitimos la navegación normal
+        if (link && link.getAttribute('href') && link.getAttribute('href') !== '#') {
+            return; // No interceptar, dejar que haga navegación normal
+        }
+        
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Marcar activo
+            navItems.forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+        });
+    });
 }
 
 // ==========================================
