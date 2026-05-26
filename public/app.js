@@ -930,27 +930,32 @@ function switchRoleView(role) {
         }
     });
     
-    document.getElementById('panel-super-admin').classList.add('hidden');
-    document.getElementById('panel-admin-empresa').classList.add('hidden');
-    document.getElementById('panel-establecimiento').classList.add('hidden');
+    const panelSuperAdmin = document.getElementById('panel-super-admin');
+    const panelAdminEmpresa = document.getElementById('panel-admin-empresa');
+    const panelEstablecimiento = document.getElementById('panel-establecimiento');
     
-    const headerCompany = document.getElementById('header-company-select').closest('.company-selector-container');
-    const headerSede = document.getElementById('header-sede-wrapper');
+    if (panelSuperAdmin) panelSuperAdmin.classList.add('hidden');
+    if (panelAdminEmpresa) panelAdminEmpresa.classList.add('hidden');
+    if (panelEstablecimiento) panelEstablecimiento.classList.add('hidden');
+    
+    const headerCompanySelect = document.getElementById('header-company-select');
+    const headerCompany = headerCompanySelect ? headerCompanySelect.closest('.company-selector-container') : null;
+    const headerSede = document.getElementById('header-sede-wrapper') || document.querySelector('.sede-selector-container');
     
     if (role === 'super-admin') {
-        document.getElementById('panel-super-admin').classList.remove('hidden');
-        headerCompany.style.display = 'none';
-        headerSede.style.display = 'none';
+        if (panelSuperAdmin) panelSuperAdmin.classList.remove('hidden');
+        if (headerCompany) headerCompany.style.display = 'none';
+        if (headerSede) headerSede.style.display = 'none';
     } 
     else if (role === 'admin-empresa') {
-        document.getElementById('panel-admin-empresa').classList.remove('hidden');
-        headerCompany.style.display = 'flex';
-        headerSede.style.display = 'none';
+        if (panelAdminEmpresa) panelAdminEmpresa.classList.remove('hidden');
+        if (headerCompany) headerCompany.style.display = 'flex';
+        if (headerSede) headerSede.style.display = 'none';
     } 
     else if (role === 'establecimiento') {
-        document.getElementById('panel-establecimiento').classList.remove('hidden');
-        headerCompany.style.display = 'flex';
-        headerSede.style.display = 'flex';
+        if (panelEstablecimiento) panelEstablecimiento.classList.remove('hidden');
+        if (headerCompany) headerCompany.style.display = 'flex';
+        if (headerSede) headerSede.style.display = 'flex';
     }
 }
 
