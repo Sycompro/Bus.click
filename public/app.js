@@ -664,6 +664,7 @@ function updateEstabUI() {
     });
     
     lucide.createIcons();
+    updateSalesTurnReport();
 }
 
 function selectVehicleForMaqueta(vehicleId) {
@@ -1512,3 +1513,100 @@ document.addEventListener('click', () => {
     document.querySelectorAll('.custom-dropdown-menu').forEach(m => m.classList.add('hidden'));
     document.querySelectorAll('.custom-dropdown-trigger').forEach(t => t.classList.remove('active'));
 });
+
+// ==========================================
+// 13. REPORTE DE VENTAS DEL TURNO Y ARQUEO DE CAJA
+// ==========================================
+function updateSalesTurnReport() {
+    const cashTotalSpan = document.getElementById('cash-payment-total');
+    const digitalTotalSpan = document.getElementById('digital-payment-total');
+    const tbody = document.getElementById('table-sales-today-body');
+
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    // Si no hay sede seleccionada, salir
+    if (!state.activeSedeId) {
+        if (cashTotalSpan) cashTotalSpan.textContent = 'S/. 0.00';
+        if (digitalTotalSpan) digitalTotalSpan.textContent = 'S/. 0.00';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">Selecciona una Sede en la cabecera para ver las ventas.</td></tr>';
+        return;
+    }
+
+    // Filtrar los tickets de los vehículos de la sede seleccionada y de la empresa seleccionada
+    const sedeVehicles = state.movilidades.filter(m => m.sedeId === state.activeSedeId && m.companyId === state.activeCompanyId);
+    const vehicleIds = sedeVehicles.map(v => v.id);
+
+    const activeTickets = state.tickets.filter(t => t.sedeId === state.activeSedeId && vehicleIds.includes(t.movilidadId));
+
+    let cashTotal = 0;
+    let digitalTotal = 0;
+
+    if (activeTickets.length === 0) {
+        if (cashTotalSpan) cashTotalSpan.textContent = 'S/. 0.00';
+        if (digitalTotalSpan) digitalTotalSpan.textContent = 'S/. 0.00';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay ventas emitidas en este turno todavía.</td></tr>';
+        return;
+    }
+
+    // Ordenar tickets de forma cronológica invertida (las más recientes primero)
+    const sortedTickets = [...activeTickets].reverse();
+
+    sortedTickets.forEach(ticket => {
+        const vehicle = state.movilidades.find(v => v.id === ticket.movilidadId);
+        const vehiclePlate = vehicle ? vehicle.plate : '---';
+        const price = parseFloat(ticket.price || 0);
+
+        if (ticket.status === 'Ocupado') {
+            if (ticket.paymentMethod === 'Efectivo') {
+                cashTotal += price;
+            } else if (ticket.paymentMethod === 'Yape/Plin') {
+                digitalTotal += price;
+            }
+        }
+
+        const paymentBadgeClass = ticket.paymentMethod === 'Efectivo' ? 'badge-cash' : 'badge-digital';
+        const ticketCode = ticket.id.substring(0, 8).toUpperCase();
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="font-bold text-indigo-400">#${ticketCode}</td>
+            <td>
+                <div class="font-bold">${ticket.passengerName}</div>
+                <div class="text-xs text-subtle" style="font-size: 0.65rem; color: #64748b;">DNI: ${ticket.passengerDni}</div>
+            </td>
+            <td>
+                <div class="font-bold">${ticket.routeTo}</div>
+                <div class="text-xs text-subtle" style="font-size: 0.65rem; color: #64748b;">Placa: ${vehiclePlate}</div>
+            </td>
+            <td>
+                <span class="seat-badge-mini">Asiento ${ticket.seatNum}</span>
+            </td>
+            <td>
+                <span class="badge-payment-pill ${paymentBadgeClass}">${ticket.paymentMethod || 'Efectivo'}</span>
+            </td>
+            <td class="font-bold text-emerald-400" style="color: #10b981;">S/. ${price.toFixed(2)}</td>
+            <td>
+                <button class="btn btn-secondary btn-print-sale-mini" data-ticket-id="${ticket.id}">
+                    <i data-lucide="ticket"></i> Boleto
+                </button>
+            </td>
+        `;
+
+        tr.querySelector('.btn-print-sale-mini').addEventListener('click', () => {
+            const ticketData = {
+                ...ticket,
+                date: ticket.date || new Date().toLocaleDateString('es-PE')
+            };
+            showTicket(ticket.id, ticketData);
+        });
+
+        tbody.appendChild(tr);
+    });
+
+    if (cashTotalSpan) cashTotalSpan.textContent = `S/. ${cashTotal.toFixed(2)}`;
+    if (digitalTotalSpan) digitalTotalSpan.textContent = `S/. ${digitalTotal.toFixed(2)}`;
+
+    lucide.createIcons();
+}

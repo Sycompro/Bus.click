@@ -124,6 +124,39 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- 📊 REPORTE DE VENTAS Y ARQUEO DE CAJA DEL TURNO (DEBAJO DEL SPLIT LAYOUT) -->
+                    <div class="estab-report-section glass mt-6">
+                        <div class="report-header">
+                            <div class="report-header-left">
+                                <h3 class="subtitle-premium"><i data-lucide="bar-chart-3"></i> Arqueo de Caja y Control de Ventas del Turno</h3>
+                                <p class="section-desc">Monitorea y cuadra tus ingresos en Efectivo y Yape/Plin en tiempo real.</p>
+                            </div>
+                            <div class="payment-stats-badges">
+                                <span class="payment-badge cash"><i data-lucide="banknote"></i> Efectivo: <strong id="cash-payment-total">S/. 0.00</strong></span>
+                                <span class="payment-badge digital"><i data-lucide="smartphone"></i> Yape/Plin: <strong id="digital-payment-total">S/. 0.00</strong></span>
+                            </div>
+                        </div>
+                        
+                        <div class="table-scroll-container mt-4">
+                            <table class="table-premium">
+                                <thead>
+                                    <tr>
+                                        <th>Código Ticket</th>
+                                        <th>Pasajero</th>
+                                        <th>Destino / Ruta</th>
+                                        <th>Ubicación</th>
+                                        <th>Método Pago</th>
+                                        <th>Monto Cobrado</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-sales-today-body">
+                                    <tr><td colspan="7" class="text-center">No hay ventas registradas hoy en este terminal.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </section>
             </main>
         </div>
