@@ -843,7 +843,7 @@ function renderSeatsGrid(vehicle) {
         } 
         else if (cell.type === 'door') {
             cellEl.className = 'door-cell';
-            cellEl.innerHTML = '<i data-lucide="log-out"></i>';
+            cellEl.innerHTML = '<i data-lucide="door-open"></i>';
         }
         else if (cell.type === 'stairs') {
             cellEl.className = 'door-cell';
