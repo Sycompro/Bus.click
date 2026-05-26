@@ -516,12 +516,16 @@ function attachDeleteEvents() {
             const confirmed = await showConfirmModal('Eliminar Registro', `¿Estás seguro de eliminar este registro (${type})?`);
             if (confirmed) {
                 try {
-                    await fetch(`/api/${type}s/${id}`, { method: 'DELETE' });
+                    const response = await fetch(`/api/${type}s/${id}`, { method: 'DELETE' });
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData.error || 'Error del servidor');
+                    }
                     await reloadAllApiData();
                     showToast(`${type.charAt(0).toUpperCase() + type.slice(1)} eliminado correctamente.`, 'success');
-                } catch (e) {
-                    console.error("Error al borrar:", e);
-                    showToast('Ocurrió un error al intentar eliminar el registro.', 'error');
+                } catch (err) {
+                    console.error("Error al borrar:", err);
+                    showToast(`Error al eliminar: ${err.message || 'Fallo de red o servidor'}`, 'error');
                 }
             }
         });
