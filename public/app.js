@@ -596,17 +596,37 @@ function updateEstabUI() {
         const occupiedSeats = vehicleTickets.length;
         const percentage = totalSeats > 0 ? Math.round((occupiedSeats / totalSeats) * 100) : 0;
         
+        let modelName = "";
+        let modelIcon = "bus";
+        if (vehicle.modelType === "combi") { modelName = "Combi Rural"; modelIcon = "car"; }
+        else if (vehicle.modelType === "minibus") { modelName = "Minibus"; modelIcon = "bus"; }
+        else if (vehicle.modelType === "bus1p") { modelName = "Bus 1 Piso"; modelIcon = "bus"; }
+        else if (vehicle.modelType === "bus2p") { modelName = "Bus 2 Pisos VIP"; modelIcon = "layers"; }
+        
         const card = document.createElement('div');
         card.className = `vehicle-sede-card glass ${state.activeVehicleId === vehicle.id ? 'active' : ''}`;
         card.innerHTML = `
             <div class="card-top">
                 <span class="plate-badge">${vehicle.plate}</span>
-                <span class="vehicle-model-pill">${vehicle.brand}</span>
+                <span class="badge-model-flat model-${vehicle.modelType}">
+                    <i data-lucide="${modelIcon}"></i> ${modelName}
+                </span>
             </div>
-            <div class="card-route">
-                <i data-lucide="arrow-right-left"></i>
-                <span>${vehicle.routeFrom} ➔ ${vehicle.routeTo}</span>
+            
+            <div class="route-graph-display">
+                <div class="route-node source">
+                    <i data-lucide="map-pin" style="color: #10b981;"></i>
+                    <span class="node-city">${vehicle.routeFrom}</span>
+                </div>
+                <div class="route-line-connector">
+                    <span class="connector-arrow">➔</span>
+                </div>
+                <div class="route-node destination">
+                    <i data-lucide="map-pin" style="color: #db2777;"></i>
+                    <span class="node-city">${vehicle.routeTo}</span>
+                </div>
             </div>
+            
             <div class="occupancy-bar-container">
                 <div class="occupancy-label">
                     <span>Ocupación: ${occupiedSeats}/${totalSeats} Asientos</span>
@@ -616,6 +636,7 @@ function updateEstabUI() {
                     <div class="progress-fill" style="width: ${percentage}%"></div>
                 </div>
             </div>
+            
             <button class="btn btn-secondary btn-full mt-6 btn-manage-seats" data-vehicle-id="${vehicle.id}">
                 <i data-lucide="grid-3x3"></i> Gestionar Asientos
             </button>
