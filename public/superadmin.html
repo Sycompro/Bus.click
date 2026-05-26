@@ -46,7 +46,10 @@
                             <h2>🌐 Gestión Global de Ecosistema</h2>
                             <p class="section-desc">Crea y monitorea todas las empresas integradas en la plataforma.</p>
                         </div>
-                        <div class="header-actions">
+                        <div class="header-actions" style="display: flex; gap: 0.75rem;">
+                            <button id="btn-open-create-company-modal" class="btn btn-primary btn-sparkle">
+                                <i data-lucide="plus-circle"></i> Registrar Empresa
+                            </button>
                             <button id="btn-seed-data" class="btn btn-secondary btn-sparkle">
                                 <i data-lucide="database-backup"></i> Cargar Datos Semilla
                             </button>
@@ -72,63 +75,22 @@
                         </div>
                     </div>
 
-                    <div class="content-split-layout">
-                        <div class="form-container-card glass">
-                            <h3 class="card-title"><i data-lucide="plus-circle"></i> Nueva Empresa</h3>
-                            <form id="form-create-company" class="form-premium">
-                                <div class="form-group">
-                                    <label>Nombre Comercial</label>
-                                    <input type="text" id="company-name" required placeholder="Ej: Transportes Flores">
-                                </div>
-                                <div class="form-group">
-                                    <label>RUC</label>
-                                    <div class="input-group-premium">
-                                        <input type="text" id="company-ruc" required placeholder="Ej: 20123456789" maxlength="11">
-                                        <button type="button" id="btn-buscar-ruc" class="btn btn-secondary btn-sparkle">
-                                            <i data-lucide="search"></i> Consultar
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label>Color Corporativo</label>
-                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                        <input type="color" id="company-color" value="#6366f1" style="width: 50px; height: 38px; padding: 0; border: none; border-radius: var(--radius-sm); cursor: pointer;">
-                                        <span class="color-value-text" style="font-size: var(--text-xs); font-weight: 700; color: #64748b;">#6366F1</span>
-                                    </div>
-                                </div>
-                                <div class="form-group-row-2">
-                                    <div class="form-group">
-                                        <label for="company-username">Usuario Administrador</label>
-                                        <input type="text" id="company-username" required placeholder="Usuario para login">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="company-password">Contraseña Empresa</label>
-                                        <input type="password" id="company-password" required placeholder="Contraseña de acceso">
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary btn-full">
-                                    <i data-lucide="save"></i> Guardar Empresa
-                                </button>
-                            </form>
-                        </div>
-
-                        <div class="list-container-card glass">
-                            <h3 class="card-title"><i data-lucide="list"></i> Directorio de Empresas</h3>
-                            <div class="table-scroll-container">
-                                <table class="table-premium">
-                                    <thead>
-                                        <tr>
-                                            <th>Empresa</th>
-                                            <th>RUC</th>
-                                            <th>Color</th>
-                                            <th>Sedes</th>
-                                            <th>Flota</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="table-companies-body"></tbody>
-                                </table>
-                            </div>
+                    <div class="list-container-card glass mt-6" style="width: 100%;">
+                        <h3 class="card-title"><i data-lucide="list"></i> Directorio de Empresas</h3>
+                        <div class="table-scroll-container">
+                            <table class="table-premium">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>RUC</th>
+                                        <th>Color</th>
+                                        <th>Sedes</th>
+                                        <th>Flota</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-companies-body"></tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
@@ -231,5 +193,50 @@
         // Forzar rol super-admin en esta vista
         state.currentRole = 'super-admin';
     </script>
+
+    <!-- MODAL REGISTRAR EMPRESA -->
+    <div id="modal-create-company" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i data-lucide="plus-circle"></i> Registrar Nueva Empresa</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-create-company-modal">×</button>
+            </div>
+            <form id="form-create-company" class="form-premium">
+                <div class="form-group">
+                    <label>Nombre Comercial</label>
+                    <input type="text" id="company-name" required placeholder="Ej: Transportes Flores">
+                </div>
+                <div class="form-group">
+                    <label>RUC</label>
+                    <div class="input-group-premium">
+                        <input type="text" id="company-ruc" required placeholder="Ej: 20123456789" maxlength="11">
+                        <button type="button" id="btn-buscar-ruc" class="btn btn-secondary btn-sparkle">
+                            <i data-lucide="search"></i> Consultar
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Color Corporativo</label>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <input type="color" id="company-color" value="#6366f1" style="width: 50px; height: 38px; padding: 0; border: none; border-radius: var(--radius-sm); cursor: pointer;">
+                        <span class="color-value-text" style="font-size: var(--text-xs); font-weight: 700; color: #64748b;">#6366F1</span>
+                    </div>
+                </div>
+                <div class="form-group-row-2">
+                    <div class="form-group">
+                        <label for="company-username">Usuario Administrador</label>
+                        <input type="text" id="company-username" required placeholder="Usuario para login">
+                    </div>
+                    <div class="form-group">
+                        <label for="company-password">Contraseña Empresa</label>
+                        <input type="password" id="company-password" required placeholder="Contraseña de acceso">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
+                    <i data-lucide="save"></i> Guardar Empresa
+                </button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

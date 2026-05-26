@@ -66,151 +66,50 @@
                     <div class="tab-contents-container mt-6">
                         <!-- ═══ SEDES ═══ -->
                         <div id="tab-admin-sedes" class="tab-content-item">
-                            <div class="content-split-layout">
-                                <div class="form-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="map-pin"></i> Registrar Sede</h3>
-                                    <form id="form-create-sede" class="form-premium">
-                                        <div class="form-group">
-                                            <label for="sede-name">Nombre Sede</label>
-                                            <input type="text" id="sede-name" required placeholder="Ej: Terminal Lima Norte">
-                                        </div>
-                                        <div class="form-group-row-2">
-                                            <div class="form-group">
-                                                <label for="sede-city">Ciudad</label>
-                                                <input type="text" id="sede-city" required placeholder="Ej: Lima">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="sede-address">Dirección</label>
-                                                <input type="text" id="sede-address" required placeholder="Ej: Av. Alfredo Mendiola 1400">
-                                            </div>
-                                        </div>
-                                        <div class="form-group-row-2">
-                                            <div class="form-group">
-                                                <label for="sede-username">Usuario Sede</label>
-                                                <input type="text" id="sede-username" required placeholder="Usuario para login">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="sede-password">Contraseña Sede</label>
-                                                <input type="password" id="sede-password" required placeholder="Contraseña de acceso">
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-full">
-                                            <i data-lucide="save"></i> Guardar Sede
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="list-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="list"></i> Directorio de Sedes</h3>
-                                    <table class="table-premium">
-                                        <thead><tr><th>Sede</th><th>Ciudad</th><th>Dirección</th><th>Acciones</th></tr></thead>
-                                        <tbody id="table-sedes-body"></tbody>
-                                    </table>
-                                </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                                <button id="btn-open-create-sede-modal" class="btn btn-primary btn-sparkle">
+                                    <i data-lucide="map-pin"></i> Registrar Sede
+                                </button>
+                            </div>
+                            <div class="list-container-card glass" style="width: 100%;">
+                                <h3 class="card-title"><i data-lucide="list"></i> Directorio de Sedes</h3>
+                                <table class="table-premium">
+                                    <thead><tr><th>Sede</th><th>Ciudad</th><th>Dirección</th><th>Acciones</th></tr></thead>
+                                    <tbody id="table-sedes-body"></tbody>
+                                </table>
                             </div>
                         </div>
                         
                         <!-- ═══ TRABAJADORES ═══ -->
                         <div id="tab-admin-trabajadores" class="tab-content-item hidden">
-                           <div class="content-split-layout">
-                                <div class="form-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="user-plus"></i> Nuevo Trabajador</h3>
-                                    <form id="form-create-trabajador" class="form-premium">
-                                        <div class="form-group">
-                                            <label for="trabajador-name">Nombre</label>
-                                            <input type="text" id="trabajador-name" required placeholder="Nombres del trabajador">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="trabajador-lastname">Apellido</label>
-                                            <input type="text" id="trabajador-lastname" required placeholder="Apellidos del trabajador">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="trabajador-dni">DNI</label>
-                                            <input type="text" id="trabajador-dni" required placeholder="DNI (8 dígitos)" maxlength="8">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="trabajador-role">Rol / Puesto</label>
-                                            <select id="trabajador-role" class="select-premium">
-                                                <option value="Vendedor de Pasajes">Vendedor de Pasajes / Cajero</option>
-                                                <option value="Conductor Principal">Conductor / Chofer Principal</option>
-                                                <option value="Conductor de Relevo">Conductor de Relevo / Copiloto</option>
-                                                <option value="Terramozo(a)">Terramozo(a) / Tripulante de Cabina</option>
-                                                <option value="Jefe de Terminal">Jefe de Terminal / Administrador de Sede</option>
-                                                <option value="Despachador de Equipaje">Despachador de Equipaje y Encomiendas</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="trabajador-sede">Sede Base</label>
-                                            <select id="trabajador-sede" class="select-premium" required></select>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-full">
-                                            <i data-lucide="save"></i> Guardar Personal
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="list-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="users"></i> Equipo de Trabajo</h3>
-                                    <table class="table-premium">
-                                        <thead><tr><th>Nombre Completo</th><th>DNI</th><th>Rol</th><th>Sede Base</th><th>Acciones</th></tr></thead>
-                                        <tbody id="table-trabajadores-body"></tbody>
-                                    </table>
-                                </div>
-                           </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                                <button id="btn-open-create-trabajador-modal" class="btn btn-primary btn-sparkle">
+                                    <i data-lucide="user-plus"></i> Registrar Personal
+                                </button>
+                            </div>
+                            <div class="list-container-card glass" style="width: 100%;">
+                                <h3 class="card-title"><i data-lucide="users"></i> Equipo de Trabajo</h3>
+                                <table class="table-premium">
+                                    <thead><tr><th>Nombre Completo</th><th>DNI</th><th>Rol</th><th>Sede Base</th><th>Acciones</th></tr></thead>
+                                    <tbody id="table-trabajadores-body"></tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <!-- ═══ MOVILIDADES ═══ -->
                         <div id="tab-admin-movilidades" class="tab-content-item hidden">
-                            <div class="content-split-layout">
-                                <div class="form-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="bus"></i> Nuevo Vehículo</h3>
-                                    <form id="form-create-movilidad" class="form-premium">
-                                        <div class="form-group">
-                                            <label for="movilidad-plate">Placa</label>
-                                            <input type="text" id="movilidad-plate" required placeholder="Ej: F3W-902">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="movilidad-brand">Marca / Carrocería</label>
-                                            <input type="text" id="movilidad-brand" required placeholder="Ej: Mercedes / Volvo">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="movilidad-model">Modelo de Chasis</label>
-                                            <select id="movilidad-model" class="select-premium">
-                                                <option value="combi">Combi Rural (15 asientos)</option>
-                                                <option value="minibus">Minibus Colectivo (24 asientos)</option>
-                                                <option value="bus1p">Bus 1 Piso (44 asientos)</option>
-                                                <option value="bus2p">Bus 2 Pisos VIP (60 asientos)</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="movilidad-sede">Sede Base</label>
-                                            <select id="movilidad-sede" class="select-premium"></select>
-                                        </div>
-                                        <div class="form-group-row-2">
-                                            <div class="form-group">
-                                                <label for="movilidad-route-from">Origen</label>
-                                                <input type="text" id="movilidad-route-from" required placeholder="Ej: Lima">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="movilidad-route-to">Destino</label>
-                                                <input type="text" id="movilidad-route-to" required placeholder="Ej: Cusco">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="movilidad-price">Precio del Pasaje (S/.)</label>
-                                            <input type="number" id="movilidad-price" required placeholder="Precio S/.">
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-full">
-                                            <i data-lucide="save"></i> Guardar Vehículo
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="list-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="truck"></i> Flota de Vehículos</h3>
-                                    <div class="table-scroll-container">
-                                        <table class="table-premium">
-                                            <thead><tr><th>Placa</th><th>Marca</th><th>Modelo</th><th>Sede</th><th>Ruta</th><th>Precio</th><th>Acciones</th></tr></thead>
-                                            <tbody id="table-movilidades-body"></tbody>
-                                        </table>
-                                    </div>
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                                <button id="btn-open-create-movilidad-modal" class="btn btn-primary btn-sparkle">
+                                    <i data-lucide="bus"></i> Incorporar Vehículo
+                                </button>
+                            </div>
+                            <div class="list-container-card glass" style="width: 100%;">
+                                <h3 class="card-title"><i data-lucide="truck"></i> Flota de Vehículos</h3>
+                                <div class="table-scroll-container">
+                                    <table class="table-premium">
+                                        <thead><tr><th>Placa</th><th>Marca</th><th>Modelo</th><th>Sede</th><th>Ruta</th><th>Precio</th><th>Acciones</th></tr></thead>
+                                        <tbody id="table-movilidades-body"></tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -276,6 +175,137 @@
                 <button type="submit" class="btn btn-primary btn-full" style="height: 42px;">
                     <i data-lucide="log-in"></i> Iniciar Sesión
                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRAR SEDE -->
+    <div id="modal-create-sede" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i data-lucide="map-pin"></i> Registrar Sede</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-create-sede-modal">×</button>
+            </div>
+            <form id="form-create-sede" class="form-premium">
+                <div class="form-group">
+                    <label for="sede-name">Nombre Sede</label>
+                    <input type="text" id="sede-name" required placeholder="Ej: Terminal Lima Norte">
+                </div>
+                <div class="form-group-row-2">
+                    <div class="form-group">
+                        <label for="sede-city">Ciudad</label>
+                        <input type="text" id="sede-city" required placeholder="Ej: Lima">
+                    </div>
+                    <div class="form-group">
+                        <label for="sede-address">Dirección</label>
+                        <input type="text" id="sede-address" required placeholder="Ej: Av. Alfredo Mendiola 1400">
+                    </div>
+                </div>
+                <div class="form-group-row-2">
+                    <div class="form-group">
+                        <label for="sede-username">Usuario Sede</label>
+                        <input type="text" id="sede-username" required placeholder="Usuario para login">
+                    </div>
+                    <div class="form-group">
+                        <label for="sede-password">Contraseña Sede</label>
+                        <input type="password" id="sede-password" required placeholder="Contraseña de acceso">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
+                    <i data-lucide="save"></i> Guardar Sede
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRAR TRABAJADOR -->
+    <div id="modal-create-trabajador" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i data-lucide="user-plus"></i> Registrar Personal</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-create-trabajador-modal">×</button>
+            </div>
+            <form id="form-create-trabajador" class="form-premium">
+                <div class="form-group">
+                    <label for="trabajador-name">Nombre</label>
+                    <input type="text" id="trabajador-name" required placeholder="Nombres del trabajador">
+                </div>
+                <div class="form-group">
+                    <label for="trabajador-lastname">Apellido</label>
+                    <input type="text" id="trabajador-lastname" required placeholder="Apellidos del trabajador">
+                </div>
+                <div class="form-group">
+                    <label for="trabajador-dni">DNI</label>
+                    <input type="text" id="trabajador-dni" required placeholder="DNI (8 dígitos)" maxlength="8">
+                </div>
+                <div class="form-group">
+                    <label for="trabajador-role">Rol / Puesto</label>
+                    <select id="trabajador-role" class="select-premium">
+                        <option value="Vendedor de Pasajes">Vendedor de Pasajes / Cajero</option>
+                        <option value="Conductor Principal">Conductor / Chofer Principal</option>
+                        <option value="Conductor de Relevo">Conductor de Relevo / Copiloto</option>
+                        <option value="Terramozo(a)">Terramozo(a) / Tripulante de Cabina</option>
+                        <option value="Jefe de Terminal">Jefe de Terminal / Administrador de Sede</option>
+                        <option value="Despachador de Equipaje">Despachador de Equipaje y Encomiendas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="trabajador-sede">Sede Base</label>
+                    <select id="trabajador-sede" class="select-premium" required></select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
+                    <i data-lucide="save"></i> Guardar Personal
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRAR VEHÍCULO -->
+    <div id="modal-create-movilidad" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i data-lucide="bus"></i> Incorporar Vehículo</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-create-movilidad-modal">×</button>
+            </div>
+            <form id="form-create-movilidad" class="form-premium">
+                <div class="form-group">
+                    <label for="movilidad-plate">Placa</label>
+                    <input type="text" id="movilidad-plate" required placeholder="Ej: F3W-902">
+                </div>
+                <div class="form-group">
+                    <label for="movilidad-brand">Marca / Carrocería</label>
+                    <input type="text" id="movilidad-brand" required placeholder="Ej: Mercedes / Volvo">
+                </div>
+                <div class="form-group">
+                    <label for="movilidad-model">Modelo de Chasis</label>
+                    <select id="movilidad-model" class="select-premium">
+                        <option value="combi">Combi Rural (15 asientos)</option>
+                        <option value="minibus">Minibus Colectivo (24 asientos)</option>
+                        <option value="bus1p">Bus 1 Piso (44 asientos)</option>
+                        <option value="bus2p">Bus 2 Pisos VIP (60 asientos)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="movilidad-sede">Sede Base</label>
+                    <select id="movilidad-sede" class="select-premium"></select>
+                </div>
+                <div class="form-group-row-2">
+                    <div class="form-group">
+                        <label for="movilidad-route-from">Origen</label>
+                        <input type="text" id="movilidad-route-from" required placeholder="Ej: Lima">
+                    </div>
+                    <div class="form-group">
+                        <label for="movilidad-route-to">Destino</label>
+                        <input type="text" id="movilidad-route-to" required placeholder="Ej: Cusco">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="movilidad-price">Precio del Pasaje (S/.)</label>
+                    <input type="number" id="movilidad-price" required placeholder="Precio S/.">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
+                    <i data-lucide="save"></i> Guardar Vehículo
+                </button>
             </form>
         </div>
     </div>

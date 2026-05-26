@@ -1314,6 +1314,13 @@ function setupUIEventListeners() {
             const cp = document.getElementById('company-password');
             if (cu) delete cu.dataset.dirty;
             if (cp) delete cp.dataset.dirty;
+            
+            const colorText = document.querySelector('.color-value-text');
+            if (colorText) colorText.textContent = '#6366F1';
+            
+            const modalCompany = document.getElementById('modal-create-company');
+            if (modalCompany) modalCompany.classList.add('hidden');
+            
             showToast("Empresa registrada con éxito.", "success");
         });
         
@@ -1388,6 +1395,10 @@ function setupUIEventListeners() {
             const sp = document.getElementById('sede-password');
             if (su) delete su.dataset.dirty;
             if (sp) delete sp.dataset.dirty;
+            
+            const modalSede = document.getElementById('modal-create-sede');
+            if (modalSede) modalSede.classList.add('hidden');
+            
             showToast("Sede registrada con éxito.", "success");
         });
     }
@@ -1409,6 +1420,10 @@ function setupUIEventListeners() {
             
             await createTrabajador(state.activeCompanyId, sedeId, name, lastname, dni, role);
             formTrabajador.reset();
+            
+            const modalTrab = document.getElementById('modal-create-trabajador');
+            if (modalTrab) modalTrab.classList.add('hidden');
+            
             showToast("Trabajador registrado con éxito.", "success");
         });
     }
@@ -1432,6 +1447,10 @@ function setupUIEventListeners() {
             
             await createMovilidad(state.activeCompanyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price);
             formMovilidad.reset();
+            
+            const modalMov = document.getElementById('modal-create-movilidad');
+            if (modalMov) modalMov.classList.add('hidden');
+            
             showToast("Vehículo incorporado a la flota con éxito.", "success");
         });
     }
@@ -1537,6 +1556,64 @@ function setupUIEventListeners() {
             }
             if (!sedePass.dataset.dirty) {
                 sedePass.value = `${initials}${randomNum}`;
+            }
+        });
+    }
+
+    // Inicializar modales de registro emergentes con animaciones fluidas
+    initGenericModal('modal-create-company', 'btn-open-create-company-modal', 'btn-close-create-company-modal', 'form-create-company');
+    initGenericModal('modal-create-sede', 'btn-open-create-sede-modal', 'btn-close-create-sede-modal', 'form-create-sede');
+    initGenericModal('modal-create-trabajador', 'btn-open-create-trabajador-modal', 'btn-close-create-trabajador-modal', 'form-create-trabajador');
+    initGenericModal('modal-create-movilidad', 'btn-open-create-movilidad-modal', 'btn-close-create-movilidad-modal', 'form-create-movilidad');
+}
+
+/**
+ * Inicializa la lógica genérica de apertura, cierre y reset de modales premium.
+ */
+function initGenericModal(modalId, btnOpenId, btnCloseId, formId) {
+    const modal = document.getElementById(modalId);
+    const btnOpen = document.getElementById(btnOpenId);
+    const btnClose = document.getElementById(btnCloseId);
+    const form = document.getElementById(formId);
+
+    if (btnOpen && modal) {
+        btnOpen.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+    }
+
+    if (btnClose && modal) {
+        btnClose.addEventListener('click', () => {
+            modal.classList.add('hidden');
+            if (form) {
+                form.reset();
+                const inputs = form.querySelectorAll('input');
+                inputs.forEach(input => {
+                    delete input.dataset.dirty;
+                });
+                if (modalId === 'modal-create-company') {
+                    const colorValueText = form.querySelector('.color-value-text');
+                    if (colorValueText) colorValueText.textContent = '#6366F1';
+                }
+            }
+        });
+    }
+
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+                if (form) {
+                    form.reset();
+                    const inputs = form.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        delete input.dataset.dirty;
+                    });
+                    if (modalId === 'modal-create-company') {
+                        const colorValueText = form.querySelector('.color-value-text');
+                        if (colorValueText) colorValueText.textContent = '#6366F1';
+                    }
+                }
             }
         });
     }
