@@ -354,38 +354,54 @@ function lightenColor(color, percent) {
 // ==========================================
 
 async function createCompany(name, ruc, logo, color, username, password) {
-    await fetch('/api/companies', {
+    const res = await fetch('/api/companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, ruc, logo, color, username, password })
     });
+    if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Error del servidor (${res.status})`);
+    }
     await reloadAllApiData();
 }
 
 async function createSede(companyId, name, city, address, username, password) {
-    await fetch('/api/sedes', {
+    const res = await fetch('/api/sedes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyId, name, city, address, username, password })
     });
+    if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Error del servidor (${res.status})`);
+    }
     await reloadAllApiData();
 }
 
 async function createTrabajador(companyId, sedeId, name, lastname, dni, role) {
-    await fetch('/api/trabajadores', {
+    const res = await fetch('/api/trabajadores', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyId, sedeId, name, lastname, dni, role })
     });
+    if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Error del servidor (${res.status})`);
+    }
     await reloadAllApiData();
 }
 
 async function createMovilidad(companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price) {
-    await fetch('/api/movilidades', {
+    const res = await fetch('/api/movilidades', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price })
     });
+    if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Error del servidor (${res.status})`);
+    }
     await reloadAllApiData();
 }
 
@@ -1436,17 +1452,23 @@ function setupUIEventListeners() {
             const username = document.getElementById('sede-username').value.trim();
             const password = document.getElementById('sede-password').value.trim();
             
-            await createSede(state.activeCompanyId, name, city, address, username, password);
-            formSede.reset();
-            const su = document.getElementById('sede-username');
-            const sp = document.getElementById('sede-password');
-            if (su) delete su.dataset.dirty;
-            if (sp) delete sp.dataset.dirty;
-            
-            const modalSede = document.getElementById('modal-create-sede');
-            if (modalSede) modalSede.classList.add('hidden');
-            
-            showToast("Sede registrada con éxito.", "success");
+            try {
+                await createSede(state.activeCompanyId, name, city, address, username, password);
+                
+                formSede.reset();
+                const su = document.getElementById('sede-username');
+                const sp = document.getElementById('sede-password');
+                if (su) delete su.dataset.dirty;
+                if (sp) delete sp.dataset.dirty;
+                
+                const modalSede = document.getElementById('modal-create-sede');
+                if (modalSede) modalSede.classList.add('hidden');
+                
+                showToast("Sede registrada con éxito.", "success");
+            } catch (err) {
+                console.error(err);
+                showToast(err.message || "Error al registrar la sede.", "error");
+            }
         });
     }
 

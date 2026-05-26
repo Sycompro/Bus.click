@@ -423,20 +423,31 @@ app.post('/api/sedes', async (req, res) => {
     const { companyId, name, city, address, username, password } = req.body;
     const id = generateId();
     
+    // Autogenerar credenciales robustas si no se suministran
+    const cleanSlug = 'sede_' + (name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15) || 'sede');
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    const finalUser = username && username.trim() !== "" ? username.trim() : cleanSlug;
+    const finalPass = password && password.trim() !== "" ? password.trim() : (cleanSlug.slice(0, 3) + randomNum);
+
+    console.log(`[CREAR SEDE] Registrando sede: "${name}". Empresa: "${companyId}". Usuario: "${finalUser}". Contraseña: "${finalPass}"`);
+
     if (usePostgres) {
         try {
             await pool.query(
                 'INSERT INTO sedes (id, company_id, name, city, address, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-                [id, companyId, name, city, address, username || "", password || ""]
+                [id, companyId, name, city, address, finalUser, finalPass]
             );
-            res.json({ id });
+            console.log(`[CREAR SEDE] Sede guardada exitosamente en PostgreSQL con ID: ${id}`);
+            res.json({ id, username: finalUser, password: finalPass });
         } catch (e) {
-            res.status(500).json({ error: e.message });
+            console.error(`[CREAR SEDE] Error al guardar en PostgreSQL:`, e);
+            res.status(500).json({ success: false, error: 'Error al registrar la sede en la base de datos: ' + e.message });
         }
     } else {
-        const sede = { id, companyId, name, city, address, username: username || "", password: password || "" };
+        const sede = { id, companyId, name, city, address, username: finalUser, password: finalPass };
         localDb.sedes.push(sede);
         saveLocalDb();
+        console.log(`[CREAR SEDE] Sede guardada exitosamente en JSON local con ID: ${id}`);
         res.json(sede);
     }
 });
@@ -735,38 +746,70 @@ app.post('/api/login/admin', async (req, res) => {
 // 3. Login Sede (Usuario y Contraseña)
 app.post('/api/login/sede', async (req, res) => {
     const { username, password } = req.body;
+    
+    console.log(`[LOGIN SEDE] Intento de ingreso. Usuario recibido: "${username}", Contraseña: "${password}"`);
+
     if (!username || !password) {
         return res.status(400).json({ success: false, error: 'Falta proporcionar usuario y contraseña.' });
     }
     
+    const uClean = username.trim();
+    const pClean = password.trim();
+
     if (usePostgres) {
         try {
+            // Búsqueda insensible a mayúsculas/minúsculas para el username
             const { rows } = await pool.query(
-                'SELECT * FROM sedes WHERE username = $1 AND password = $2',
-                [username.trim(), password.trim()]
+                'SELECT * FROM sedes WHERE LOWER(username) = LOWER($1)',
+                [uClean]
             );
+            
+            console.log(`[LOGIN SEDE] Registros encontrados en PostgreSQL para "${uClean}": ${rows.length}`);
+            
             if (rows.length > 0) {
                 const s = rows[0];
-                res.json({
-                    success: true,
-                    sede: { id: s.id, name: s.name, companyId: s.company_id }
-                });
+                const dbPass = (s.password || '').trim();
+                console.log(`[LOGIN SEDE] Coincidencia encontrada. Sede: "${s.name}". Usuario en BD: "${s.username}". Comparando pass: BD "${dbPass}" vs ingresada "${pClean}"`);
+                
+                if (dbPass === pClean) {
+                    console.log(`[LOGIN SEDE] Autenticación EXITOSA para sede: ${s.name}`);
+                    res.json({
+                        success: true,
+                        sede: { id: s.id, name: s.name, companyId: s.company_id }
+                    });
+                } else {
+                    console.log(`[LOGIN SEDE] Contraseña INCORRECTA para la sede: ${s.name}`);
+                    res.status(401).json({ success: false, error: 'Usuario o contraseña de sede incorrectos.' });
+                }
             } else {
+                console.log(`[LOGIN SEDE] Usuario "${uClean}" NO existe en la base de datos de PostgreSQL.`);
                 res.status(401).json({ success: false, error: 'Usuario o contraseña de sede incorrectos.' });
             }
         } catch (e) {
-            res.status(500).json({ error: e.message });
+            console.error('[LOGIN SEDE] Error grave en consulta PostgreSQL:', e);
+            res.status(500).json({ success: false, error: 'Error del servidor al validar credenciales: ' + e.message });
         }
     } else {
         const sede = localDb.sedes.find(
-            s => s.username === username.trim() && s.password === password.trim()
+            s => (s.username || '').trim().toLowerCase() === uClean.toLowerCase()
         );
+        
         if (sede) {
-            res.json({
-                success: true,
-                sede: { id: sede.id, name: sede.name, companyId: sede.companyId }
-            });
+            const dbPass = (sede.password || '').trim();
+            console.log(`[LOGIN SEDE LOCAL] Sede encontrada: "${sede.name}". Comparando pass: BD "${dbPass}" vs ingresada "${pClean}"`);
+            
+            if (dbPass === pClean) {
+                console.log(`[LOGIN SEDE LOCAL] Autenticación EXITOSA para sede: ${sede.name}`);
+                res.json({
+                    success: true,
+                    sede: { id: sede.id, name: sede.name, companyId: sede.companyId }
+                });
+            } else {
+                console.log(`[LOGIN SEDE LOCAL] Contraseña INCORRECTA para sede: ${sede.name}`);
+                res.status(401).json({ success: false, error: 'Usuario o contraseña de sede incorrectos.' });
+            }
         } else {
+            console.log(`[LOGIN SEDE LOCAL] Usuario "${uClean}" no encontrado en JSON local.`);
             res.status(401).json({ success: false, error: 'Usuario o contraseña de sede incorrectos.' });
         }
     }
