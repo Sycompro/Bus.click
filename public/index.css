@@ -744,6 +744,8 @@ body {
 
 .form-premium input[type="text"],
 .form-premium input[type="number"],
+.form-premium input[type="password"],
+.form-premium input[type="email"],
 .form-premium select {
     width: 100%;
     padding: 0.6rem 0.875rem;
