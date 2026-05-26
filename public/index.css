@@ -379,6 +379,12 @@ body {
     transform: scale(1.08) rotate(-5deg);
 }
 
+.brand-text {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
 .brand-text h1 {
     font-family: var(--font-heading);
     font-size: var(--text-lg);
@@ -399,8 +405,9 @@ body {
     background: var(--brand-secondary-pale);
     padding: 2px 8px;
     border-radius: var(--radius-full);
-    display: inline-block;
-    margin-top: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     letter-spacing: 0.5px;
     border: 1px solid var(--pastel-violet-border);
 }
