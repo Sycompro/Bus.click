@@ -223,8 +223,8 @@ function populateSedeSelectors() {
     
     const prevHeaderSelected = headerSedeSelect.value || state.activeSedeId;
     headerSedeSelect.innerHTML = '';
-    workerSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
-    vehicleSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
+    if (workerSedeSelect) workerSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
+    if (vehicleSedeSelect) vehicleSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
     
     // Filtrar sedes por la empresa activa
     const filteredSedes = state.sedes.filter(s => s.companyId === state.activeCompanyId);
@@ -242,16 +242,20 @@ function populateSedeSelectors() {
         headerSedeSelect.appendChild(opt1);
         
         // En formulario trabajadores
-        const opt2 = document.createElement('option');
-        opt2.value = sede.id;
-        opt2.textContent = sede.name;
-        workerSedeSelect.appendChild(opt2);
+        if (workerSedeSelect) {
+            const opt2 = document.createElement('option');
+            opt2.value = sede.id;
+            opt2.textContent = sede.name;
+            workerSedeSelect.appendChild(opt2);
+        }
         
         // En formulario movilidades
-        const opt3 = document.createElement('option');
-        opt3.value = sede.id;
-        opt3.textContent = sede.name;
-        vehicleSedeSelect.appendChild(opt3);
+        if (vehicleSedeSelect) {
+            const opt3 = document.createElement('option');
+            opt3.value = sede.id;
+            opt3.textContent = sede.name;
+            vehicleSedeSelect.appendChild(opt3);
+        }
     });
     
     if (filteredSedes.some(s => s.id === prevHeaderSelected)) {
