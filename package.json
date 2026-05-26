@@ -1,0 +1,24 @@
+{
+  "name": "bus-click",
+  "version": "2.0.0",
+  "description": "Sistema Premium Multiempresa de Gestión de Pasajes de Buses y Combis",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "transport",
+    "ticket",
+    "express",
+    "postgresql",
+    "railway"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "pg": "^8.11.3"
+  }
+}

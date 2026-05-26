@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Empresa - Bus.click</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="panel-admin-empresa-view">
+
+    <div id="app-container" class="app-container">
+        <!-- HEADER ADMIN -->
+        <header class="main-header glass">
+            <div class="header-left">
+                <div class="brand">
+                    <div class="brand-icon"><i data-lucide="building-2"></i></div>
+                    <div class="brand-text">
+                        <h1>Bus.click</h1>
+                        <span class="badge-version">ADMINISTRADOR DE EMPRESA</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-center">
+                <div class="company-selector-container">
+                    <select id="header-company-select" class="select-premium"></select>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="firebase-status-pill glass">
+                    <span class="status-dot ping-active"></span>
+                    <span class="status-text">Consola de Control</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-layout">
+            <main class="main-content">
+                <section id="panel-admin-empresa" class="panel-section">
+                    <div class="panel-header-block">
+                        <div>
+                            <h2 id="admin-company-title">Panel de Control Corporativo</h2>
+                            <p class="section-desc">Gestiona sedes, personal y flota de tu empresa.</p>
+                        </div>
+                    </div>
+
+                    <div class="tabs-premium-wrapper glass">
+                        <div class="tabs-premium">
+                            <button class="tab-btn active" data-admin-tab="sedes"><i data-lucide="map-pin"></i> Sedes</button>
+                            <button class="tab-btn" data-admin-tab="trabajadores"><i data-lucide="users"></i> Personal</button>
+                            <button class="tab-btn" data-admin-tab="movilidades"><i data-lucide="truck"></i> Flota</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-contents-container mt-6">
+                        <!-- SEDES -->
+                        <div id="tab-admin-sedes" class="tab-content-item">
+                            <div class="content-split-layout">
+                                <div class="form-container-card glass">
+                                    <h3 class="card-title">Registrar Sede</h3>
+                                    <form id="form-create-sede" class="form-premium">
+                                        <input type="text" id="sede-name" required placeholder="Nombre Sede">
+                                        <input type="text" id="sede-city" required placeholder="Ciudad">
+                                        <input type="text" id="sede-address" required placeholder="Dirección">
+                                        <button type="submit" class="btn btn-primary btn-full">Guardar Sede</button>
+                                    </form>
+                                </div>
+                                <div class="list-container-card glass">
+                                    <table class="table-premium">
+                                        <thead><tr><th>Sede</th><th>Ciudad</th><th>Acciones</th></tr></thead>
+                                        <tbody id="table-sedes-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- TRABAJADORES -->
+                        <div id="tab-admin-trabajadores" class="tab-content-item hidden">
+                           <div class="content-split-layout">
+                                <div class="form-container-card glass">
+                                    <h3 class="card-title">Nuevo Trabajador</h3>
+                                    <form id="form-create-trabajador" class="form-premium">
+                                        <input type="text" id="trabajador-name" required placeholder="Nombre">
+                                        <input type="text" id="trabajador-lastname" required placeholder="Apellido">
+                                        <input type="text" id="trabajador-dni" required placeholder="DNI">
+                                        <select id="trabajador-role" class="select-premium">
+                                            <option value="Vendedor">Vendedor</option>
+                                            <option value="Administrador Sede">Jefe de Sede</option>
+                                        </select>
+                                        <select id="trabajador-sede" class="select-premium" required></select>
+                                        <button type="submit" class="btn btn-primary btn-full">Guardar Personal</button>
+                                    </form>
+                                </div>
+                                <div class="list-container-card glass">
+                                    <table class="table-premium">
+                                        <thead><tr><th>Nombre</th><th>Rol</th><th>Sede</th></tr></thead>
+                                        <tbody id="table-trabajadores-body"></tbody>
+                                    </table>
+                                </div>
+                           </div>
+                        </div>
+
+                        <!-- MOVILIDADES -->
+                        <div id="tab-admin-movilidades" class="tab-content-item hidden">
+                            <div class="content-split-layout">
+                                <div class="form-container-card glass">
+                                    <form id="form-create-movilidad" class="form-premium">
+                                        <input type="text" id="movilidad-plate" required placeholder="Placa">
+                                        <input type="text" id="movilidad-brand" required placeholder="Marca">
+                                        <select id="movilidad-model" class="select-premium">
+                                            <option value="combi">Combi (15 seats)</option>
+                                            <option value="minibus">Minibus (24 seats)</option>
+                                            <option value="bus1p">Bus 1P (44 seats)</option>
+                                            <option value="bus2p">Bus 2P (60 seats)</option>
+                                        </select>
+                                        <select id="movilidad-sede" class="select-premium"></select>
+                                        <input type="text" id="movilidad-route-from" required placeholder="Origen">
+                                        <input type="text" id="movilidad-route-to" required placeholder="Destino">
+                                        <input type="number" id="movilidad-price" required placeholder="Precio S/.">
+                                        <button type="submit" class="btn btn-primary btn-full">Guardar Vehículo</button>
+                                    </form>
+                                </div>
+                                <div class="list-container-card glass">
+                                    <table class="table-premium">
+                                        <thead><tr><th>Placa</th><th>Modelo</th><th>Ruta</th></tr></thead>
+                                        <tbody id="table-movilidades-body"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        state.currentRole = 'admin-empresa';
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venta de Pasajes - Bus.click</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="panel-establecimiento-view">
+
+    <div id="app-container" class="app-container">
+        <!-- HEADER OPERACIONAL -->
+        <header class="main-header glass">
+            <div class="header-left">
+                <div class="brand">
+                    <div class="brand-icon"><i data-lucide="bus"></i></div>
+                    <div class="brand-text">
+                        <h1>Bus.click</h1>
+                        <span class="badge-version">TERMINAL DE VENTAS</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <div class="company-selector-container">
+                    <i data-lucide="building-2" class="icon-subtle"></i>
+                    <select id="header-company-select" class="select-premium"></select>
+                </div>
+                <div class="sede-selector-container">
+                    <i data-lucide="map-pin" class="icon-subtle"></i>
+                    <select id="header-sede-select" class="select-premium"></select>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="firebase-status-pill glass">
+                    <span class="status-dot ping-active"></span>
+                    <span class="status-text" id="user-display">Vendedor Online</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-layout">
+            <main class="main-content">
+                <section id="panel-establecimiento" class="panel-section">
+                    <div class="panel-header-block-establecimiento">
+                        <div class="estab-welcome">
+                            <h2>Sede: <span id="txt-estab-sede-name">Cargando...</span></h2>
+                            <p class="section-desc">Selecciona un vehículo para gestionar los asientos y emitir boletos.</p>
+                        </div>
+                        <div class="estab-overview-stats glass">
+                            <div class="estab-stat">
+                                <span class="label">En Terminal</span>
+                                <span class="value" id="txt-estab-count-vehicles">0</span>
+                            </div>
+                            <div class="estab-stat-divider"></div>
+                            <div class="estab-stat">
+                                <span class="label">Ventas Hoy</span>
+                                <span class="value" id="txt-estab-count-sold">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="establecimiento-layout-split">
+                        <div class="estab-flota-section">
+                            <h3 class="subtitle-premium"><i data-lucide="navigation"></i> Salidas Programadas</h3>
+                            <div id="estab-vehicles-grid" class="estab-vehicles-grid"></div>
+                        </div>
+
+                        <div class="estab-maqueta-section glass">
+                            <div id="maqueta-empty-state" class="maqueta-empty-state">
+                                <div class="glow-icon"><i data-lucide="monitor"></i></div>
+                                <h4>Selecciona una Movilidad</h4>
+                                <p>Haz clic en un vehículo de la izquierda para ver el mapa de asientos.</p>
+                            </div>
+
+                            <div id="maqueta-active-container" class="maqueta-active-container hidden">
+                                <div class="maqueta-vehicle-header">
+                                    <div class="vehicle-icon-large"><i data-lucide="bus" id="maqueta-icon-model"></i></div>
+                                    <div class="vehicle-details">
+                                        <h4 id="maqueta-txt-plate">---</h4>
+                                        <p id="maqueta-txt-route">---</p>
+                                    </div>
+                                    <div class="occupancy-pill" id="maqueta-txt-occupancy">Asientos: 0 / 0</div>
+                                </div>
+
+                                <div id="maqueta-floor-selector" class="maqueta-floor-selector glass hidden">
+                                    <button class="floor-btn active" data-floor="1">1° Piso</button>
+                                    <button class="floor-btn" data-floor="2">2° Piso</button>
+                                </div>
+
+                                <div class="bus-chassis-wrapper">
+                                    <div class="bus-chassis" id="bus-chassis-body">
+                                        <div class="bus-cabin-front">
+                                            <div class="steering-wheel"><i data-lucide="circle-dot"></i></div>
+                                        </div>
+                                        <div class="bus-seating-grid" id="bus-seats-grid-render"></div>
+                                    </div>
+                                </div>
+
+                                <div class="maqueta-footer-stats">
+                                    <div class="stat"><span class="label">Libres</span><span class="value" id="stat-seats-avail">0</span></div>
+                                    <div class="stat"><span class="label">Ocupados</span><span class="value" id="stat-seats-occ">0</span></div>
+                                    <div class="stat"><span class="label">Total S/.</span><span class="value" id="stat-seats-cash">0.00</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- MODAL VENTA -->
+        <div id="modal-sale-register" class="modal-overlay hidden">
+            <div class="modal-card glass">
+                <div class="modal-header">
+                    <h3>Registrar Pasaje - Asiento <span id="modal-seat-num">0</span></h3>
+                    <button class="btn-close-modal" id="btn-close-sale-modal">&times;</button>
+                </div>
+                <form id="form-register-sale">
+                    <input type="text" id="sale-dni" required placeholder="DNI Pasajero">
+                    <input type="text" id="sale-passenger-name" required placeholder="Nombre Completo">
+                    <div class="form-group-row-2">
+                        <input type="text" id="sale-route-from" readonly>
+                        <input type="text" id="sale-route-to" readonly>
+                    </div>
+                    <div class="form-group-row-2">
+                        <select id="sale-status" class="select-premium">
+                            <option value="Ocupado">Venta Directa</option>
+                            <option value="Reservado">Reserva</option>
+                        </select>
+                        <select id="sale-payment" class="select-premium">
+                            <option value="Efectivo">Efectivo</option>
+                            <option value="Yape/Plin">Yape/Plin</option>
+                        </select>
+                    </div>
+                    <input type="number" id="sale-price" required placeholder="Precio S/.">
+                    <button type="submit" class="btn btn-primary btn-full">Emitir Boleto</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- TICKET VIEW (SIMILAR TO OLD ONE) -->
+        <div id="modal-ticket-view" class="modal-overlay hidden">
+             <!-- Simplified ticket for brevity in this step, keeping structure -->
+             <div class="ticket-card glass" id="ticket-render-area">
+                <h3 id="ticket-company-name">Bus.click</h3>
+                <p id="ticket-id">---</p>
+                <p>Pasajero: <span id="ticket-passenger">---</span></p>
+                <p>Asiento: <span id="ticket-seat">---</span></p>
+                <p>Precio: <span id="ticket-price">---</span></p>
+                <button class="btn btn-primary btn-full" id="btn-close-ticket">Cerrar</button>
+             </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        state.currentRole = 'establecimiento';
+    </script>
+</body>
+</html>
