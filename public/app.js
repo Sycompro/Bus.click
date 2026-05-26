@@ -1246,6 +1246,10 @@ function setupUIEventListeners() {
             
             await createCompany(name, ruc, logo, color, username, password);
             formCompany.reset();
+            const cu = document.getElementById('company-username');
+            const cp = document.getElementById('company-password');
+            if (cu) delete cu.dataset.dirty;
+            if (cp) delete cp.dataset.dirty;
             showToast("Empresa registrada con éxito.", "success");
         });
         
@@ -1274,6 +1278,7 @@ function setupUIEventListeners() {
                     if (res.success && res.data) {
                         const co = res.data;
                         document.getElementById('company-name').value = co.nombre_o_razon_social;
+                        generateCompanyCredentialsSuggestions(co.nombre_o_razon_social);
                         showToast(`RUC Encontrado: ${co.nombre_o_razon_social} (${co.estado} / ${co.condicion})`, "success");
                     } else {
                         showToast(res.error || "No se encontraron datos de SUNAT para este RUC. Regístralo manualmente.", "error");
@@ -1315,6 +1320,10 @@ function setupUIEventListeners() {
             
             await createSede(state.activeCompanyId, name, city, address, username, password);
             formSede.reset();
+            const su = document.getElementById('sede-username');
+            const sp = document.getElementById('sede-password');
+            if (su) delete su.dataset.dirty;
+            if (sp) delete sp.dataset.dirty;
             showToast("Sede registrada con éxito.", "success");
         });
     }
@@ -1420,6 +1429,52 @@ function setupUIEventListeners() {
         switchRoleView(state.currentRole);
     } else {
         switchRoleView('establecimiento');
+    }
+
+    // --- AUTO-GENERACIÓN DINÁMICA DE CREDENCIALES ---
+    // 1. Inputs de Empresa
+    const compName = document.getElementById('company-name');
+    const compUser = document.getElementById('company-username');
+    const compPass = document.getElementById('company-password');
+    
+    if (compUser) compUser.addEventListener('input', () => compUser.dataset.dirty = 'true');
+    if (compPass) compPass.addEventListener('input', () => compPass.dataset.dirty = 'true');
+    
+    if (compName && compUser && compPass) {
+        compName.addEventListener('input', (e) => {
+            generateCompanyCredentialsSuggestions(e.target.value);
+        });
+    }
+    
+    // 2. Inputs de Sede
+    const sedeName = document.getElementById('sede-name');
+    const sedeUser = document.getElementById('sede-username');
+    const sedePass = document.getElementById('sede-password');
+    
+    if (sedeUser) sedeUser.addEventListener('input', () => sedeUser.dataset.dirty = 'true');
+    if (sedePass) sedePass.addEventListener('input', () => sedePass.dataset.dirty = 'true');
+    
+    if (sedeName && sedeUser && sedePass) {
+        sedeName.addEventListener('input', (e) => {
+            const val = e.target.value.trim();
+            if (!val) {
+                if (!sedeUser.dataset.dirty) sedeUser.value = '';
+                if (!sedePass.dataset.dirty) sedePass.value = '';
+                return;
+            }
+            const activeCompany = state.companies.find(c => c.id === state.activeCompanyId);
+            const companyPrefix = activeCompany ? slugify(activeCompany.name) : 'sede';
+            const cleanSlug = slugify(val);
+            const initials = val.split(' ').map(w => w[0]).join('').toLowerCase().replace(/[^a-z]/g, '');
+            const randomNum = Math.floor(100 + Math.random() * 900);
+            
+            if (!sedeUser.dataset.dirty) {
+                sedeUser.value = `${companyPrefix}_${cleanSlug}`;
+            }
+            if (!sedePass.dataset.dirty) {
+                sedePass.value = `${initials}${randomNum}`;
+            }
+        });
     }
 }
 
@@ -2103,6 +2158,41 @@ function setupAdminSettingsEvents() {
                 lucide.createIcons();
             }
         });
+    }
+}
+
+// --- FUNCIONES AUXILIARES DE GENERACIÓN DINÁMICA ---
+function slugify(text) {
+    if (!text) return '';
+    return text.toString().toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '')
+        .replace(/[^a-z0-9]/g, '')
+        .slice(0, 15);
+}
+
+function generateCompanyCredentialsSuggestions(name) {
+    const compUser = document.getElementById('company-username');
+    const compPass = document.getElementById('company-password');
+    if (!compUser || !compPass) return;
+    
+    const val = name.trim();
+    if (!val) {
+        if (!compUser.dataset.dirty) compUser.value = '';
+        if (!compPass.dataset.dirty) compPass.value = '';
+        return;
+    }
+    
+    const cleanSlug = slugify(val);
+    const initials = val.split(' ').map(w => w[0]).join('').toLowerCase().replace(/[^a-z]/g, '');
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    
+    if (!compUser.dataset.dirty) {
+        compUser.value = cleanSlug;
+    }
+    if (!compPass.dataset.dirty) {
+        compPass.value = `${initials}${randomNum}`;
     }
 }
 
