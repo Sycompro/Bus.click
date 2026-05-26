@@ -236,6 +236,8 @@ function populateSedeSelectors() {
     const headerSedeSelect = document.getElementById('header-sede-select');
     const workerSedeSelect = document.getElementById('trabajador-sede');
     const vehicleSedeSelect = document.getElementById('movilidad-sede');
+    const routeFromSelect = document.getElementById('movilidad-route-from');
+    const routeToSelect = document.getElementById('movilidad-route-to');
     
     if (!headerSedeSelect) return;
     
@@ -243,6 +245,8 @@ function populateSedeSelectors() {
     headerSedeSelect.innerHTML = '';
     if (workerSedeSelect) workerSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
     if (vehicleSedeSelect) vehicleSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
+    if (routeFromSelect) routeFromSelect.innerHTML = '<option value="">Selecciona Origen</option>';
+    if (routeToSelect) routeToSelect.innerHTML = '<option value="">Selecciona Destino</option>';
     
     // Filtrar sedes por la empresa activa
     const filteredSedes = state.sedes.filter(s => s.companyId === state.activeCompanyId);
@@ -273,6 +277,20 @@ function populateSedeSelectors() {
             opt3.value = sede.id;
             opt3.textContent = sede.name;
             vehicleSedeSelect.appendChild(opt3);
+        }
+
+        // Origen y Destino del viaje
+        if (routeFromSelect) {
+            const optFrom = document.createElement('option');
+            optFrom.value = sede.city;
+            optFrom.textContent = `${sede.city} (${sede.name})`;
+            routeFromSelect.appendChild(optFrom);
+        }
+        if (routeToSelect) {
+            const optTo = document.createElement('option');
+            optTo.value = sede.city;
+            optTo.textContent = `${sede.city} (${sede.name})`;
+            routeToSelect.appendChild(optTo);
         }
     });
     
