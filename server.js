@@ -792,10 +792,12 @@ app.post('/api/seed', async (req, res) => {
         ];
         
         const seedTrabajadores = [
-            { id: "tr-1", companyId: "flores", sedeId: "sede-fl-1", name: "Roberto", lastname: "Gómez", dni: "44123456", role: "Vendedor" },
-            { id: "tr-2", companyId: "flores", sedeId: "sede-fl-1", name: "Patricia", lastname: "Flores", dni: "45987654", role: "Administrador Sede" },
-            { id: "tr-3", companyId: "cruzdelsur", sedeId: "sede-cds-1", name: "Carlos", lastname: "Mendoza", dni: "70554433", role: "Vendedor" },
-            { id: "tr-4", companyId: "combi", sedeId: "sede-com-1", name: "Manuel", lastname: "Yauri", dni: "10203040", role: "Vendedor" }
+            { id: "tr-1", companyId: "flores", sedeId: "sede-fl-1", name: "Roberto", lastname: "Gómez", dni: "44123456", role: "Vendedor de Pasajes" },
+            { id: "tr-2", companyId: "flores", sedeId: "sede-fl-1", name: "Patricia", lastname: "Flores", dni: "45987654", role: "Jefe de Terminal" },
+            { id: "tr-3", companyId: "cruzdelsur", sedeId: "sede-cds-1", name: "Carlos", lastname: "Mendoza", dni: "70554433", role: "Vendedor de Pasajes" },
+            { id: "tr-4", companyId: "combi", sedeId: "sede-com-1", name: "Manuel", lastname: "Yauri", dni: "10203040", role: "Vendedor de Pasajes" },
+            { id: "tr-5", companyId: "flores", sedeId: "sede-fl-1", name: "Julio", lastname: "Prado", dni: "42109876", role: "Conductor Principal" },
+            { id: "tr-6", companyId: "flores", sedeId: "sede-fl-1", name: "Sofía", lastname: "Linares", dni: "46321098", role: "Terramozo(a)" }
         ];
         
         const seedMovilidades = [
