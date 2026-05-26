@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Super Admin - Bus.click Ecosystem</title>
+    <meta name="description" content="Panel de Superadministración de Bus.click - Gestión global del ecosistema de transporte">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,6 +25,7 @@
                     </div>
                 </div>
             </div>
+            <div class="header-center"></div>
             <div class="header-right">
                 <div class="firebase-status-pill glass">
                     <span class="status-dot ping-active"></span>
@@ -37,38 +39,38 @@
                 <section id="panel-super-admin" class="panel-section">
                     <div class="panel-header-block">
                         <div>
-                            <h2>Gestión Global de Ecosistema</h2>
+                            <h2>🌐 Gestión Global de Ecosistema</h2>
                             <p class="section-desc">Crea y monitorea todas las empresas integradas en la plataforma.</p>
                         </div>
                         <div class="header-actions">
                             <button id="btn-seed-data" class="btn btn-secondary btn-sparkle">
-                                <i data-lucide="database-backup"></i> Resetear / Cargar Datos Semilla
+                                <i data-lucide="database-backup"></i> Cargar Datos Semilla
                             </button>
                         </div>
                     </div>
 
                     <div class="metrics-grid">
                         <div class="metric-card glass">
-                            <div class="metric-icon bg-indigo-500-10 text-indigo-400"><i data-lucide="building"></i></div>
+                            <div class="metric-icon bg-indigo-500-10"><i data-lucide="building"></i></div>
                             <div class="metric-info"><h3>Empresas</h3><p class="metric-value" id="stat-super-companies">0</p></div>
                         </div>
                         <div class="metric-card glass">
-                            <div class="metric-icon bg-emerald-500-10 text-emerald-400"><i data-lucide="milestone"></i></div>
+                            <div class="metric-icon bg-emerald-500-10"><i data-lucide="milestone"></i></div>
                             <div class="metric-info"><h3>Sedes</h3><p class="metric-value" id="stat-super-sedes">0</p></div>
                         </div>
                         <div class="metric-card glass">
-                            <div class="metric-icon bg-pink-500-10 text-pink-400"><i data-lucide="truck"></i></div>
-                            <div class="metric-info"><h3>Flota</h3><p class="metric-value" id="stat-super-vehicles">0</p></div>
+                            <div class="metric-icon bg-pink-500-10"><i data-lucide="truck"></i></div>
+                            <div class="metric-info"><h3>Flota Total</h3><p class="metric-value" id="stat-super-vehicles">0</p></div>
                         </div>
                         <div class="metric-card glass">
-                            <div class="metric-icon bg-amber-500-10 text-amber-400"><i data-lucide="ticket"></i></div>
-                            <div class="metric-info"><h3>Ventas</h3><p class="metric-value" id="stat-super-tickets">0</p></div>
+                            <div class="metric-icon bg-amber-500-10"><i data-lucide="ticket"></i></div>
+                            <div class="metric-info"><h3>Ventas Hoy</h3><p class="metric-value" id="stat-super-tickets">0</p></div>
                         </div>
                     </div>
 
                     <div class="content-split-layout">
                         <div class="form-container-card glass">
-                            <h3 class="card-title"><i data-lucide="plus-circle"></i> Registrar Nueva Empresa</h3>
+                            <h3 class="card-title"><i data-lucide="plus-circle"></i> Nueva Empresa</h3>
                             <form id="form-create-company" class="form-premium">
                                 <div class="form-group">
                                     <label>Nombre Comercial</label>
@@ -87,7 +89,9 @@
                                     <label>Color Corporativo</label>
                                     <input type="color" id="company-color" value="#6366f1">
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-full">Guardar Empresa</button>
+                                <button type="submit" class="btn btn-primary btn-full">
+                                    <i data-lucide="save"></i> Guardar Empresa
+                                </button>
                             </form>
                         </div>
 

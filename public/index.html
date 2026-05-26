@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Venta de Pasajes - Bus.click</title>
+    <meta name="description" content="Terminal de ventas de pasajes de Bus.click - Compra tu boleto en tiempo real">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +14,7 @@
 <body class="panel-establecimiento-view">
 
     <div id="app-container" class="app-container">
-        <!-- HEADER OPERACIONAL -->
+        <!-- HEADER TERMINAL DE VENTAS -->
         <header class="main-header glass">
             <div class="header-left">
                 <div class="brand">
@@ -49,7 +50,7 @@
                 <section id="panel-establecimiento" class="panel-section">
                     <div class="panel-header-block-establecimiento">
                         <div class="estab-welcome">
-                            <h2>Sede: <span id="txt-estab-sede-name">Cargando...</span></h2>
+                            <h2>🚌 Sede: <span id="txt-estab-sede-name">Cargando...</span></h2>
                             <p class="section-desc">Selecciona un vehículo para gestionar los asientos y emitir boletos.</p>
                         </div>
                         <div class="estab-overview-stats glass">
@@ -131,7 +132,7 @@
         <div id="modal-sale-register" class="modal-overlay hidden">
             <div class="modal-card glass">
                 <div class="modal-header">
-                    <h3>Registrar Pasaje - Asiento <span id="modal-seat-num">0</span></h3>
+                    <h3>🎫 Registrar Pasaje - Asiento <span id="modal-seat-num">0</span></h3>
                     <button class="btn-close-modal" id="btn-close-sale-modal">&times;</button>
                 </div>
                 <form id="form-register-sale" class="form-premium">
@@ -183,16 +184,15 @@
                         <input type="number" id="sale-price" required placeholder="Precio S/.">
                     </div>
                     
-                    <button type="submit" class="btn btn-primary btn-full" style="margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary btn-full">
                         <i data-lucide="ticket"></i> Emitir Boleto
                     </button>
                 </form>
             </div>
         </div>
 
-        <!-- TICKET VIEW (SIMILAR TO OLD ONE) -->
+        <!-- TICKET VIEW -->
         <div id="modal-ticket-view" class="modal-overlay hidden">
-             <!-- Simplified ticket for brevity in this step, keeping structure -->
              <div class="ticket-card glass" id="ticket-render-area">
                 <h3 id="ticket-company-name">Bus.click</h3>
                 <p id="ticket-id">---</p>

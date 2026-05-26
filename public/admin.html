@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Empresa - Bus.click</title>
+    <meta name="description" content="Panel de administración de empresa - Bus.click">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -13,7 +14,7 @@
 <body class="panel-admin-empresa-view">
 
     <div id="app-container" class="app-container">
-        <!-- HEADER ADMIN -->
+        <!-- HEADER ADMIN EMPRESA -->
         <header class="main-header glass">
             <div class="header-left">
                 <div class="brand">
@@ -27,6 +28,7 @@
             
             <div class="header-center">
                 <div class="company-selector-container">
+                    <i data-lucide="building-2" class="icon-subtle"></i>
                     <select id="header-company-select" class="select-premium"></select>
                 </div>
             </div>
@@ -44,7 +46,7 @@
                 <section id="panel-admin-empresa" class="panel-section">
                     <div class="panel-header-block">
                         <div>
-                            <h2 id="admin-company-title">Panel de Control Corporativo</h2>
+                            <h2 id="admin-company-title">🏢 Panel de Control Corporativo</h2>
                             <p class="section-desc">Gestiona sedes, personal y flota de tu empresa.</p>
                         </div>
                     </div>
@@ -58,11 +60,11 @@
                     </div>
 
                     <div class="tab-contents-container mt-6">
-                        <!-- SEDES -->
+                        <!-- ═══ SEDES ═══ -->
                         <div id="tab-admin-sedes" class="tab-content-item">
                             <div class="content-split-layout">
                                 <div class="form-container-card glass">
-                                    <h3 class="card-title">Registrar Sede</h3>
+                                    <h3 class="card-title"><i data-lucide="map-pin"></i> Registrar Sede</h3>
                                     <form id="form-create-sede" class="form-premium">
                                         <div class="form-group">
                                             <label for="sede-name">Nombre Sede</label>
@@ -76,10 +78,13 @@
                                             <label for="sede-address">Dirección</label>
                                             <input type="text" id="sede-address" required placeholder="Ej: Av. Alfredo Mendiola 1400">
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-full">Guardar Sede</button>
+                                        <button type="submit" class="btn btn-primary btn-full">
+                                            <i data-lucide="save"></i> Guardar Sede
+                                        </button>
                                     </form>
                                 </div>
                                 <div class="list-container-card glass">
+                                    <h3 class="card-title"><i data-lucide="list"></i> Directorio de Sedes</h3>
                                     <table class="table-premium">
                                         <thead><tr><th>Sede</th><th>Ciudad</th><th>Dirección</th><th>Acciones</th></tr></thead>
                                         <tbody id="table-sedes-body"></tbody>
@@ -88,11 +93,11 @@
                             </div>
                         </div>
                         
-                        <!-- TRABAJADORES -->
+                        <!-- ═══ TRABAJADORES ═══ -->
                         <div id="tab-admin-trabajadores" class="tab-content-item hidden">
                            <div class="content-split-layout">
                                 <div class="form-container-card glass">
-                                    <h3 class="card-title">Nuevo Trabajador</h3>
+                                    <h3 class="card-title"><i data-lucide="user-plus"></i> Nuevo Trabajador</h3>
                                     <form id="form-create-trabajador" class="form-premium">
                                         <div class="form-group">
                                             <label for="trabajador-name">Nombre</label>
@@ -117,10 +122,13 @@
                                             <label for="trabajador-sede">Sede Base</label>
                                             <select id="trabajador-sede" class="select-premium" required></select>
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-full">Guardar Personal</button>
+                                        <button type="submit" class="btn btn-primary btn-full">
+                                            <i data-lucide="save"></i> Guardar Personal
+                                        </button>
                                     </form>
                                 </div>
                                 <div class="list-container-card glass">
+                                    <h3 class="card-title"><i data-lucide="users"></i> Equipo de Trabajo</h3>
                                     <table class="table-premium">
                                         <thead><tr><th>Nombre Completo</th><th>DNI</th><th>Rol</th><th>Sede Base</th><th>Acciones</th></tr></thead>
                                         <tbody id="table-trabajadores-body"></tbody>
@@ -129,11 +137,11 @@
                            </div>
                         </div>
 
-                        <!-- MOVILIDADES -->
+                        <!-- ═══ MOVILIDADES ═══ -->
                         <div id="tab-admin-movilidades" class="tab-content-item hidden">
                             <div class="content-split-layout">
                                 <div class="form-container-card glass">
-                                    <h3 class="card-title">Nuevo Vehículo</h3>
+                                    <h3 class="card-title"><i data-lucide="bus"></i> Nuevo Vehículo</h3>
                                     <form id="form-create-movilidad" class="form-premium">
                                         <div class="form-group">
                                             <label for="movilidad-plate">Placa</label>
@@ -144,7 +152,7 @@
                                             <input type="text" id="movilidad-brand" required placeholder="Ej: Mercedes / Volvo">
                                         </div>
                                         <div class="form-group">
-                                            <label for="movilidad-model">Modelo de Chasis / Capacidad</label>
+                                            <label for="movilidad-model">Modelo de Chasis</label>
                                             <select id="movilidad-model" class="select-premium">
                                                 <option value="combi">Combi Rural (15 asientos)</option>
                                                 <option value="minibus">Minibus Colectivo (24 asientos)</option>
@@ -170,14 +178,19 @@
                                             <label for="movilidad-price">Precio del Pasaje (S/.)</label>
                                             <input type="number" id="movilidad-price" required placeholder="Precio S/.">
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-full">Guardar Vehículo</button>
+                                        <button type="submit" class="btn btn-primary btn-full">
+                                            <i data-lucide="save"></i> Guardar Vehículo
+                                        </button>
                                     </form>
                                 </div>
                                 <div class="list-container-card glass">
-                                    <table class="table-premium">
-                                        <thead><tr><th>Placa</th><th>Marca</th><th>Modelo</th><th>Sede Base</th><th>Ruta</th><th>Precio</th><th>Acciones</th></tr></thead>
-                                        <tbody id="table-movilidades-body"></tbody>
-                                    </table>
+                                    <h3 class="card-title"><i data-lucide="truck"></i> Flota de Vehículos</h3>
+                                    <div class="table-scroll-container">
+                                        <table class="table-premium">
+                                            <thead><tr><th>Placa</th><th>Marca</th><th>Modelo</th><th>Sede</th><th>Ruta</th><th>Precio</th><th>Acciones</th></tr></thead>
+                                            <tbody id="table-movilidades-body"></tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
