@@ -209,6 +209,14 @@ function populateCompanySelectors() {
         headerSelect.value = state.companies[0].id;
     }
     
+    // Restringir visualización multiempresa: solo el Super Admin puede cambiar de empresa libremente.
+    // Para Vendedores y Administradores de Empresa, el selector permanece bloqueado en su empresa asignada.
+    if (state.currentRole !== 'super-admin') {
+        headerSelect.disabled = true;
+    } else {
+        headerSelect.disabled = false;
+    }
+    
     state.activeCompanyId = headerSelect.value;
     applyCompanyBrandTheme();
     populateSedeSelectors();
