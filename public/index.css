@@ -129,15 +129,24 @@ body {
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
-    color: #f8fafc;
-    border: 1px solid var(--border-glass);
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--border-glass-light);
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #94a3b8;
     transform: translateY(-2px);
+}
+
+.form-premium input[readonly] {
+    background: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+    color: #64748b !important;
+    cursor: not-allowed;
+    box-shadow: none !important;
 }
 
 .btn-full {
@@ -1998,5 +2007,21 @@ body {
 
 .input-group-premium .btn:hover {
     transform: translateY(-1px);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.form-group label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
 }
 
