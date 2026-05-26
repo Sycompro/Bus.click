@@ -226,7 +226,7 @@ app.get('/api/companies', async (req, res) => {
                 color: r.color,
                 username: r.username,
                 password: r.password,
-                paymentMethods: r.payment_methods ? r.payment_methods.split(',') : ['Efectivo', 'Yape/Plin']
+                paymentMethods: (r.payment_methods !== null && r.payment_methods !== undefined) ? (r.payment_methods === '' ? [] : r.payment_methods.split(',')) : ['Efectivo', 'Yape/Plin']
             })));
         } catch (e) {
             res.status(500).json({ error: e.message });
