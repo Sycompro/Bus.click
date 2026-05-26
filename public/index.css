@@ -9,10 +9,10 @@
     --font-heading: 'Outfit', sans-serif;
 
     /* 🎨 Paleta Principal - Pasteles Vibrantes */
-    --bg-base: #f0f4ff;
+    --bg-base: #ffffff;
     --bg-surface: #ffffff;
-    --bg-surface-hover: #fafbff;
-    --bg-subtle: #f5f7ff;
+    --bg-surface-hover: #fafcff;
+    --bg-subtle: #f8fafc;
     --border-soft: #e0e7ff;
     --border-medium: #c7d2fe;
     --border-strong: #a5b4fc;
