@@ -438,6 +438,59 @@ app.delete('/api/tickets/:id', async (req, res) => {
     }
 });
 
+// --- PROXY SEGURO DE CONSULTAS DNI Y RUC (APIPERU.DEV) ---
+const APIPERU_TOKEN = process.env.APIPERU_TOKEN || "76ca7246c8a8c464fd551b6555e780791a69ff89acb8887558d65b23f05ab81b";
+
+app.post('/api/consultar-dni', async (req, res) => {
+    const { dni } = req.body;
+    if (!dni || dni.length !== 8) {
+        return res.status(400).json({ success: false, error: 'El DNI debe tener exactamente 8 dígitos.' });
+    }
+    
+    try {
+        const response = await fetch('https://apiperu.dev/api/dni', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${APIPERU_TOKEN}`
+            },
+            body: JSON.stringify({ dni })
+        });
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error("Error en proxy DNI:", error);
+        res.status(500).json({ success: false, error: 'Fallo al consultar el DNI en el servicio externo.' });
+    }
+});
+
+app.post('/api/consultar-ruc', async (req, res) => {
+    const { ruc } = req.body;
+    if (!ruc || ruc.length !== 11) {
+        return res.status(400).json({ success: false, error: 'El RUC debe tener exactamente 11 dígitos.' });
+    }
+    
+    try {
+        const response = await fetch('https://apiperu.dev/api/ruc', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${APIPERU_TOKEN}`
+            },
+            body: JSON.stringify({ ruc })
+        });
+        
+        const data = await response.json();
+        res.json(data);
+    } catch (error) {
+        console.error("Error en proxy RUC:", error);
+        res.status(500).json({ success: false, error: 'Fallo al consultar el RUC en el servicio externo.' });
+    }
+});
+
 // --- CARGAR DATOS SEMILLA ---
 app.post('/api/seed', async (req, res) => {
     try {

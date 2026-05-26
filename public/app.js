@@ -1005,29 +1005,50 @@ function closeTicketModal() {
     document.getElementById('modal-ticket-view').classList.add('hidden');
 }
 
-// Simular RENIEC
-function handleSearchDni() {
+// Consulta real de DNI con apiperu.dev a través de proxy seguro
+async function handleSearchDni() {
     const dniInput = document.getElementById('sale-dni');
-    if (dniInput.value.length < 8) {
-        showToast("Por favor ingresa un número de DNI válido de 8 dígitos para simular.", "error");
+    const dni = dniInput ? dniInput.value.trim() : '';
+    if (dni.length !== 8 || isNaN(dni)) {
+        showToast("Por favor, ingresa un número de DNI válido de 8 dígitos numéricos.", "error");
         return;
     }
     
-    const randomName = MOCK_NAMES[Math.floor(Math.random() * MOCK_NAMES.length)];
-    const searchBtn = document.getElementById('btn-search-dni');
-    searchBtn.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i>';
-    lucide.createIcons();
+    const searchBtn = document.getElementById('btn-buscar-dni');
+    if (!searchBtn) return;
     
-    setTimeout(() => {
-        document.getElementById('sale-passenger-name').value = randomName;
-        searchBtn.innerHTML = '<i data-lucide="check"></i>';
-        lucide.createIcons();
+    searchBtn.disabled = true;
+    const originalHtml = searchBtn.innerHTML;
+    searchBtn.innerHTML = `...`;
+    
+    try {
+        showToast("Consultando DNI en RENIEC...", "info");
+        const res = await fetch('/api/consultar-dni', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dni })
+        }).then(r => r.json());
         
+        if (res.success && res.data) {
+            const person = res.data;
+            document.getElementById('sale-passenger-name').value = person.nombre_completo;
+            searchBtn.innerHTML = '<i data-lucide="check"></i>';
+            showToast(`DNI Encontrado: ${person.nombre_completo}`, "success");
+        } else {
+            showToast(res.error || "No se encontraron datos en RENIEC. Puedes ingresar el nombre manualmente.", "error");
+            searchBtn.innerHTML = '<i data-lucide="alert-circle"></i>';
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error al conectarse con el servicio de consulta de DNI.", "error");
+        searchBtn.innerHTML = '<i data-lucide="alert-circle"></i>';
+    } finally {
         setTimeout(() => {
-            searchBtn.innerHTML = '<i data-lucide="search"></i>';
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = originalHtml;
             lucide.createIcons();
         }, 1500);
-    }, 600);
+    }
 }
 
 // ==========================================
@@ -1143,13 +1164,62 @@ function setupUIEventListeners() {
             e.preventDefault();
             const name = document.getElementById('company-name').value.trim();
             const ruc = document.getElementById('company-ruc').value.trim();
-            const logo = document.getElementById('company-logo').value.trim();
+            const logo = ""; // Solución preventiva: no leer '#company-logo' ya que no existe en el DOM
             const color = document.getElementById('company-color').value;
             
             await createCompany(name, ruc, logo, color);
             formCompany.reset();
             showToast("Empresa registrada con éxito.", "success");
         });
+        
+        const btnBuscarRuc = document.getElementById('btn-buscar-ruc');
+        if (btnBuscarRuc) {
+            btnBuscarRuc.addEventListener('click', async () => {
+                const rucInput = document.getElementById('company-ruc');
+                const ruc = rucInput ? rucInput.value.trim() : '';
+                if (ruc.length !== 11 || isNaN(ruc)) {
+                    showToast("Por favor, ingresa un RUC válido de 11 dígitos numéricos.", "error");
+                    return;
+                }
+                
+                btnBuscarRuc.disabled = true;
+                const originalHtml = btnBuscarRuc.innerHTML;
+                btnBuscarRuc.innerHTML = `Buscando...`;
+                
+                try {
+                    showToast("Consultando RUC en SUNAT...", "info");
+                    const res = await fetch('/api/consultar-ruc', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ruc })
+                    }).then(r => r.json());
+                    
+                    if (res.success && res.data) {
+                        const co = res.data;
+                        document.getElementById('company-name').value = co.nombre_o_razon_social;
+                        showToast(`RUC Encontrado: ${co.nombre_o_razon_social} (${co.estado} / ${co.condicion})`, "success");
+                    } else {
+                        showToast(res.error || "No se encontraron datos de SUNAT para este RUC. Regístralo manualmente.", "error");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast("Error al conectarse con el servicio de consulta de RUC.", "error");
+                } finally {
+                    setTimeout(() => {
+                        btnBuscarRuc.disabled = false;
+                        btnBuscarRuc.innerHTML = originalHtml;
+                        lucide.createIcons();
+                    }, 1000);
+                }
+            });
+            
+            document.getElementById('company-ruc').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    btnBuscarRuc.click();
+                }
+            });
+        }
         
         document.getElementById('company-color').addEventListener('input', (e) => {
             document.querySelector('.color-value-text').textContent = e.target.value.toUpperCase();
@@ -1248,6 +1318,13 @@ function setupUIEventListeners() {
     document.getElementById('btn-close-sale-modal')?.addEventListener('click', closeSaleModal);
     document.getElementById('btn-cancel-sale')?.addEventListener('click', closeSaleModal);
     document.getElementById('btn-search-dni')?.addEventListener('click', handleSearchDni);
+    document.getElementById('btn-buscar-dni')?.addEventListener('click', handleSearchDni);
+    document.getElementById('sale-dni')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearchDni();
+        }
+    });
     document.getElementById('form-register-sale')?.addEventListener('submit', handleRegisterSale);
     
     document.getElementById('btn-close-ticket')?.addEventListener('click', closeTicketModal);

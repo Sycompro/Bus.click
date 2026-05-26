@@ -76,7 +76,12 @@
                                 </div>
                                 <div class="form-group">
                                     <label>RUC</label>
-                                    <input type="text" id="company-ruc" required placeholder="Ej: 20123456789">
+                                    <div class="input-group-premium">
+                                        <input type="text" id="company-ruc" required placeholder="Ej: 20123456789" maxlength="11">
+                                        <button type="button" id="btn-buscar-ruc" class="btn btn-secondary btn-sparkle">
+                                            <i data-lucide="search"></i> Consultar
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Color Corporativo</label>

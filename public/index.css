@@ -1966,3 +1966,37 @@ body {
     transform: translateY(-2px);
 }
 
+/* ==========================================================
+   INPUTS CON ACCIÓN / BOTÓN DE BÚSQUEDA PREMIUM (RUC Y DNI)
+   ========================================================== */
+.input-group-premium {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    width: 100%;
+}
+
+.input-group-premium input {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.input-group-premium .btn {
+    white-space: nowrap;
+    padding: 0 1.25rem !important;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-top: 0 !important;
+}
+
+.input-group-premium .btn:hover {
+    transform: translateY(-1px);
+}
+
