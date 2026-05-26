@@ -1095,8 +1095,7 @@ function setupUIEventListeners() {
         });
     }
 
-    const adminTabBtns = document.querySelectorAll('[data-admin-tab]');
-    const adminTabBtns = document.querySelectorAll('.tab-btn');
+    const adminTabBtns = document.querySelectorAll('.tab-btn[data-admin-tab]');
     adminTabBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             adminTabBtns.forEach(b => b.classList.remove('active'));
