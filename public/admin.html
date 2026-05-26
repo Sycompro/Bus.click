@@ -38,6 +38,9 @@
                     <span class="status-dot ping-active"></span>
                     <span class="status-text">Consola de Control</span>
                 </div>
+                <button id="btn-logout" class="btn-logout" style="margin-left: 0.75rem;">
+                    <i data-lucide="log-out"></i> Salir
+                </button>
             </div>
         </header>
 
@@ -56,6 +59,7 @@
                             <button class="tab-btn active" data-admin-tab="sedes"><i data-lucide="map-pin"></i> Sedes</button>
                             <button class="tab-btn" data-admin-tab="trabajadores"><i data-lucide="users"></i> Personal</button>
                             <button class="tab-btn" data-admin-tab="movilidades"><i data-lucide="truck"></i> Flota</button>
+                            <button class="tab-btn" data-admin-tab="settings"><i data-lucide="settings"></i> Ajustes</button>
                         </div>
                     </div>
 
@@ -70,13 +74,25 @@
                                             <label for="sede-name">Nombre Sede</label>
                                             <input type="text" id="sede-name" required placeholder="Ej: Terminal Lima Norte">
                                         </div>
-                                        <div class="form-group">
-                                            <label for="sede-city">Ciudad</label>
-                                            <input type="text" id="sede-city" required placeholder="Ej: Lima">
+                                        <div class="form-group-row-2">
+                                            <div class="form-group">
+                                                <label for="sede-city">Ciudad</label>
+                                                <input type="text" id="sede-city" required placeholder="Ej: Lima">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="sede-address">Dirección</label>
+                                                <input type="text" id="sede-address" required placeholder="Ej: Av. Alfredo Mendiola 1400">
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="sede-address">Dirección</label>
-                                            <input type="text" id="sede-address" required placeholder="Ej: Av. Alfredo Mendiola 1400">
+                                        <div class="form-group-row-2">
+                                            <div class="form-group">
+                                                <label for="sede-username">Usuario Sede</label>
+                                                <input type="text" id="sede-username" required placeholder="Usuario para login">
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="sede-password">Contraseña Sede</label>
+                                                <input type="password" id="sede-password" required placeholder="Contraseña de acceso">
+                                            </div>
                                         </div>
                                         <button type="submit" class="btn btn-primary btn-full">
                                             <i data-lucide="save"></i> Guardar Sede
@@ -194,9 +210,69 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ═══ AJUSTES DE EMPRESA ═══ -->
+                        <div id="tab-admin-settings" class="tab-content-item hidden">
+                            <div class="content-split-layout">
+                                <div class="form-container-card glass">
+                                    <h3 class="card-title"><i data-lucide="settings"></i> Configuración de Empresa</h3>
+                                    <div class="form-premium">
+                                        <div class="form-group">
+                                            <label>Razón Social / RUC</label>
+                                            <input type="text" id="admin-settings-company-name" readonly style="background: var(--bg-subtle); cursor: not-allowed;">
+                                        </div>
+                                        <div class="form-group mt-3">
+                                            <label for="input-new-payment-method">Nuevo Método de Pago</label>
+                                            <div class="input-group-premium">
+                                                <input type="text" id="input-new-payment-method" placeholder="Ej: Tarjeta Visa / Transferencia">
+                                                <button type="button" id="btn-add-payment-method" class="btn btn-primary">
+                                                    <i data-lucide="plus"></i> Agregar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-container-card glass">
+                                    <h3 class="card-title"><i data-lucide="wallet"></i> Métodos de Pago Activos</h3>
+                                    <p class="section-desc mb-3">Estos son los métodos de pago habilitados para emitir boletos en tus terminales de venta.</p>
+                                    <div class="payment-methods-admin-list" id="admin-payment-methods-list-render">
+                                        <!-- Se inyectará dinámicamente -->
+                                    </div>
+                                    <button type="button" id="btn-save-payment-methods" class="btn btn-primary btn-full mt-6">
+                                        <i data-lucide="save"></i> Guardar Métodos de Pago
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </section>
             </main>
+        </div>
+
+    <!-- OVERLAY DE LOGIN DE EMPRESA -->
+    <div id="admin-login-overlay" class="login-overlay-premium">
+        <div class="login-card-premium">
+            <div class="login-header">
+                <div class="login-header-icon">
+                    <i data-lucide="building-2"></i>
+                </div>
+                <h2>Admin Empresa</h2>
+                <p>Bus.click Corporate Admin Portal</p>
+            </div>
+            
+            <form id="form-login-admin" class="login-form-premium">
+                <div class="login-input-wrapper">
+                    <input type="text" id="login-admin-user" required placeholder="Usuario de Empresa">
+                    <i data-lucide="user"></i>
+                </div>
+                <div class="login-input-wrapper">
+                    <input type="password" id="login-admin-pass" required placeholder="Contraseña">
+                    <i data-lucide="lock"></i>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="height: 42px;">
+                    <i data-lucide="log-in"></i> Iniciar Sesión
+               </button>
+            </form>
         </div>
     </div>
 

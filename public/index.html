@@ -42,6 +42,9 @@
                     <span class="status-dot ping-active"></span>
                     <span class="status-text" id="user-display">Vendedor Online</span>
                 </div>
+                <button id="btn-logout" class="btn-logout" style="margin-left: 0.75rem;">
+                    <i data-lucide="log-out"></i> Salir
+                </button>
             </div>
         </header>
 
@@ -234,6 +237,32 @@
                 <p>Precio: <span id="ticket-price">---</span></p>
                 <button class="btn btn-primary btn-full" id="btn-close-ticket">Cerrar</button>
              </div>
+    </div>
+
+    <!-- OVERLAY DE LOGIN DE SEDE -->
+    <div id="sede-login-overlay" class="login-overlay-premium">
+        <div class="login-card-premium">
+            <div class="login-header">
+                <div class="login-header-icon">
+                    <i data-lucide="bus"></i>
+                </div>
+                <h2>Terminal de Ventas</h2>
+                <p>Bus.click Sede Portal</p>
+            </div>
+            
+            <form id="form-login-sede" class="login-form-premium">
+                <div class="login-input-wrapper">
+                    <input type="text" id="login-sede-user" required placeholder="Usuario de Sede">
+                    <i data-lucide="user"></i>
+                </div>
+                <div class="login-input-wrapper">
+                    <input type="password" id="login-sede-pass" required placeholder="Contraseña Sede">
+                    <i data-lucide="lock"></i>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="height: 42px;">
+                    <i data-lucide="log-in"></i> Iniciar Sesión
+               </button>
+            </form>
         </div>
     </div>
 

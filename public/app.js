@@ -121,11 +121,17 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
     setupUIEventListeners();
     
-    // Cargar datos por primera vez
-    await reloadAllApiData();
-    
     // Sincronizar dropdowns personalizados
     syncCustomDropdowns();
+    
+    // Inicializar y comprobar autenticación
+    const authenticated = checkAuthentication();
+    if (!authenticated) {
+        return; // Detener inicialización de datos si no está autenticado
+    }
+    
+    // Cargar datos por primera vez
+    await reloadAllApiData();
     
     // Configurar Polling Inteligente cada 3 segundos para sincronización en tiempo real
     setInterval(syncTicketsOnly, 3000);
@@ -300,20 +306,20 @@ function lightenColor(color, percent) {
 // 4. OPERACIONES DE ESCRITURA API (POST/DELETE)
 // ==========================================
 
-async function createCompany(name, ruc, logo, color) {
+async function createCompany(name, ruc, logo, color, username, password) {
     await fetch('/api/companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, ruc, logo, color })
+        body: JSON.stringify({ name, ruc, logo, color, username, password })
     });
     await reloadAllApiData();
 }
 
-async function createSede(companyId, name, city, address) {
+async function createSede(companyId, name, city, address, username, password) {
     await fetch('/api/sedes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ companyId, name, city, address })
+        body: JSON.stringify({ companyId, name, city, address, username, password })
     });
     await reloadAllApiData();
 }
@@ -943,10 +949,25 @@ function openSaleModal(seatNum, vehicle) {
     document.getElementById('sale-route-to').value = vehicle.routeTo;
     document.getElementById('sale-price').value = vehicle.price;
     
+    // Rellenar dinámicamente métodos de pago configurados por la empresa
+    const activeCompany = state.companies.find(c => c.id === state.activeCompanyId);
+    const methods = (activeCompany && activeCompany.paymentMethods) ? activeCompany.paymentMethods : ['Efectivo', 'Yape/Plin'];
+    const selectPayment = document.getElementById('sale-payment');
+    if (selectPayment) {
+        selectPayment.innerHTML = '';
+        methods.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            selectPayment.appendChild(opt);
+        });
+    }
+    
     document.getElementById('form-register-sale').reset();
     document.getElementById('sale-price').value = vehicle.price;
     
     document.getElementById('modal-sale-register').classList.remove('hidden');
+    syncCustomDropdowns(); // Sincronizar el dropdown personalizado con los nuevos métodos
 }
 
 function closeSaleModal() {
@@ -1146,6 +1167,29 @@ function updateSuperStats() {
 // 11. EVENT LISTENERS GENERALES
 // ==========================================
 function setupUIEventListeners() {
+    const btnLogout = document.getElementById('btn-logout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            const role = state.currentRole;
+            if (role === 'super-admin') {
+                localStorage.removeItem('superadmin_logged_in');
+                localStorage.removeItem('superadmin_email');
+                localStorage.removeItem('superadmin_name');
+            } else if (role === 'admin-empresa') {
+                localStorage.removeItem('admin_company_id');
+                localStorage.removeItem('admin_company_name');
+            } else if (role === 'establecimiento') {
+                localStorage.removeItem('sede_id');
+                localStorage.removeItem('sede_name');
+                localStorage.removeItem('sede_company_id');
+            }
+            showToast("Sesión cerrada correctamente. Redirigiendo...", "info");
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        });
+    }
+
     const headerCompanySelect = document.getElementById('header-company-select');
     if (headerCompanySelect) {
         headerCompanySelect.addEventListener('change', (e) => {
@@ -1197,8 +1241,10 @@ function setupUIEventListeners() {
             const ruc = document.getElementById('company-ruc').value.trim();
             const logo = ""; // Solución preventiva: no leer '#company-logo' ya que no existe en el DOM
             const color = document.getElementById('company-color').value;
+            const username = document.getElementById('company-username').value.trim();
+            const password = document.getElementById('company-password').value.trim();
             
-            await createCompany(name, ruc, logo, color);
+            await createCompany(name, ruc, logo, color, username, password);
             formCompany.reset();
             showToast("Empresa registrada con éxito.", "success");
         });
@@ -1264,8 +1310,10 @@ function setupUIEventListeners() {
             const name = document.getElementById('sede-name').value.trim();
             const city = document.getElementById('sede-city').value.trim();
             const address = document.getElementById('sede-address').value.trim();
+            const username = document.getElementById('sede-username').value.trim();
+            const password = document.getElementById('sede-password').value.trim();
             
-            await createSede(state.activeCompanyId, name, city, address);
+            await createSede(state.activeCompanyId, name, city, address, username, password);
             formSede.reset();
             showToast("Sede registrada con éxito.", "success");
         });
@@ -1322,7 +1370,7 @@ function setupUIEventListeners() {
             btn.classList.add('active');
             
             const targetTab = btn.getAttribute('data-admin-tab');
-            const tabs = ['sedes', 'trabajadores', 'movilidades'];
+            const tabs = ['sedes', 'trabajadores', 'movilidades', 'settings'];
             tabs.forEach(t => {
                 const el = document.getElementById(`tab-admin-${t}`);
                 if (el) el.classList.add('hidden');
@@ -1330,6 +1378,10 @@ function setupUIEventListeners() {
             
             const targetEl = document.getElementById(`tab-admin-${targetTab}`);
             if (targetEl) targetEl.classList.remove('hidden');
+            
+            if (targetTab === 'settings') {
+                initAdminSettingsTab();
+            }
         });
     });
 
@@ -1610,3 +1662,413 @@ function updateSalesTurnReport() {
 
     lucide.createIcons();
 }
+
+// ==========================================
+// 12. SISTEMA DE AUTENTICACIÓN MULTI-NIVEL PREMIUM
+// ==========================================
+
+function checkAuthentication() {
+    const role = state.currentRole;
+    if (role === 'super-admin') {
+        const loggedIn = localStorage.getItem('superadmin_logged_in') === 'true';
+        const overlay = document.getElementById('superadmin-login-overlay');
+        if (loggedIn) {
+            if (overlay) overlay.classList.add('hidden');
+            return true;
+        } else {
+            if (overlay) overlay.classList.remove('hidden');
+            initGoogleSignIn();
+            return false;
+        }
+    } else if (role === 'admin-empresa') {
+        const activeCompanyId = localStorage.getItem('admin_company_id');
+        const overlay = document.getElementById('admin-login-overlay');
+        if (activeCompanyId) {
+            if (overlay) overlay.classList.add('hidden');
+            state.activeCompanyId = activeCompanyId;
+            lockCompanySelector(activeCompanyId);
+            return true;
+        } else {
+            if (overlay) overlay.classList.remove('hidden');
+            setupAdminLoginListener();
+            return false;
+        }
+    } else if (role === 'establecimiento') {
+        const activeCompanyId = localStorage.getItem('sede_company_id');
+        const activeSedeId = localStorage.getItem('sede_id');
+        const overlay = document.getElementById('sede-login-overlay');
+        if (activeCompanyId && activeSedeId) {
+            if (overlay) overlay.classList.add('hidden');
+            state.activeCompanyId = activeCompanyId;
+            state.activeSedeId = activeSedeId;
+            lockSedeSelector(activeCompanyId, activeSedeId);
+            return true;
+        } else {
+            if (overlay) overlay.classList.remove('hidden');
+            setupSedeLoginListener();
+            return false;
+        }
+    }
+    return true;
+}
+
+function initGoogleSignIn() {
+    if (typeof google === 'undefined') {
+        setTimeout(initGoogleSignIn, 200);
+        return;
+    }
+    
+    google.accounts.id.initialize({
+        client_id: '782298642289-5q7o848d5b1q7i5f5e27a6b9a89d7b1b.apps.googleusercontent.com',
+        callback: handleGoogleSignInCallback
+    });
+    
+    const btnContainer = document.getElementById('google-signin-btn');
+    if (btnContainer) {
+        google.accounts.id.renderButton(
+            btnContainer,
+            { theme: 'outline', size: 'large', width: 320, text: 'signin_with', shape: 'pill' }
+        );
+    }
+}
+
+function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+    } catch(e) {
+        return null;
+    }
+}
+
+async function handleGoogleSignInCallback(response) {
+    const payload = parseJwt(response.credential);
+    if (!payload || !payload.email) {
+        showToast("Error al obtener información de Google.", "error");
+        return;
+    }
+    
+    const email = payload.email.toLowerCase();
+    
+    try {
+        const res = await fetch('/api/login/superadmin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok && data.success) {
+            showToast(`¡Bienvenido de vuelta, ${payload.name || 'Super Admin'}!`, "success");
+            localStorage.setItem('superadmin_logged_in', 'true');
+            localStorage.setItem('superadmin_email', email);
+            localStorage.setItem('superadmin_name', payload.name || 'Super Admin');
+            
+            const overlay = document.getElementById('superadmin-login-overlay');
+            if (overlay) overlay.classList.add('hidden');
+            
+            // Cargar datos
+            await reloadAllApiData();
+            // Polling
+            setInterval(syncTicketsOnly, 3000);
+        } else {
+            showToast(data.error || "Acceso Denegado.", "error");
+            showConfirmModal(
+                "Acceso Denegado (Seguridad)", 
+                `La cuenta de Google (${email}) no tiene privilegios de Super Administrador de Bus.click. Solo se permite el acceso al propietario: syscomecosistemadigital@gmail.com.`
+            );
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error al conectarse con el servidor de autenticación.", "error");
+    }
+}
+
+let adminLoginListenerAdded = false;
+function setupAdminLoginListener() {
+    if (adminLoginListenerAdded) return;
+    const form = document.getElementById('form-login-admin');
+    if (!form) return;
+    adminLoginListenerAdded = true;
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('login-admin-user').value.trim();
+        const password = document.getElementById('login-admin-pass').value.trim();
+        
+        if (!username || !password) {
+            showToast("Por favor, ingresa tu usuario y contraseña.", "error");
+            return;
+        }
+        
+        try {
+            const res = await fetch('/api/login/admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                showToast(`¡Bienvenido! Administrador de ${data.company.name}`, "success");
+                localStorage.setItem('admin_company_id', data.company.id);
+                localStorage.setItem('admin_company_name', data.company.name);
+                
+                state.activeCompanyId = data.company.id;
+                
+                const overlay = document.getElementById('admin-login-overlay');
+                if (overlay) overlay.classList.add('hidden');
+                
+                lockCompanySelector(data.company.id);
+                
+                await reloadAllApiData();
+                setInterval(syncTicketsOnly, 3000);
+            } else {
+                showToast(data.error || "Usuario o contraseña incorrectos.", "error");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Error al conectarse con el servidor de autenticación.", "error");
+        }
+    });
+}
+
+function lockCompanySelector(companyId) {
+    const select = document.getElementById('header-company-select');
+    if (select) {
+        select.value = companyId;
+        select.disabled = true;
+        
+        // Aislamiento extra: deshabilitar el custom dropdown
+        setTimeout(() => {
+            const trigger = select.closest('.custom-dropdown-container')?.querySelector('.custom-dropdown-trigger');
+            if (trigger) {
+                trigger.style.pointerEvents = 'none';
+                trigger.style.background = 'var(--bg-subtle)';
+                trigger.style.opacity = '0.7';
+            }
+        }, 500);
+    }
+}
+
+let sedeLoginListenerAdded = false;
+function setupSedeLoginListener() {
+    if (sedeLoginListenerAdded) return;
+    const form = document.getElementById('form-login-sede');
+    if (!form) return;
+    sedeLoginListenerAdded = true;
+    
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('login-sede-user').value.trim();
+        const password = document.getElementById('login-sede-pass').value.trim();
+        
+        if (!username || !password) {
+            showToast("Por favor, ingresa tu usuario y contraseña.", "error");
+            return;
+        }
+        
+        try {
+            const res = await fetch('/api/login/sede', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await res.json();
+            
+            if (res.ok && data.success) {
+                showToast(`¡Bienvenido! Sede: ${data.sede.name}`, "success");
+                localStorage.setItem('sede_id', data.sede.id);
+                localStorage.setItem('sede_name', data.sede.name);
+                localStorage.setItem('sede_company_id', data.sede.companyId);
+                
+                state.activeCompanyId = data.sede.companyId;
+                state.activeSedeId = data.sede.id;
+                
+                const overlay = document.getElementById('sede-login-overlay');
+                if (overlay) overlay.classList.add('hidden');
+                
+                lockSedeSelector(data.sede.companyId, data.sede.id);
+                
+                await reloadAllApiData();
+                setInterval(syncTicketsOnly, 3000);
+            } else {
+                showToast(data.error || "Usuario o contraseña de sede incorrectos.", "error");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("Error al conectarse con el servidor de autenticación.", "error");
+        }
+    });
+}
+
+function lockSedeSelector(companyId, sedeId) {
+    const companySelect = document.getElementById('header-company-select');
+    if (companySelect) {
+        companySelect.value = companyId;
+        companySelect.disabled = true;
+    }
+    
+    const sedeSelect = document.getElementById('header-sede-select');
+    if (sedeSelect) {
+        sedeSelect.value = sedeId;
+        sedeSelect.disabled = true;
+    }
+    
+    // Deshabilitar triggers de custom select
+    setTimeout(() => {
+        const triggers = document.querySelectorAll('.custom-dropdown-container .custom-dropdown-trigger');
+        triggers.forEach(trigger => {
+            trigger.style.pointerEvents = 'none';
+            trigger.style.background = 'var(--bg-subtle)';
+            trigger.style.opacity = '0.7';
+        });
+    }, 500);
+}
+
+// ==========================================
+// 13. CONFIGURACIÓN DE MÉTODOS DE PAGO EN EL ADMINISTRADOR
+// ==========================================
+let adminSettingsPaymentMethods = [];
+
+function initAdminSettingsTab() {
+    const activeCompanyObj = state.companies.find(c => c.id === state.activeCompanyId);
+    if (!activeCompanyObj) return;
+    
+    // Set Razón Social / RUC
+    const companyNameInput = document.getElementById('admin-settings-company-name');
+    if (companyNameInput) {
+        companyNameInput.value = `${activeCompanyObj.name} (RUC: ${activeCompanyObj.ruc})`;
+    }
+    
+    // Cargar métodos actuales
+    adminSettingsPaymentMethods = [...(activeCompanyObj.paymentMethods || ['Efectivo', 'Yape/Plin'])];
+    
+    // Renderizar la lista
+    renderAdminPaymentMethodsList();
+    
+    // Configurar listeners de eventos
+    setupAdminSettingsEvents();
+}
+
+function renderAdminPaymentMethodsList() {
+    const container = document.getElementById('admin-payment-methods-list-render');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (adminSettingsPaymentMethods.length === 0) {
+        container.innerHTML = `
+            <div class="text-center py-4" style="color: #94a3b8; font-size: var(--text-xs); font-weight: 500;">
+                No hay métodos de pago habilitados. Agrega al menos uno.
+            </div>
+        `;
+        return;
+    }
+    
+    adminSettingsPaymentMethods.forEach((method, index) => {
+        const item = document.createElement('div');
+        item.className = 'payment-method-admin-item';
+        item.innerHTML = `
+            <div class="payment-method-admin-item-left">
+                <i data-lucide="credit-card"></i>
+                <span>${method}</span>
+            </div>
+            <button type="button" class="btn-remove-payment-method" data-index="${index}">
+                <i data-lucide="trash-2"></i>
+            </button>
+        `;
+        
+        // Evento para eliminar
+        item.querySelector('.btn-remove-payment-method').addEventListener('click', () => {
+            adminSettingsPaymentMethods.splice(index, 1);
+            renderAdminPaymentMethodsList();
+            showToast(`Método "${method}" quitado temporalmente.`, "info");
+        });
+        
+        container.appendChild(item);
+    });
+    
+    lucide.createIcons();
+}
+
+let adminSettingsEventsAdded = false;
+function setupAdminSettingsEvents() {
+    if (adminSettingsEventsAdded) return;
+    adminSettingsEventsAdded = true;
+    
+    const btnAdd = document.getElementById('btn-add-payment-method');
+    const inputMethod = document.getElementById('input-new-payment-method');
+    const btnSave = document.getElementById('btn-save-payment-methods');
+    
+    if (btnAdd && inputMethod) {
+        const addFn = () => {
+            const val = inputMethod.value.trim();
+            if (!val) {
+                showToast("Por favor, escribe un método de pago válido.", "error");
+                return;
+            }
+            if (adminSettingsPaymentMethods.includes(val)) {
+                showToast("Este método de pago ya está en la lista.", "error");
+                return;
+            }
+            adminSettingsPaymentMethods.push(val);
+            inputMethod.value = '';
+            renderAdminPaymentMethodsList();
+            showToast(`Método "${val}" agregado a la lista.`, "success");
+        };
+        
+        btnAdd.addEventListener('click', addFn);
+        inputMethod.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addFn();
+            }
+        });
+    }
+    
+    if (btnSave) {
+        btnSave.addEventListener('click', async () => {
+            if (adminSettingsPaymentMethods.length === 0) {
+                showToast("Debes habilitar al menos un método de pago.", "error");
+                return;
+            }
+            
+            btnSave.disabled = true;
+            const originalText = btnSave.innerHTML;
+            btnSave.innerHTML = `<i class="animate-spin" data-lucide="loader-2"></i> Guardando...`;
+            lucide.createIcons();
+            
+            try {
+                const res = await fetch(`/api/companies/${state.activeCompanyId}/payment-methods`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentMethods: adminSettingsPaymentMethods })
+                });
+                
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast("Métodos de pago actualizados con éxito en el servidor.", "success");
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al guardar los métodos de pago.", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error al conectarse con el servidor.", "error");
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalText;
+                lucide.createIcons();
+            }
+        });
+    }
+}
+

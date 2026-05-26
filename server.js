@@ -89,6 +89,13 @@ async function initializePostgresTables() {
             )
         `);
         
+        // Agregar columnas payment_methods, username y password si no existen
+        await client.query(`
+            ALTER TABLE companies ADD COLUMN IF NOT EXISTS payment_methods TEXT DEFAULT 'Efectivo,Yape/Plin',
+            ADD COLUMN IF NOT EXISTS username VARCHAR(100),
+            ADD COLUMN IF NOT EXISTS password VARCHAR(100);
+        `);
+        
         // Tabla Sedes
         await client.query(`
             CREATE TABLE IF NOT EXISTS sedes (
@@ -99,6 +106,12 @@ async function initializePostgresTables() {
                 address VARCHAR(200) NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
+        `);
+
+        // Agregar columnas username y password si no existen
+        await client.query(`
+            ALTER TABLE sedes ADD COLUMN IF NOT EXISTS username VARCHAR(100),
+            ADD COLUMN IF NOT EXISTS password VARCHAR(100);
         `);
         
         // Tabla Trabajadores
@@ -175,31 +188,53 @@ app.get('/api/companies', async (req, res) => {
     if (usePostgres) {
         try {
             const { rows } = await pool.query('SELECT * FROM companies ORDER BY created_at ASC');
-            res.json(rows.map(r => ({ id: r.id, name: r.name, ruc: r.ruc, logo: r.logo, color: r.color })));
+            res.json(rows.map(r => ({ 
+                id: r.id, 
+                name: r.name, 
+                ruc: r.ruc, 
+                logo: r.logo, 
+                color: r.color,
+                username: r.username,
+                password: r.password,
+                paymentMethods: r.payment_methods ? r.payment_methods.split(',') : ['Efectivo', 'Yape/Plin']
+            })));
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
     } else {
-        res.json(localDb.companies);
+        res.json(localDb.companies.map(c => ({
+            ...c,
+            paymentMethods: c.paymentMethods || ['Efectivo', 'Yape/Plin']
+        })));
     }
 });
 
 app.post('/api/companies', async (req, res) => {
-    const { name, ruc, logo, color } = req.body;
+    const { name, ruc, logo, color, username, password } = req.body;
     const id = generateId();
+    const defaultMethods = 'Efectivo,Yape/Plin';
     
     if (usePostgres) {
         try {
             await pool.query(
-                'INSERT INTO companies (id, name, ruc, logo, color) VALUES ($1, $2, $3, $4, $5)',
-                [id, name, ruc, logo || "", color || "#6366f1"]
+                'INSERT INTO companies (id, name, ruc, logo, color, payment_methods, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                [id, name, ruc, logo || "", color || "#6366f1", defaultMethods, username || "", password || ""]
             );
             res.json({ id });
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
     } else {
-        const company = { id, name, ruc, logo: logo || "", color: color || "#6366f1" };
+        const company = { 
+            id, 
+            name, 
+            ruc, 
+            logo: logo || "", 
+            color: color || "#6366f1",
+            username: username || "",
+            password: password || "",
+            paymentMethods: ['Efectivo', 'Yape/Plin'] 
+        };
         localDb.companies.push(company);
         saveLocalDb();
         res.json(company);
@@ -226,12 +261,44 @@ app.delete('/api/companies/:id', async (req, res) => {
     }
 });
 
+app.put('/api/companies/:id/payment-methods', async (req, res) => {
+    const { id } = req.params;
+    const { paymentMethods } = req.body; // array de strings
+    const methodsStr = Array.isArray(paymentMethods) ? paymentMethods.join(',') : 'Efectivo,Yape/Plin';
+
+    if (usePostgres) {
+        try {
+            await pool.query('UPDATE companies SET payment_methods = $1 WHERE id = $2', [methodsStr, id]);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const company = localDb.companies.find(c => c.id === id);
+        if (company) {
+            company.paymentMethods = Array.isArray(paymentMethods) ? paymentMethods : ['Efectivo', 'Yape/Plin'];
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: "Company not found" });
+        }
+    }
+});
+
 // --- SEDES ---
 app.get('/api/sedes', async (req, res) => {
     if (usePostgres) {
         try {
             const { rows } = await pool.query('SELECT * FROM sedes ORDER BY created_at ASC');
-            res.json(rows.map(r => ({ id: r.id, companyId: r.company_id, name: r.name, city: r.city, address: r.address })));
+            res.json(rows.map(r => ({ 
+                id: r.id, 
+                companyId: r.company_id, 
+                name: r.name, 
+                city: r.city, 
+                address: r.address,
+                username: r.username,
+                password: r.password
+            })));
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
@@ -241,21 +308,21 @@ app.get('/api/sedes', async (req, res) => {
 });
 
 app.post('/api/sedes', async (req, res) => {
-    const { companyId, name, city, address } = req.body;
+    const { companyId, name, city, address, username, password } = req.body;
     const id = generateId();
     
     if (usePostgres) {
         try {
             await pool.query(
-                'INSERT INTO sedes (id, company_id, name, city, address) VALUES ($1, $2, $3, $4, $5)',
-                [id, companyId, name, city, address]
+                'INSERT INTO sedes (id, company_id, name, city, address, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                [id, companyId, name, city, address, username || "", password || ""]
             );
             res.json({ id });
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
     } else {
-        const sede = { id, companyId, name, city, address };
+        const sede = { id, companyId, name, city, address, username: username || "", password: password || "" };
         localDb.sedes.push(sede);
         saveLocalDb();
         res.json(sede);
@@ -491,6 +558,108 @@ app.post('/api/consultar-ruc', async (req, res) => {
     }
 });
 
+// --- ENDPOINTS DE AUTENTICACIÓN MULTI-NIVEL ---
+
+// 1. Login Super Admin (Con validación de Google Email)
+app.post('/api/login/superadmin', async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+        return res.status(400).json({ success: false, error: 'Falta proporcionar el correo electrónico.' });
+    }
+    
+    if (email === 'syscomecosistemadigital@gmail.com') {
+        res.json({ 
+            success: true, 
+            user: { email: 'syscomecosistemadigital@gmail.com', role: 'super-admin' } 
+        });
+    } else {
+        res.status(403).json({ 
+            success: false, 
+            error: 'Acceso Denegado. Solo se permite el ingreso con la cuenta syscomecosistemadigital@gmail.com.' 
+        });
+    }
+});
+
+// 2. Login Admin de Empresa (Usuario y Contraseña)
+app.post('/api/login/admin', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ success: false, error: 'Falta proporcionar usuario y contraseña.' });
+    }
+    
+    if (usePostgres) {
+        try {
+            const { rows } = await pool.query(
+                'SELECT * FROM companies WHERE username = $1 AND password = $2',
+                [username.trim(), password.trim()]
+            );
+            if (rows.length > 0) {
+                const c = rows[0];
+                res.json({
+                    success: true,
+                    company: { id: c.id, name: c.name, color: c.color, logo: c.logo }
+                });
+            } else {
+                res.status(401).json({ success: false, error: 'Usuario o contraseña de empresa incorrectos.' });
+            }
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const company = localDb.companies.find(
+            c => c.username === username.trim() && c.password === password.trim()
+        );
+        if (company) {
+            res.json({
+                success: true,
+                company: { id: company.id, name: company.name, color: company.color, logo: company.logo }
+            });
+        } else {
+            res.status(401).json({ success: false, error: 'Usuario o contraseña de empresa incorrectos.' });
+        }
+    }
+});
+
+// 3. Login Sede (Usuario y Contraseña)
+app.post('/api/login/sede', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        return res.status(400).json({ success: false, error: 'Falta proporcionar usuario y contraseña.' });
+    }
+    
+    if (usePostgres) {
+        try {
+            const { rows } = await pool.query(
+                'SELECT * FROM sedes WHERE username = $1 AND password = $2',
+                [username.trim(), password.trim()]
+            );
+            if (rows.length > 0) {
+                const s = rows[0];
+                res.json({
+                    success: true,
+                    sede: { id: s.id, name: s.name, companyId: s.company_id }
+                });
+            } else {
+                res.status(401).json({ success: false, error: 'Usuario o contraseña de sede incorrectos.' });
+            }
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const sede = localDb.sedes.find(
+            s => s.username === username.trim() && s.password === password.trim()
+        );
+        if (sede) {
+            res.json({
+                success: true,
+                sede: { id: sede.id, name: sede.name, companyId: sede.companyId }
+            });
+        } else {
+            res.status(401).json({ success: false, error: 'Usuario o contraseña de sede incorrectos.' });
+        }
+    }
+});
+
 // --- CARGAR DATOS SEMILLA ---
 app.post('/api/seed', async (req, res) => {
     try {
@@ -498,16 +667,16 @@ app.post('/api/seed', async (req, res) => {
         
         // Estructura semilla
         const seedCompanies = [
-            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316" },
-            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6" },
-            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b" }
+            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123" },
+            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123" },
+            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123" }
         ];
         
         const seedSedes = [
-            { id: "sede-fl-1", companyId: "flores", name: "Terminal Lima Norte", city: "Lima", address: "Av. Gerardo Unger 6500" },
-            { id: "sede-fl-2", companyId: "flores", name: "Terminal Arequipa", city: "Arequipa", address: "Av. Arturo Ibáñez s/n" },
-            { id: "sede-cds-1", companyId: "cruzdelsur", name: "Sede Cruz del Sur Centro", city: "Lima", address: "Av. Javier Prado Este 1109" },
-            { id: "sede-com-1", companyId: "combi", name: "Terminal Colectivos San Juan", city: "Lima", address: "Av. Los Héroes 450" }
+            { id: "sede-fl-1", companyId: "flores", name: "Terminal Lima Norte", city: "Lima", address: "Av. Gerardo Unger 6500", username: "flores_lima", password: "123" },
+            { id: "sede-fl-2", companyId: "flores", name: "Terminal Arequipa", city: "Arequipa", address: "Av. Arturo Ibáñez s/n", username: "flores_arequipa", password: "123" },
+            { id: "sede-cds-1", companyId: "cruzdelsur", name: "Sede Cruz del Sur Centro", city: "Lima", address: "Av. Javier Prado Este 1109", username: "cds_centro", password: "123" },
+            { id: "sede-com-1", companyId: "combi", name: "Terminal Colectivos San Juan", city: "Lima", address: "Av. Los Héroes 450", username: "combi_sanjuan", password: "123" }
         ];
         
         const seedTrabajadores = [
@@ -539,12 +708,12 @@ app.post('/api/seed', async (req, res) => {
                 
                 // Cargar empresas
                 for (const c of seedCompanies) {
-                    await client.query('INSERT INTO companies (id, name, ruc, logo, color) VALUES ($1, $2, $3, $4, $5)', [c.id, c.name, c.ruc, c.logo, c.color]);
+                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7)', [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password]);
                 }
                 
                 // Cargar sedes
                 for (const s of seedSedes) {
-                    await client.query('INSERT INTO sedes (id, company_id, name, city, address) VALUES ($1, $2, $3, $4, $5)', [s.id, s.companyId, s.name, s.city, s.address]);
+                    await client.query('INSERT INTO sedes (id, company_id, name, city, address, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7)', [s.id, s.companyId, s.name, s.city, s.address, s.username, s.password]);
                 }
                 
                 // Cargar trabajadores
