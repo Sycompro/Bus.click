@@ -124,6 +124,9 @@ async function initApp() {
     // Cargar datos por primera vez
     await reloadAllApiData();
     
+    // Sincronizar dropdowns personalizados
+    syncCustomDropdowns();
+    
     // Configurar Polling Inteligente cada 3 segundos para sincronización en tiempo real
     setInterval(syncTicketsOnly, 3000);
 }
@@ -220,6 +223,7 @@ function populateCompanySelectors() {
     state.activeCompanyId = headerSelect.value;
     applyCompanyBrandTheme();
     populateSedeSelectors();
+    syncCustomDropdowns();
 }
 
 function populateSedeSelectors() {
@@ -274,6 +278,7 @@ function populateSedeSelectors() {
     
     state.activeSedeId = headerSedeSelect.value;
     updateEstabUI();
+    syncCustomDropdowns();
 }
 
 // Aplicar colores de la empresa de forma dinámica con variables CSS
@@ -1379,3 +1384,131 @@ function updateSuperStats() {
     if (sMovi) sMovi.textContent = state.movilidades.length;
     if (sTick) sTick.textContent = state.tickets.length;
 }
+
+// ==========================================
+// 12. SISTEMA DE DROPDOWNS PERSONALIZADOS PREMIUM (CUSTOM SELECT)
+// ==========================================
+function syncCustomDropdowns() {
+    // 1. Limpiar dropdowns anteriores para evitar duplicados en actualizaciones de UI
+    document.querySelectorAll('.custom-dropdown-container').forEach(c => c.remove());
+    document.querySelectorAll('select.select-native-hidden').forEach(s => s.classList.remove('select-native-hidden'));
+
+    const selects = document.querySelectorAll('select');
+    selects.forEach(select => {
+        if (select.classList.contains('select-native-hidden')) return;
+
+        // Crear el contenedor de dropdown premium
+        const container = document.createElement('div');
+        container.className = 'custom-dropdown-container';
+
+        // Crear el botón disparador (trigger)
+        const trigger = document.createElement('div');
+        trigger.className = 'custom-dropdown-trigger';
+        if (select.disabled) {
+            trigger.classList.add('disabled');
+            trigger.style.cursor = 'not-allowed';
+            trigger.style.opacity = '0.7';
+            trigger.style.color = '#64748b';
+            trigger.style.background = '#f8fafc';
+        }
+
+        // Obtener opción seleccionada o la primera por defecto
+        const selectedOption = select.options[select.selectedIndex] || select.options[0];
+        const selectedText = selectedOption ? selectedOption.textContent : 'Seleccionar...';
+
+        trigger.innerHTML = `
+            <span class="trigger-text">${selectedText}</span>
+            <i data-lucide="chevron-down" class="chevron"></i>
+        `;
+
+        // Crear el menú desplegable
+        const menu = document.createElement('div');
+        menu.className = 'custom-dropdown-menu hidden';
+
+        // Función para reconstruir dinámicamente las opciones del select nativo
+        function rebuildOptions() {
+            menu.innerHTML = '';
+            Array.from(select.options).forEach(opt => {
+                const optEl = document.createElement('div');
+                optEl.className = 'custom-dropdown-option';
+                if (opt.value === select.value) {
+                    optEl.classList.add('selected');
+                }
+                optEl.textContent = opt.textContent;
+                optEl.setAttribute('data-value', opt.value);
+
+                optEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (select.disabled) return;
+
+                    // Cambiar valor en select nativo y disparar evento de cambio
+                    select.value = opt.value;
+                    select.dispatchEvent(new Event('change'));
+
+                    // Cerrar y actualizar texto del trigger
+                    trigger.querySelector('.trigger-text').textContent = opt.textContent;
+                    menu.classList.add('hidden');
+                    trigger.classList.remove('active');
+
+                    menu.querySelectorAll('.custom-dropdown-option').forEach(o => o.classList.remove('selected'));
+                    optEl.classList.add('selected');
+                });
+
+                menu.appendChild(optEl);
+            });
+        }
+
+        rebuildOptions();
+
+        // Manejar apertura/cierre al dar clic en el trigger
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (select.disabled) return;
+
+            // Cerrar todos los demás menús dropdowns abiertos primero
+            document.querySelectorAll('.custom-dropdown-menu').forEach(m => {
+                if (m !== menu) {
+                    m.classList.add('hidden');
+                    m.previousElementSibling.classList.remove('active');
+                }
+            });
+
+            // Reconstruir opciones frescas de la base de datos
+            rebuildOptions();
+
+            const isOpen = !menu.classList.contains('hidden');
+            if (isOpen) {
+                menu.classList.add('hidden');
+                trigger.classList.remove('active');
+            } else {
+                menu.classList.remove('hidden');
+                trigger.classList.add('active');
+            }
+
+            lucide.createIcons();
+        });
+
+        // Ocultar select nativo de forma segura y accesible
+        select.classList.add('select-native-hidden');
+        select.parentNode.insertBefore(container, select);
+        container.appendChild(trigger);
+        container.appendChild(menu);
+
+        // Mantener sincronizado si el select cambia mediante código externo de JS
+        select.addEventListener('change', () => {
+            const currentOpt = select.options[select.selectedIndex];
+            if (currentOpt) {
+                trigger.querySelector('.trigger-text').textContent = currentOpt.textContent;
+            }
+            rebuildOptions();
+        });
+    });
+
+    lucide.createIcons();
+}
+
+// Cerrar todos los dropdowns personalizados al hacer clic en cualquier parte fuera del desplegable
+document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-dropdown-menu').forEach(m => m.classList.add('hidden'));
+    document.querySelectorAll('.custom-dropdown-trigger').forEach(t => t.classList.remove('active'));
+});
