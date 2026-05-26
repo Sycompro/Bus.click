@@ -1713,47 +1713,72 @@ function checkAuthentication() {
 }
 
 function initGoogleSignIn() {
-    if (typeof google === 'undefined') {
-        setTimeout(initGoogleSignIn, 200);
-        return;
+    // 1. Botón Éxito: syscomecosistemadigital@gmail.com
+    const btnSuccess = document.getElementById('btn-google-account-success');
+    if (btnSuccess) {
+        btnSuccess.addEventListener('click', async () => {
+            await simulateGoogleAuth('syscomecosistemadigital@gmail.com', 'Syscom Ecosistema Digital');
+        });
     }
     
-    google.accounts.id.initialize({
-        client_id: '782298642289-5q7o848d5b1q7i5f5e27a6b9a89d7b1b.apps.googleusercontent.com',
-        callback: handleGoogleSignInCallback
-    });
+    // 2. Botón Denegado: otro_usuario@gmail.com
+    const btnDenied = document.getElementById('btn-google-account-denied');
+    if (btnDenied) {
+        btnDenied.addEventListener('click', () => {
+            showGoogleBlockedScreen('otro_usuario@gmail.com');
+        });
+    }
     
-    const btnContainer = document.getElementById('google-signin-btn');
-    if (btnContainer) {
-        google.accounts.id.renderButton(
-            btnContainer,
-            { theme: 'outline', size: 'large', width: 320, text: 'signin_with', shape: 'pill' }
-        );
+    // 3. Botón Mostrar input personalizado
+    const btnCustomTrigger = document.getElementById('btn-google-account-custom-trigger');
+    const customContainer = document.getElementById('google-custom-email-container');
+    if (btnCustomTrigger && customContainer) {
+        btnCustomTrigger.addEventListener('click', () => {
+            customContainer.classList.remove('hidden');
+            btnCustomTrigger.classList.add('hidden');
+        });
+    }
+    
+    // 4. Submit de email personalizado
+    const btnCustomSubmit = document.getElementById('btn-google-custom-email-submit');
+    const inputCustomEmail = document.getElementById('google-custom-email-input');
+    if (btnCustomSubmit && inputCustomEmail) {
+        const submitFn = async () => {
+            const email = inputCustomEmail.value.trim().toLowerCase();
+            if (!email || !email.includes('@')) {
+                showToast("Por favor, ingresa un correo válido.", "error");
+                return;
+            }
+            if (email === 'syscomecosistemadigital@gmail.com') {
+                await simulateGoogleAuth(email, 'Syscom Ecosistema Digital');
+            } else {
+                showGoogleBlockedScreen(email);
+            }
+        };
+        btnCustomSubmit.addEventListener('click', submitFn);
+        inputCustomEmail.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitFn();
+            }
+        });
+    }
+    
+    // 5. Botón Volver de pantalla bloqueada
+    const btnBack = document.getElementById('btn-back-from-blocked');
+    if (btnBack) {
+        btnBack.addEventListener('click', () => {
+            const blockedCard = document.getElementById('superadmin-google-blocked-card');
+            const mainCard = document.getElementById('superadmin-google-card');
+            if (blockedCard && mainCard) {
+                blockedCard.classList.add('hidden');
+                mainCard.classList.remove('hidden');
+            }
+        });
     }
 }
 
-function parseJwt(token) {
-    try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-    } catch(e) {
-        return null;
-    }
-}
-
-async function handleGoogleSignInCallback(response) {
-    const payload = parseJwt(response.credential);
-    if (!payload || !payload.email) {
-        showToast("Error al obtener información de Google.", "error");
-        return;
-    }
-    
-    const email = payload.email.toLowerCase();
-    
+async function simulateGoogleAuth(email, name) {
     try {
         const res = await fetch('/api/login/superadmin', {
             method: 'POST',
@@ -1764,10 +1789,10 @@ async function handleGoogleSignInCallback(response) {
         const data = await res.json();
         
         if (res.ok && data.success) {
-            showToast(`¡Bienvenido de vuelta, ${payload.name || 'Super Admin'}!`, "success");
+            showToast(`¡Bienvenido de vuelta, ${name}!`, "success");
             localStorage.setItem('superadmin_logged_in', 'true');
             localStorage.setItem('superadmin_email', email);
-            localStorage.setItem('superadmin_name', payload.name || 'Super Admin');
+            localStorage.setItem('superadmin_name', name);
             
             const overlay = document.getElementById('superadmin-login-overlay');
             if (overlay) overlay.classList.add('hidden');
@@ -1777,15 +1802,24 @@ async function handleGoogleSignInCallback(response) {
             // Polling
             setInterval(syncTicketsOnly, 3000);
         } else {
-            showToast(data.error || "Acceso Denegado.", "error");
-            showConfirmModal(
-                "Acceso Denegado (Seguridad)", 
-                `La cuenta de Google (${email}) no tiene privilegios de Super Administrador de Bus.click. Solo se permite el acceso al propietario: syscomecosistemadigital@gmail.com.`
-            );
+            showGoogleBlockedScreen(email);
         }
     } catch (err) {
         console.error(err);
         showToast("Error al conectarse con el servidor de autenticación.", "error");
+    }
+}
+
+function showGoogleBlockedScreen(email) {
+    const mainCard = document.getElementById('superadmin-google-card');
+    const blockedCard = document.getElementById('superadmin-google-blocked-card');
+    const emailDisplay = document.getElementById('google-blocked-email-display');
+    
+    if (mainCard && blockedCard && emailDisplay) {
+        emailDisplay.textContent = email;
+        mainCard.classList.add('hidden');
+        blockedCard.classList.remove('hidden');
+        showToast("Acceso denegado. Google OAuth bloqueado.", "error");
     }
 }
 

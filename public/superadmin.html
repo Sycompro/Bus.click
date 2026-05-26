@@ -138,22 +138,90 @@
 
     <!-- OVERLAY DE LOGIN CON GOOGLE PARA SUPER ADMIN -->
     <div id="superadmin-login-overlay" class="login-overlay-premium">
-        <div class="login-card-premium">
-            <div class="login-header">
-                <div class="login-header-icon">
-                    <i data-lucide="shield-check"></i>
+        <!-- 1. Tarjeta Elegir Cuenta Google (Simulada Interactiva) -->
+        <div id="superadmin-google-card" class="login-card-premium">
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem;">
+                <div style="font-family: var(--font-heading); font-weight: 800; font-size: 1.6rem; letter-spacing: -0.5px;">
+                    <span style="color: #4285F4;">G</span><span style="color: #ea4335;">o</span><span style="color: #fbbc05;">o</span><span style="color: #4285F4;">g</span><span style="color: #34a853;">l</span><span style="color: #ea4335;">e</span>
                 </div>
-                <h2>Super Administrador</h2>
-                <p>Bus.click Ecosystem Control Portal</p>
+                <h2 style="font-family: var(--font-heading); font-size: var(--text-base); font-weight: 800; color: #0f172a; margin-top: 0.25rem;">
+                    Acceder a Bus.click
+                </h2>
+                <p style="font-size: var(--text-xs); color: #64748b; font-weight: 500;">
+                    Elige una cuenta de Google para continuar
+                </p>
             </div>
             
-            <div class="google-login-container">
-                <p style="font-size: var(--text-xs); color: #64748b; font-weight: 600; text-align: center;">
-                    Para continuar, inicia sesión con tu cuenta de Google Autorizada
-                </p>
-                <div class="google-login-btn-placeholder">
-                    <div id="google-signin-btn"></div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
+                <!-- Cuenta A: Autorizada -->
+                <button type="button" class="google-account-item" id="btn-google-account-success">
+                    <div class="google-avatar google-avatar-success">S</div>
+                    <div class="google-account-info">
+                        <span class="google-account-email">syscomecosistemadigital@gmail.com</span>
+                        <span class="google-account-label">Propietario Principal (Acceso Autorizado)</span>
+                    </div>
+                </button>
+                
+                <!-- Cuenta B: Denegada -->
+                <button type="button" class="google-account-item" id="btn-google-account-denied">
+                    <div class="google-avatar google-avatar-warning">O</div>
+                    <div class="google-account-info">
+                        <span class="google-account-email">otro_usuario@gmail.com</span>
+                        <span class="google-account-label">Invitado Externo (Acceso Bloqueado)</span>
+                    </div>
+                </button>
+                
+                <!-- Opción: Escribir cuenta manual -->
+                <button type="button" class="google-account-item" id="btn-google-account-custom-trigger" style="justify-content: center; background: #f8fafc; border-style: dashed;">
+                    <span style="font-size: var(--text-xs); font-weight: 700; color: var(--brand-primary);">Usar otra cuenta de Google...</span>
+                </button>
+            </div>
+            
+            <!-- Contenedor input manual (oculto por defecto) -->
+            <div id="google-custom-email-container" class="hidden" style="display: flex; flex-direction: column; gap: 0.75rem; width: 100%; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+                <label style="font-size: 0.65rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Escribe tu correo de Google</label>
+                <div class="login-input-wrapper">
+                    <input type="email" id="google-custom-email-input" placeholder="correo@gmail.com">
+                    <i data-lucide="mail"></i>
                 </div>
+                <button type="button" id="btn-google-custom-email-submit" class="btn btn-primary btn-full" style="height: 38px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <i data-lucide="log-in" style="width: 14px; height: 14px;"></i> Acceder
+                </button>
+            </div>
+            
+            <div style="font-size: 0.65rem; color: #94a3b8; text-align: center; font-weight: 500; line-height: 1.4;">
+                Para garantizar la seguridad de Bus.click, solo el propietario autorizado puede ingresar a este entorno.
+            </div>
+        </div>
+        
+        <!-- 2. Tarjeta Google Blocked (Recreación exacta del error 401) -->
+        <div id="superadmin-google-blocked-card" class="login-card-premium hidden" style="border-color: #ef4444; background: #ffffff;">
+            <div style="display: flex; flex-direction: column; gap: 1.5rem; text-align: left;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-heading); font-weight: 800; color: #0f172a; font-size: var(--text-base);">
+                    <span style="color: #4285F4; font-size: 1.25rem;">G</span><span style="color: #ea4335;">o</span><span style="color: #fbbc05;">o</span><span style="color: #4285F4;">g</span><span style="color: #34a853;">l</span><span style="color: #ea4335;">e</span>
+                    <span style="margin-left: auto; font-size: var(--text-xs); color: #ef4444; font-weight: 700; background: #fef2f2; padding: 2px 8px; border-radius: var(--radius-sm);">Acceso Bloqueado</span>
+                </div>
+                
+                <h2 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: #1e293b; line-height: 1.2;">
+                    Acceso bloqueado: Error de autorización
+                </h2>
+                
+                <div style="display: flex; align-items: center; gap: 0.5rem; background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid #e2e8f0;">
+                    <div style="width: 24px; height: 24px; border-radius: 50%; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700;">
+                        U
+                    </div>
+                    <span id="google-blocked-email-display" style="font-size: var(--text-xs); font-weight: 700; color: #334155;">otro_usuario@gmail.com</span>
+                </div>
+                
+                <div style="font-size: var(--text-xs); color: #475569; line-height: 1.5; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <p style="font-weight: 700; color: #b91c1c;">The OAuth client was not found.</p>
+                    <p>Si eres desarrollador de esta app, consulta los detalles del error.</p>
+                    <p style="color: #64748b; font-weight: 700; font-family: monospace; font-size: 0.7rem;">Error 401: invalid_client</p>
+                </div>
+                
+                <button type="button" id="btn-back-from-blocked" class="btn btn-secondary btn-full" style="height: 40px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+                    <i data-lucide="arrow-left" style="width: 14px; height: 14px;"></i> Volver a intentar
+                </button>
             </div>
         </div>
     </div>

@@ -2784,3 +2784,69 @@ body {
     width: 14px; height: 14px;
 }
 
+/* ─── SIMULADOR GOOGLE SIGN-IN PREMIUM ─── */
+.google-account-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-align: left;
+}
+
+.google-account-item:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.google-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--brand-primary-pale);
+    color: var(--brand-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: var(--text-sm);
+    flex-shrink: 0;
+}
+
+.google-avatar.google-avatar-success {
+    background: #e0f2fe;
+    color: #0ea5e9;
+}
+
+.google-avatar.google-avatar-warning {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.google-account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.google-account-email {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.google-account-label {
+    font-size: 0.6rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+
