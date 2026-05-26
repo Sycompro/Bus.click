@@ -886,11 +886,17 @@ function renderSeatsGrid(vehicle) {
         gridRender.appendChild(cellEl);
     });
     
-    document.getElementById('maqueta-txt-occupancy').textContent = `Asientos: ${occCount + resCount} / ${getCapacityByModel(vehicle.modelType)} ocupados`;
-    document.getElementById('stat-seats-avail').textContent = availCount;
-    document.getElementById('stat-seats-occ').textContent = occCount;
-    document.getElementById('stat-seats-res').textContent = resCount;
-    document.getElementById('stat-seats-cash').textContent = `S/. ${totalCash.toFixed(2)}`;
+    const occupancyEl = document.getElementById('maqueta-txt-occupancy');
+    const availEl = document.getElementById('stat-seats-avail');
+    const occEl = document.getElementById('stat-seats-occ');
+    const resEl = document.getElementById('stat-seats-res');
+    const cashEl = document.getElementById('stat-seats-cash');
+
+    if (occupancyEl) occupancyEl.textContent = `Asientos: ${occCount + resCount} / ${getCapacityByModel(vehicle.modelType)} ocupados`;
+    if (availEl) availEl.textContent = availCount;
+    if (occEl) occEl.textContent = occCount;
+    if (resEl) resEl.textContent = resCount;
+    if (cashEl) cashEl.textContent = `S/. ${totalCash.toFixed(2)}`;
     
     lucide.createIcons();
 }
