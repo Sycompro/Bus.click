@@ -133,11 +133,15 @@
                         <div class="report-header">
                             <div class="report-header-left">
                                 <h3 class="subtitle-premium"><i data-lucide="bar-chart-3"></i> Arqueo de Caja y Control de Ventas del Turno</h3>
-                                <p class="section-desc">Monitorea y cuadra tus ingresos en Efectivo y Yape/Plin en tiempo real.</p>
+                                <p class="section-desc">Monitorea y cuadra tus ingresos por cada uno de los métodos de pago habilitados en tiempo real.</p>
                             </div>
-                            <div class="payment-stats-badges">
-                                <span class="payment-badge cash"><i data-lucide="banknote"></i> Efectivo: <strong id="cash-payment-total">S/. 0.00</strong></span>
-                                <span class="payment-badge digital"><i data-lucide="smartphone"></i> Yape/Plin: <strong id="digital-payment-total">S/. 0.00</strong></span>
+                            <div class="payment-stats-badges" id="dynamic-payment-badges-container">
+                                <!-- Se poblará dinámicamente con balances en tiempo real -->
+                            </div>
+                            <!-- Soporte oculto para retrocompatibilidad de scripts legados -->
+                            <div style="display: none;">
+                                <strong id="cash-payment-total">S/. 0.00</strong>
+                                <strong id="digital-payment-total">S/. 0.00</strong>
                             </div>
                         </div>
                         
@@ -208,10 +212,7 @@
                         </div>
                         <div class="form-group">
                             <label for="sale-payment">Método de Pago</label>
-                            <select id="sale-payment" class="select-premium">
-                                <option value="Efectivo">Efectivo</option>
-                                <option value="Yape/Plin">Yape/Plin</option>
-                            </select>
+                            <select id="sale-payment" class="select-premium"></select>
                         </div>
                     </div>
                     

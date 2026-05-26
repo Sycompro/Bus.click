@@ -779,9 +779,9 @@ app.post('/api/seed', async (req, res) => {
         
         // Estructura semilla
         const seedCompanies = [
-            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123" },
-            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123" },
-            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123" }
+            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa'] },
+            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa', 'Transferencia BCP'] },
+            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin'] }
         ];
         
         const seedSedes = [
@@ -822,7 +822,8 @@ app.post('/api/seed', async (req, res) => {
                 
                 // Cargar empresas
                 for (const c of seedCompanies) {
-                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7)', [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password]);
+                    const mStr = c.paymentMethods ? c.paymentMethods.join(',') : 'Efectivo,Yape/Plin';
+                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password, payment_methods) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password, mStr]);
                 }
                 
                 // Cargar sedes

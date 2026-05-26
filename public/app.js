@@ -1008,6 +1008,9 @@ function renderSeatsGrid(vehicle) {
 function openSaleModal(seatNum, vehicle) {
     state.selectedSeat = seatNum;
     
+    // Ejecutar el reset primero para limpiar campos anteriores sin afectar los elementos que inyectamos por JS
+    document.getElementById('form-register-sale').reset();
+    
     document.getElementById('modal-seat-num').textContent = seatNum;
     document.getElementById('sale-route-from').value = vehicle.routeFrom;
     document.getElementById('sale-route-to').value = vehicle.routeTo;
@@ -1026,9 +1029,6 @@ function openSaleModal(seatNum, vehicle) {
             selectPayment.appendChild(opt);
         });
     }
-    
-    document.getElementById('form-register-sale').reset();
-    document.getElementById('sale-price').value = vehicle.price;
     
     document.getElementById('modal-sale-register').classList.remove('hidden');
     syncCustomDropdowns(); // Sincronizar el dropdown personalizado con los nuevos métodos
@@ -1689,18 +1689,32 @@ document.addEventListener('click', () => {
 // 13. REPORTE DE VENTAS DEL TURNO Y ARQUEO DE CAJA
 // ==========================================
 function updateSalesTurnReport() {
-    const cashTotalSpan = document.getElementById('cash-payment-total');
-    const digitalTotalSpan = document.getElementById('digital-payment-total');
     const tbody = document.getElementById('table-sales-today-body');
-
     if (!tbody) return;
 
     tbody.innerHTML = '';
+
+    const activeCompany = state.companies.find(c => c.id === state.activeCompanyId);
+    const companyMethods = (activeCompany && activeCompany.paymentMethods) ? activeCompany.paymentMethods : ['Efectivo', 'Yape/Plin'];
+
+    // Inicializar balances acumulados para cada método de pago habilitado
+    const paymentsAccumulator = {};
+    companyMethods.forEach(method => {
+        paymentsAccumulator[method] = 0;
+    });
+
+    const cashTotalSpan = document.getElementById('cash-payment-total');
+    const digitalTotalSpan = document.getElementById('digital-payment-total');
 
     // Si no hay sede seleccionada, salir
     if (!state.activeSedeId) {
         if (cashTotalSpan) cashTotalSpan.textContent = 'S/. 0.00';
         if (digitalTotalSpan) digitalTotalSpan.textContent = 'S/. 0.00';
+        
+        const badgesContainer = document.getElementById('dynamic-payment-badges-container');
+        if (badgesContainer) {
+            badgesContainer.innerHTML = '<span class="text-xs text-subtle" style="color: #64748b;">Selecciona una sede para calcular los arqueos.</span>';
+        }
         tbody.innerHTML = '<tr><td colspan="7" class="text-center">Selecciona una Sede en la cabecera para ver las ventas.</td></tr>';
         return;
     }
@@ -1711,13 +1725,32 @@ function updateSalesTurnReport() {
 
     const activeTickets = state.tickets.filter(t => t.sedeId === state.activeSedeId && vehicleIds.includes(t.movilidadId));
 
-    let cashTotal = 0;
-    let digitalTotal = 0;
-
     if (activeTickets.length === 0) {
         if (cashTotalSpan) cashTotalSpan.textContent = 'S/. 0.00';
         if (digitalTotalSpan) digitalTotalSpan.textContent = 'S/. 0.00';
+        
+        const badgesContainer = document.getElementById('dynamic-payment-badges-container');
+        if (badgesContainer) {
+            badgesContainer.innerHTML = '';
+            companyMethods.forEach(method => {
+                const badgeSpan = document.createElement('span');
+                let iconName = 'credit-card';
+                let badgeClass = 'digital';
+                if (method.toLowerCase().includes('efectivo')) {
+                    iconName = 'banknote';
+                    badgeClass = 'cash';
+                } else if (method.toLowerCase().includes('yape') || method.toLowerCase().includes('plin')) {
+                    iconName = 'smartphone';
+                    badgeClass = 'digital';
+                }
+                badgeSpan.className = `payment-badge ${badgeClass}`;
+                badgeSpan.innerHTML = `<i data-lucide="${iconName}"></i> ${method}: <strong>S/. 0.00</strong>`;
+                badgesContainer.appendChild(badgeSpan);
+            });
+        }
+        
         tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay ventas emitidas en este turno todavía.</td></tr>';
+        lucide.createIcons();
         return;
     }
 
@@ -1730,14 +1763,19 @@ function updateSalesTurnReport() {
         const price = parseFloat(ticket.price || 0);
 
         if (ticket.status === 'Ocupado') {
-            if (ticket.paymentMethod === 'Efectivo') {
-                cashTotal += price;
-            } else if (ticket.paymentMethod === 'Yape/Plin') {
-                digitalTotal += price;
+            const method = ticket.paymentMethod || 'Efectivo';
+            if (paymentsAccumulator[method] === undefined) {
+                paymentsAccumulator[method] = 0;
             }
+            paymentsAccumulator[method] += price;
         }
 
-        const paymentBadgeClass = ticket.paymentMethod === 'Efectivo' ? 'badge-cash' : 'badge-digital';
+        // Estilo de badge del ticket en la lista
+        let paymentBadgeClass = 'badge-digital';
+        if (ticket.paymentMethod && ticket.paymentMethod.toLowerCase().includes('efectivo')) {
+            paymentBadgeClass = 'badge-cash';
+        }
+
         const ticketCode = ticket.id.substring(0, 8).toUpperCase();
 
         const tr = document.createElement('tr');
@@ -1776,8 +1814,44 @@ function updateSalesTurnReport() {
         tbody.appendChild(tr);
     });
 
-    if (cashTotalSpan) cashTotalSpan.textContent = `S/. ${cashTotal.toFixed(2)}`;
-    if (digitalTotalSpan) digitalTotalSpan.textContent = `S/. ${digitalTotal.toFixed(2)}`;
+    // Renderizar dinámicamente los badges de balances arriba en la UI
+    const badgesContainer = document.getElementById('dynamic-payment-badges-container');
+    if (badgesContainer) {
+        badgesContainer.innerHTML = '';
+        Object.keys(paymentsAccumulator).forEach(method => {
+            const amount = paymentsAccumulator[method];
+            let iconName = 'credit-card';
+            let badgeClass = 'digital';
+            if (method.toLowerCase().includes('efectivo')) {
+                iconName = 'banknote';
+                badgeClass = 'cash';
+            } else if (method.toLowerCase().includes('yape') || method.toLowerCase().includes('plin')) {
+                iconName = 'smartphone';
+                badgeClass = 'digital';
+            } else if (method.toLowerCase().includes('transferencia') || method.toLowerCase().includes('bcp') || method.toLowerCase().includes('banco') || method.toLowerCase().includes('interbank') || method.toLowerCase().includes('bbva')) {
+                iconName = 'landmark';
+                badgeClass = 'digital';
+            }
+            
+            const badgeSpan = document.createElement('span');
+            badgeSpan.className = `payment-badge ${badgeClass}`;
+            badgeSpan.innerHTML = `<i data-lucide="${iconName}"></i> ${method}: <strong>S/. ${amount.toFixed(2)}</strong>`;
+            badgesContainer.appendChild(badgeSpan);
+        });
+    }
+
+    // Mantener soporte legado de fallback para ids antiguos por si acaso
+    let cashSum = 0;
+    let digiSum = 0;
+    Object.keys(paymentsAccumulator).forEach(m => {
+        if (m.toLowerCase().includes('efectivo')) {
+            cashSum += paymentsAccumulator[m];
+        } else {
+            digiSum += paymentsAccumulator[m];
+        }
+    });
+    if (cashTotalSpan) cashTotalSpan.textContent = `S/. ${cashSum.toFixed(2)}`;
+    if (digitalTotalSpan) digitalTotalSpan.textContent = `S/. ${digiSum.toFixed(2)}`;
 
     lucide.createIcons();
 }
