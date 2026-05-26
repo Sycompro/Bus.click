@@ -622,7 +622,7 @@ function updateEstabUI() {
                     <span class="connector-arrow">➔</span>
                 </div>
                 <div class="route-node destination">
-                    <i data-lucide="map-pin" style="color: #db2777;"></i>
+                    <i data-lucide="map-pin" style="color: var(--brand-primary);"></i>
                     <span class="node-city">${vehicle.routeTo}</span>
                 </div>
             </div>

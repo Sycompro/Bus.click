@@ -1661,9 +1661,9 @@ body {
 .role-btn.active { color: #0f172a; }
 
 .role-btn.btn-super-admin.active {
-    background: var(--pastel-rose);
-    border: 1px solid var(--pastel-rose-border);
-    color: var(--pastel-rose-text);
+    background: var(--pastel-violet);
+    border: 1px solid var(--pastel-violet-border);
+    color: var(--pastel-violet-text);
 }
 .role-btn.btn-admin-empresa.active {
     background: var(--pastel-amber);
@@ -1671,9 +1671,9 @@ body {
     color: var(--pastel-amber-text);
 }
 .role-btn.btn-establecimiento.active {
-    background: var(--pastel-violet);
-    border: 1px solid var(--pastel-violet-border);
-    color: var(--pastel-violet-text);
+    background: var(--pastel-sky);
+    border: 1px solid var(--pastel-sky-border);
+    color: var(--pastel-sky-text);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1724,9 +1724,9 @@ body {
 .modal-header h3 i { color: var(--brand-primary); }
 
 .btn-close-modal {
-    background: var(--pastel-rose);
-    border: 1px solid var(--pastel-rose-border);
-    color: var(--pastel-rose-text);
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-soft);
+    color: #64748b;
     font-size: 1.25rem;
     cursor: pointer;
     line-height: 1;
@@ -1739,7 +1739,8 @@ body {
 }
 
 .btn-close-modal:hover {
-    background: #fda4af;
+    background: var(--border-soft);
+    color: #1e293b;
     transform: scale(1.1);
 }
 
@@ -2179,7 +2180,7 @@ body {
 .badge-model-flat i { width: 10px; height: 10px; }
 
 .badge-model-flat.model-combi   { background: var(--pastel-green);  color: var(--pastel-green-text);  border: 1px solid var(--pastel-green-border); }
-.badge-model-flat.model-minibus { background: var(--pastel-pink);   color: var(--pastel-pink-text);   border: 1px solid var(--pastel-pink-border); }
+.badge-model-flat.model-minibus { background: var(--pastel-amber);   color: var(--pastel-amber-text);   border: 1px solid var(--pastel-amber-border); }
 .badge-model-flat.model-bus1p   { background: var(--pastel-sky);    color: var(--pastel-sky-text);    border: 1px solid var(--pastel-sky-border); }
 .badge-model-flat.model-bus2p   { background: var(--pastel-violet); color: var(--pastel-violet-text); border: 1px solid var(--pastel-violet-border); }
 
