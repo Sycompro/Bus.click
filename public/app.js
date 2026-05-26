@@ -270,18 +270,8 @@ function populateSedeSelectors() {
 
 // Aplicar colores de la empresa de forma dinámica con variables CSS
 function applyCompanyBrandTheme() {
-    const activeCompany = state.companies.find(c => c.id === state.activeCompanyId);
-    if (activeCompany && activeCompany.color) {
-        let color = activeCompany.color;
-        // Si el color es un rojo brillante o fucsia de alerta, lo normalizamos a un naranja de transporte muy elegante
-        const lowerColor = color.toLowerCase();
-        if (lowerColor === '#ef4444' || lowerColor === '#ff0000' || lowerColor === '#dc2626' || lowerColor === '#f43f5e' || lowerColor === '#db2777') {
-            color = '#f97316';
-        }
-        document.documentElement.style.setProperty('--brand-primary', color);
-        document.documentElement.style.setProperty('--brand-primary-glow', `${color}35`);
-        document.documentElement.style.setProperty('--brand-primary-light', lightenColor(color, 15));
-    }
+    // La paleta del sistema Bus.click se mantiene estática e integrada con color índigo y lavanda 
+    // para garantizar una visualización sumamente profesional y consistente de todos los controles de venta.
 }
 
 function lightenColor(color, percent) {
