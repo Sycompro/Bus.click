@@ -1039,17 +1039,13 @@ body {
 
 /* ─── TARJETAS DE VEHÍCULOS ─── */
 .estab-vehicles-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-direction: column;
     gap: 0.875rem;
 }
 
-@media (max-width: 650px) {
-    .estab-vehicles-grid { grid-template-columns: 1fr; }
-}
-
 .no-data-card {
-    grid-column: span 2;
+    width: 100%;
     padding: 2.5rem;
     display: flex;
     flex-direction: column;
