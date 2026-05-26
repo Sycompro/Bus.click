@@ -858,7 +858,7 @@ function renderSeatsGrid(vehicle) {
                     const tooltip = document.createElement('div');
                     tooltip.className = 'seat-tooltip';
                     tooltip.innerHTML = `
-                        <div class="font-bold text-rose-400">Asiento N° ${cell.seatNum}</div>
+                        <div class="font-bold text-indigo-400">Asiento N° ${cell.seatNum}</div>
                         <div class="tooltip-line"><strong>Nombre:</strong> ${ticket.passengerName}</div>
                         <div class="tooltip-line"><strong>DNI:</strong> ${ticket.passengerDni}</div>
                         <div class="tooltip-line"><strong>Ruta:</strong> ${ticket.routeFrom} ➔ ${ticket.routeTo}</div>

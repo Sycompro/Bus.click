@@ -625,18 +625,18 @@ body {
 /* Paleta de Iconos Pastel */
 .bg-indigo-500-10  { background: var(--pastel-violet); color: #6366f1; }
 .bg-emerald-500-10 { background: var(--pastel-green);  color: #10b981; }
-.bg-pink-500-10    { background: var(--pastel-pink);    color: #ec4899; }
+.bg-pink-500-10    { background: var(--pastel-sky);    color: #0284c7; }
 .bg-amber-500-10   { background: var(--pastel-amber);   color: #f59e0b; }
 
 /* Indicador lateral de color */
 .metric-card:nth-child(1)::before { background: #6366f1; }
 .metric-card:nth-child(2)::before { background: #10b981; }
-.metric-card:nth-child(3)::before { background: #ec4899; }
+.metric-card:nth-child(3)::before { background: #0284c7; }
 .metric-card:nth-child(4)::before { background: #f59e0b; }
 
 .text-indigo-400  { color: #6366f1; }
 .text-emerald-400 { color: #10b981; }
-.text-pink-400    { color: #ec4899; }
+.text-pink-400    { color: #0284c7; }
 .text-amber-400   { color: #f59e0b; }
 
 .metric-info h3 {
