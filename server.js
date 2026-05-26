@@ -96,6 +96,14 @@ async function initializePostgresTables() {
             ADD COLUMN IF NOT EXISTS password VARCHAR(100);
         `);
         
+        // Auto-reparar credenciales de empresas nulas si existen
+        await client.query(`
+            UPDATE companies SET 
+                username = COALESCE(username, LOWER(REGEXP_REPLACE(name, '[^a-zA-Z0-9]', '', 'g'))), 
+                password = COALESCE(password, LOWER(LEFT(REGEXP_REPLACE(name, '[^a-zA-Z0-9]', '', 'g'), 3)) || '123') 
+            WHERE username IS NULL OR password IS NULL;
+        `);
+        
         // Tabla Sedes
         await client.query(`
             CREATE TABLE IF NOT EXISTS sedes (
@@ -112,6 +120,14 @@ async function initializePostgresTables() {
         await client.query(`
             ALTER TABLE sedes ADD COLUMN IF NOT EXISTS username VARCHAR(100),
             ADD COLUMN IF NOT EXISTS password VARCHAR(100);
+        `);
+        
+        // Auto-reparar credenciales de sedes nulas si existen
+        await client.query(`
+            UPDATE sedes SET 
+                username = COALESCE(username, 'sede_' || LOWER(REGEXP_REPLACE(name, '[^a-zA-Z0-9]', '', 'g'))), 
+                password = COALESCE(password, LOWER(LEFT(REGEXP_REPLACE(name, '[^a-zA-Z0-9]', '', 'g'), 3)) || '123') 
+            WHERE username IS NULL OR password IS NULL;
         `);
         
         // Tabla Trabajadores
@@ -202,6 +218,11 @@ app.get('/api/companies', async (req, res) => {
             res.status(500).json({ error: e.message });
         }
     } else {
+        // Asegurar que existan credenciales para empresas en el fallback JSON local
+        localDb.companies.forEach(c => {
+            if (!c.username) c.username = c.id;
+            if (!c.password) c.password = "123";
+        });
         res.json(localDb.companies.map(c => ({
             ...c,
             paymentMethods: c.paymentMethods || ['Efectivo', 'Yape/Plin']
@@ -303,6 +324,11 @@ app.get('/api/sedes', async (req, res) => {
             res.status(500).json({ error: e.message });
         }
     } else {
+        // Asegurar que existan credenciales para sedes en el fallback JSON local
+        localDb.sedes.forEach(s => {
+            if (!s.username) s.username = s.id;
+            if (!s.password) s.password = "123";
+        });
         res.json(localDb.sedes);
     }
 });

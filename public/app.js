@@ -388,7 +388,17 @@ function renderCompaniesList() {
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="font-bold">${company.name}</td>
+            <td class="font-bold">
+                <div style="font-size: var(--text-sm); font-weight: 700; color: #0f172a;">${company.name}</div>
+                <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 0.25rem;">
+                    <span style="font-size: 0.65rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
+                        <i data-lucide="user" style="width: 10px; height: 10px;"></i> ${company.username || 'sin_usuario'}
+                    </span>
+                    <span style="font-size: 0.65rem; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
+                        <i data-lucide="lock" style="width: 10px; height: 10px;"></i> ${company.password || 'sin_clave'}
+                    </span>
+                </div>
+            </td>
             <td>${company.ruc}</td>
             <td>
                 <span class="company-badge-color" style="background-color: ${company.color || '#6366f1'}"></span>
@@ -424,7 +434,17 @@ function renderSedesList() {
     filteredSedes.forEach(sede => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="font-bold">${sede.name}</td>
+            <td class="font-bold">
+                <div style="font-size: var(--text-sm); font-weight: 700; color: #0f172a;">${sede.name}</div>
+                <div style="display: flex; align-items: center; gap: 0.35rem; margin-top: 0.25rem;">
+                    <span style="font-size: 0.65rem; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
+                        <i data-lucide="user" style="width: 10px; height: 10px;"></i> ${sede.username || 'sin_usuario'}
+                    </span>
+                    <span style="font-size: 0.65rem; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: var(--radius-sm); font-weight: 700; font-family: monospace; display: flex; align-items: center; gap: 2px;">
+                        <i data-lucide="lock" style="width: 10px; height: 10px;"></i> ${sede.password || 'sin_clave'}
+                    </span>
+                </div>
+            </td>
             <td>${sede.city}</td>
             <td>${sede.address}</td>
             <td class="action-buttons-cell">
