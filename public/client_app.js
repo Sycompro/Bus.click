@@ -1207,9 +1207,9 @@ function initPremiumDatepickers() {
                 ];
 
                 header.innerHTML = `
-                    <button type="button" class="datepicker-nav-btn btn-prev"><i data-lucide="chevron-left" style="width: 12px; height: 12px;"></i></button>
-                    <div class="datepicker-month-title" style="text-transform: capitalize; font-weight: 800;">${monthNames[month]} de ${year}</div>
-                    <button type="button" class="datepicker-nav-btn btn-next"><i data-lucide="chevron-right" style="width: 12px; height: 12px;"></i></button>
+                    <button type="button" class="datepicker-nav-btn btn-prev" style="display: flex; align-items: center; justify-content: center; outline: none; border-radius: 6px;"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                    <div class="datepicker-month-title" style="text-transform: capitalize; font-weight: 800; color: #1e293b; font-size: 0.85rem;">${monthNames[month]} de ${year}</div>
+                    <button type="button" class="datepicker-nav-btn btn-next" style="display: flex; align-items: center; justify-content: center; outline: none; border-radius: 6px;"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
                 `;
                 popover.appendChild(header);
 
@@ -1290,8 +1290,9 @@ function initPremiumDatepickers() {
                 const footer = document.createElement('div');
                 footer.className = 'datepicker-footer';
                 footer.innerHTML = `
-                    <button type="button" class="datepicker-footer-btn datepicker-btn-clear">Borrar</button>
-                    <button type="button" class="datepicker-footer-btn datepicker-btn-today">Hoy</button>
+                    <button type="button" class="datepicker-footer-btn datepicker-btn-clear" style="color: #ef4444; font-weight: 700;">Borrar</button>
+                    <button type="button" class="datepicker-footer-btn datepicker-btn-today" style="color: #475569; font-weight: 700;">Hoy</button>
+                    <button type="button" class="datepicker-footer-btn datepicker-btn-close" style="color: #7c3aed; font-weight: 800;">Cerrar</button>
                 `;
                 popover.appendChild(footer);
 
@@ -1329,6 +1330,11 @@ function initPremiumDatepickers() {
                     ev.stopPropagation();
                     const now = new Date();
                     selectDate(now.getDate(), now.getMonth(), now.getFullYear());
+                });
+
+                popover.querySelector('.datepicker-btn-close').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    closeAllPremiumDatepickers();
                 });
 
                 lucide.createIcons();
