@@ -409,28 +409,33 @@ async function createMovilidad(companyId, sedeId, plate, brand, modelType, route
 }
 
 // ==========================================
-// 5. REGISTRO DE DATOS SEMILLA (SEED DATA)
+// 5. VACIADO COMPLETO DE BASE DE DATOS (RESET DB)
 // ==========================================
-async function seedDefaultRailwayData() {
-    const seedBtn = document.getElementById('btn-seed-data');
-    seedBtn.disabled = true;
-    seedBtn.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i> Precargando Datos...';
+async function clearDatabaseData() {
+    const confirmClear = confirm("¿Estás seguro de que deseas VACIAR Y LIMPIAR por completo el ecosistema? Esta acción eliminará permanentemente todas las empresas, sedes, personal, flota y boletos de la base de datos PostgreSQL.");
+    if (!confirmClear) return;
+
+    const clearBtn = document.getElementById('btn-clear-db');
+    if (!clearBtn) return;
+    
+    clearBtn.disabled = true;
+    clearBtn.innerHTML = '<i class="animate-spin" data-lucide="loader-2"></i> Vaciando BD...';
     lucide.createIcons();
 
     try {
-        const res = await fetch('/api/seed', { method: 'POST' }).then(r => r.json());
+        const res = await fetch('/api/clear-db', { method: 'POST' }).then(r => r.json());
         if (res.success) {
             await reloadAllApiData();
-            showToast("¡Datos semilla creados en tu Base de Datos de Railway exitosamente!", "success");
+            showToast("¡Base de datos vaciada y limpiada con éxito!", "success");
         } else {
-            showToast("Error al cargar datos semilla: " + res.error, "error");
+            showToast("Error al vaciar la base de datos: " + res.error, "error");
         }
     } catch (err) {
-        console.error("Error al sembrar datos:", err);
-        showToast("Ocurrió un error cargando los datos semilla.", "error");
+        console.error("Error al vaciar BD:", err);
+        showToast("Ocurrió un error al vaciar la base de datos.", "error");
     } finally {
-        seedBtn.disabled = false;
-        seedBtn.innerHTML = '<i data-lucide="database-backup"></i> Cargar Datos Semilla en Railway';
+        clearBtn.disabled = false;
+        clearBtn.innerHTML = '<i data-lucide="trash-2"></i> Vaciar Base de Datos';
         lucide.createIcons();
     }
 }
@@ -1451,9 +1456,9 @@ function setupUIEventListeners() {
         });
     });
 
-    const btnSeed = document.getElementById('btn-seed-data');
-    if (btnSeed) {
-        btnSeed.addEventListener('click', seedDefaultRailwayData);
+    const btnClearDb = document.getElementById('btn-clear-db');
+    if (btnClearDb) {
+        btnClearDb.addEventListener('click', clearDatabaseData);
     }
 
     const btnDiag = document.getElementById('btn-diagnose-db');

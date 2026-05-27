@@ -990,113 +990,58 @@ app.post('/api/login/sede', async (req, res) => {
     }
 });
 
-// --- CARGAR DATOS SEMILLA ---
-app.post('/api/seed', async (req, res) => {
+// --- VACIAR / LIMPIAR BASE DE DATOS (RESET DB) ---
+app.post('/api/clear-db', async (req, res) => {
     try {
-        console.log("Precargando datos semilla...");
+        console.log("🧹 Iniciando proceso de vaciado completo de la base de datos...");
         
-        // Estructura semilla
-        const seedCompanies = [
-            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Encomiendas,GPS Satelital', billingCycle: 'Semestral' },
-            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa', 'Transferencia BCP'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Pasarela Online,GPS Satelital', billingCycle: 'Anual' },
-            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin'], planName: 'Plan Básico', services: 'Boletería', billingCycle: 'Mensual' }
-        ];
-        
-        const seedSedes = [
-            { id: "sede-fl-1", companyId: "flores", name: "Terminal Lima Norte", city: "Lima", address: "Av. Gerardo Unger 6500", username: "flores_lima", password: "123" },
-            { id: "sede-fl-2", companyId: "flores", name: "Terminal Arequipa", city: "Arequipa", address: "Av. Arturo Ibáñez s/n", username: "flores_arequipa", password: "123" },
-            { id: "sede-cds-1", companyId: "cruzdelsur", name: "Sede Cruz del Sur Centro", city: "Lima", address: "Av. Javier Prado Este 1109", username: "cds_centro", password: "123" },
-            { id: "sede-com-1", companyId: "combi", name: "Terminal Colectivos San Juan", city: "Lima", address: "Av. Los Héroes 450", username: "combi_sanjuan", password: "123" }
-        ];
-        
-        const seedTrabajadores = [
-            { id: "tr-1", companyId: "flores", sedeId: "sede-fl-1", name: "Roberto", lastname: "Gómez", dni: "44123456", role: "Vendedor de Pasajes" },
-            { id: "tr-2", companyId: "flores", sedeId: "sede-fl-1", name: "Patricia", lastname: "Flores", dni: "45987654", role: "Jefe de Terminal" },
-            { id: "tr-3", companyId: "cruzdelsur", sedeId: "sede-cds-1", name: "Carlos", lastname: "Mendoza", dni: "70554433", role: "Vendedor de Pasajes" },
-            { id: "tr-4", companyId: "combi", sedeId: "sede-com-1", name: "Manuel", lastname: "Yauri", dni: "10203040", role: "Vendedor de Pasajes" },
-            { id: "tr-5", companyId: "flores", sedeId: "sede-fl-1", name: "Julio", lastname: "Prado", dni: "42109876", role: "Conductor Principal" },
-            { id: "tr-6", companyId: "flores", sedeId: "sede-fl-1", name: "Sofía", lastname: "Linares", dni: "46321098", role: "Terramozo(a)" }
-        ];
-        
-        const seedMovilidades = [
-            { id: "mov-1", companyId: "flores", SedeId: "sede-fl-1", plate: "F3W-902", brand: "Volvo B430R", modelType: "bus1p", routeFrom: "Lima", routeTo: "Arequipa", price: 60 },
-            { id: "mov-2", companyId: "flores", SedeId: "sede-fl-1", plate: "A9P-231", brand: "Mercedes DoubleDecker", modelType: "bus2p", routeFrom: "Lima", routeTo: "Cusco", price: 90 },
-            { id: "mov-3", companyId: "cruzdelsur", SedeId: "sede-cds-1", plate: "C5S-991", brand: "Scania K410", modelType: "bus1p", routeFrom: "Lima", routeTo: "Ica", price: 45 },
-            { id: "mov-4", companyId: "combi", SedeId: "sede-com-1", plate: "T8O-114", brand: "Toyota HiAce rural", modelType: "combi", routeFrom: "Lima", routeTo: "Cañete", price: 20 },
-            { id: "mov-5", companyId: "combi", SedeId: "sede-com-1", plate: "B9U-225", brand: "Mitsubishi Fuso", modelType: "minibus", routeFrom: "Lima", routeTo: "Huacho", price: 30 }
-        ];
-
-        const seedPayments = [
-            { id: "pay-1", companyId: "flores", billingPeriod: "Mayo 2026", amount: 580, dueDate: "2026-05-15", payDate: "2026-05-14", status: "Pagado" },
-            { id: "pay-2", companyId: "flores", billingPeriod: "Junio 2026", amount: 580, dueDate: "2026-06-15", payDate: null, status: "Pendiente" },
-            { id: "pay-3", companyId: "cruzdelsur", billingPeriod: "Mayo 2026", amount: 610, dueDate: "2026-05-15", payDate: "2026-05-13", status: "Pagado" },
-            { id: "pay-4", companyId: "cruzdelsur", billingPeriod: "Junio 2026", amount: 610, dueDate: "2026-06-15", payDate: null, status: "Pendiente" },
-            { id: "pay-5", companyId: "combi", billingPeriod: "Mayo 2026", amount: 100, dueDate: "2026-05-15", payDate: null, status: "Vencido" },
-            { id: "pay-6", companyId: "combi", billingPeriod: "Junio 2026", amount: 100, dueDate: "2026-06-15", payDate: null, status: "Pendiente" }
-        ];
-
         if (usePostgres) {
             const client = await pool.connect();
             try {
                 await client.query('BEGIN');
                 
-                // Limpiar previamente
+                console.log("🧹 Vaciando company_payments en PostgreSQL...");
                 await client.query('DELETE FROM company_payments');
+                
+                console.log("🧹 Vaciando tickets en PostgreSQL...");
                 await client.query('DELETE FROM tickets');
+                
+                console.log("🧹 Vaciando movilidades en PostgreSQL...");
                 await client.query('DELETE FROM movilidades');
+                
+                console.log("🧹 Vaciando trabajadores en PostgreSQL...");
                 await client.query('DELETE FROM trabajadores');
+                
+                console.log("🧹 Vaciando sedes en PostgreSQL...");
                 await client.query('DELETE FROM sedes');
+                
+                console.log("🧹 Vaciando companies en PostgreSQL...");
                 await client.query('DELETE FROM companies');
                 
-                // Cargar empresas
-                for (const c of seedCompanies) {
-                    const mStr = c.paymentMethods ? c.paymentMethods.join(',') : 'Efectivo,Yape/Plin';
-                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password, payment_methods, plan_name, services, billing_cycle) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', 
-                        [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password, mStr, c.planName, c.services, c.billingCycle || 'Mensual']);
-                }
-                
-                // Cargar sedes
-                for (const s of seedSedes) {
-                    await client.query('INSERT INTO sedes (id, company_id, name, city, address, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7)', [s.id, s.companyId, s.name, s.city, s.address, s.username, s.password]);
-                }
-                
-                // Cargar trabajadores
-                for (const t of seedTrabajadores) {
-                    await client.query('INSERT INTO trabajadores (id, company_id, sede_id, name, lastname, dni, role) VALUES ($1, $2, $3, $4, $5, $6, $7)', [t.id, t.companyId, t.sedeId, t.name, t.lastname, t.dni, t.role]);
-                }
-                
-                // Cargar movilidades
-                for (const m of seedMovilidades) {
-                    await client.query('INSERT INTO movilidades (id, company_id, sede_id, plate, brand, model_type, route_from, route_to, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', [m.id, m.companyId, m.SedeId, m.plate, m.brand, m.modelType, m.routeFrom, m.routeTo, m.price]);
-                }
-
-                // Cargar pagos de prueba
-                for (const p of seedPayments) {
-                    await client.query('INSERT INTO company_payments (id, company_id, billing_period, amount, due_date, status, pay_date) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-                        [p.id, p.companyId, p.billingPeriod, p.amount, p.dueDate, p.status, p.payDate]);
-                }
-                
                 await client.query('COMMIT');
+                console.log("✔ Base de datos física de PostgreSQL en Railway vaciada con éxito.");
             } catch (err) {
                 await client.query('ROLLBACK');
                 throw err;
             } finally {
                 client.release();
             }
-        } else {
-            // Cargar en localDb
-            localDb.companies = seedCompanies;
-            localDb.sedes = seedSedes;
-            localDb.trabajadores = seedTrabajadores;
-            localDb.movilidades = seedMovilidades.map(m => ({ id: m.id, companyId: m.companyId, sedeId: m.SedeId, plate: m.plate, brand: m.brand, modelType: m.modelType, routeFrom: m.routeFrom, routeTo: m.routeTo, price: m.price }));
-            localDb.tickets = [];
-            localDb.payments = seedPayments;
-            saveLocalDb();
         }
         
-        res.json({ success: true });
+        // Vaciado de localDb (fallback)
+        localDb = {
+            companies: [],
+            sedes: [],
+            trabajadores: [],
+            movilidades: [],
+            tickets: []
+        };
+        saveLocalDb();
+        console.log("✔ Base de datos local JSON vaciada con éxito.");
+        
+        res.json({ success: true, message: "Base de datos completamente vaciada." });
     } catch (e) {
-        console.error("Error al sembrar:", e);
+        console.error("Error al vaciar base de datos:", e);
         res.status(500).json({ error: e.message });
     }
 });
