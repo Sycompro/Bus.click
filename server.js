@@ -89,11 +89,13 @@ async function initializePostgresTables() {
             )
         `);
         
-        // Agregar columnas payment_methods, username y password si no existen
+        // Agregar columnas payment_methods, username, password, plan_name y services si no existen
         await client.query(`
             ALTER TABLE companies ADD COLUMN IF NOT EXISTS payment_methods TEXT DEFAULT 'Efectivo,Yape/Plin',
             ADD COLUMN IF NOT EXISTS username VARCHAR(100),
-            ADD COLUMN IF NOT EXISTS password VARCHAR(100);
+            ADD COLUMN IF NOT EXISTS password VARCHAR(100),
+            ADD COLUMN IF NOT EXISTS plan_name VARCHAR(100) DEFAULT 'Plan Profesional',
+            ADD COLUMN IF NOT EXISTS services TEXT DEFAULT 'Boletería,Flota';
         `);
         
         // Auto-reparar credenciales de empresas nulas si existen
@@ -179,6 +181,19 @@ async function initializePostgresTables() {
             )
         `);
         
+        // Tabla Pagos de Suscripción Mensual de Empresas
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS company_payments (
+                id VARCHAR(50) PRIMARY KEY,
+                company_id VARCHAR(50) REFERENCES companies(id) ON DELETE CASCADE,
+                billing_period VARCHAR(50) NOT NULL,
+                amount DECIMAL(10,2) NOT NULL,
+                due_date VARCHAR(50) NOT NULL,
+                pay_date VARCHAR(50),
+                status VARCHAR(20) DEFAULT 'Pendiente'
+            )
+        `);
+        
         await client.query('COMMIT');
         console.log("✔ Estructura de tablas de PostgreSQL verificada/creada correctamente.");
     } catch (e) {
@@ -226,6 +241,8 @@ app.get('/api/companies', async (req, res) => {
                 color: r.color,
                 username: r.username,
                 password: r.password,
+                planName: r.plan_name || 'Plan Profesional',
+                services: r.services || 'Boletería,Flota',
                 paymentMethods: (r.payment_methods !== null && r.payment_methods !== undefined) ? (r.payment_methods === '' ? [] : r.payment_methods.split(',')) : ['Efectivo', 'Yape/Plin']
             })));
         } catch (e) {
@@ -240,25 +257,31 @@ app.get('/api/companies', async (req, res) => {
                 c.username = c.username && c.username.trim() !== "" ? c.username : cleanSlug;
                 c.password = c.password && c.password.trim() !== "" ? c.password : (cleanSlug.slice(0, 3) + randomNum);
             }
+            c.planName = c.planName || 'Plan Profesional';
+            c.services = c.services || 'Boletería,Flota';
         });
         saveLocalDb();
         res.json(localDb.companies.map(c => ({
             ...c,
+            planName: c.planName || 'Plan Profesional',
+            services: c.services || 'Boletería,Flota',
             paymentMethods: c.paymentMethods || ['Efectivo', 'Yape/Plin']
         })));
     }
 });
 
 app.post('/api/companies', async (req, res) => {
-    const { name, ruc, logo, color, username, password } = req.body;
+    const { name, ruc, logo, color, username, password, planName, services } = req.body;
     const id = generateId();
     const defaultMethods = 'Efectivo,Yape/Plin';
+    const finalPlanName = planName || 'Plan Profesional';
+    const finalServices = services || 'Boletería,Flota';
     
     if (usePostgres) {
         try {
             await pool.query(
-                'INSERT INTO companies (id, name, ruc, logo, color, payment_methods, username, password) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-                [id, name, ruc, logo || "", color || "#6366f1", defaultMethods, username || "", password || ""]
+                'INSERT INTO companies (id, name, ruc, logo, color, payment_methods, username, password, plan_name, services) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+                [id, name, ruc, logo || "", color || "#6366f1", defaultMethods, username || "", password || "", finalPlanName, finalServices]
             );
             res.json({ id });
         } catch (e) {
@@ -273,6 +296,8 @@ app.post('/api/companies', async (req, res) => {
             color: color || "#6366f1",
             username: username || "",
             password: password || "",
+            planName: finalPlanName,
+            services: finalServices,
             paymentMethods: ['Efectivo', 'Yape/Plin'] 
         };
         localDb.companies.push(company);
@@ -345,6 +370,129 @@ app.put('/api/companies/:id/credentials', async (req, res) => {
             res.json({ success: true });
         } else {
             res.status(404).json({ error: "Company not found" });
+        }
+    }
+});
+
+app.put('/api/companies/:id/services', async (req, res) => {
+    const { id } = req.params;
+    const { planName, services } = req.body;
+
+    if (usePostgres) {
+        try {
+            await pool.query(
+                'UPDATE companies SET plan_name = $1, services = $2 WHERE id = $3',
+                [planName, services, id]
+            );
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const company = localDb.companies.find(c => c.id === id);
+        if (company) {
+            company.planName = planName;
+            company.services = services;
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: "Company not found" });
+        }
+    }
+});
+
+app.get('/api/payments', async (req, res) => {
+    if (usePostgres) {
+        try {
+            const { rows } = await pool.query(`
+                SELECT cp.*, c.name as company_name 
+                FROM company_payments cp
+                JOIN companies c ON cp.company_id = c.id
+                ORDER BY cp.due_date DESC
+            `);
+            res.json(rows.map(r => ({
+                id: r.id,
+                companyId: r.company_id,
+                companyName: r.company_name,
+                billingPeriod: r.billing_period,
+                amount: parseFloat(r.amount),
+                dueDate: r.due_date,
+                payDate: r.pay_date,
+                status: r.status
+            })));
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        localDb.payments = localDb.payments || [];
+        const enriched = localDb.payments.map(p => {
+            const company = localDb.companies.find(c => c.id === p.companyId);
+            return {
+                ...p,
+                companyName: company ? company.name : 'Empresa Desconocida'
+            };
+        });
+        // Ordenar por fecha de vencimiento desc
+        enriched.sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+        res.json(enriched);
+    }
+});
+
+app.post('/api/payments', async (req, res) => {
+    const { companyId, billingPeriod, amount, dueDate, status, payDate } = req.body;
+    const id = generateId();
+
+    if (usePostgres) {
+        try {
+            await pool.query(
+                'INSERT INTO company_payments (id, company_id, billing_period, amount, due_date, status, pay_date) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                [id, companyId, billingPeriod, amount, dueDate, status || 'Pendiente', payDate || null]
+            );
+            res.json({ id });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        localDb.payments = localDb.payments || [];
+        const newPayment = {
+            id,
+            companyId,
+            billingPeriod,
+            amount: parseFloat(amount),
+            dueDate,
+            status: status || 'Pendiente',
+            payDate: payDate || null
+        };
+        localDb.payments.push(newPayment);
+        saveLocalDb();
+        res.json(newPayment);
+    }
+});
+
+app.put('/api/payments/:id/status', async (req, res) => {
+    const { id } = req.params;
+    const { status, payDate } = req.body;
+
+    if (usePostgres) {
+        try {
+            await pool.query(
+                'UPDATE company_payments SET status = $1, pay_date = $2 WHERE id = $3',
+                [status, payDate || null, id]
+            );
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        localDb.payments = localDb.payments || [];
+        const payment = localDb.payments.find(p => p.id === id);
+        if (payment) {
+            payment.status = status;
+            payment.payDate = payDate || null;
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: "Payment not found" });
         }
     }
 });
@@ -822,9 +970,9 @@ app.post('/api/seed', async (req, res) => {
         
         // Estructura semilla
         const seedCompanies = [
-            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa'] },
-            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa', 'Transferencia BCP'] },
-            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin'] }
+            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Encomiendas,GPS Satelital' },
+            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa', 'Transferencia BCP'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Pasarela Online,GPS Satelital' },
+            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin'], planName: 'Plan Básico', services: 'Boletería' }
         ];
         
         const seedSedes = [
@@ -851,12 +999,22 @@ app.post('/api/seed', async (req, res) => {
             { id: "mov-5", companyId: "combi", SedeId: "sede-com-1", plate: "B9U-225", brand: "Mitsubishi Fuso", modelType: "minibus", routeFrom: "Lima", routeTo: "Huacho", price: 30 }
         ];
 
+        const seedPayments = [
+            { id: "pay-1", companyId: "flores", billingPeriod: "Mayo 2026", amount: 580, dueDate: "2026-05-15", payDate: "2026-05-14", status: "Pagado" },
+            { id: "pay-2", companyId: "flores", billingPeriod: "Junio 2026", amount: 580, dueDate: "2026-06-15", payDate: null, status: "Pendiente" },
+            { id: "pay-3", companyId: "cruzdelsur", billingPeriod: "Mayo 2026", amount: 610, dueDate: "2026-05-15", payDate: "2026-05-13", status: "Pagado" },
+            { id: "pay-4", companyId: "cruzdelsur", billingPeriod: "Junio 2026", amount: 610, dueDate: "2026-06-15", payDate: null, status: "Pendiente" },
+            { id: "pay-5", companyId: "combi", billingPeriod: "Mayo 2026", amount: 100, dueDate: "2026-05-15", payDate: null, status: "Vencido" },
+            { id: "pay-6", companyId: "combi", billingPeriod: "Junio 2026", amount: 100, dueDate: "2026-06-15", payDate: null, status: "Pendiente" }
+        ];
+
         if (usePostgres) {
             const client = await pool.connect();
             try {
                 await client.query('BEGIN');
                 
                 // Limpiar previamente
+                await client.query('DELETE FROM company_payments');
                 await client.query('DELETE FROM tickets');
                 await client.query('DELETE FROM movilidades');
                 await client.query('DELETE FROM trabajadores');
@@ -866,7 +1024,8 @@ app.post('/api/seed', async (req, res) => {
                 // Cargar empresas
                 for (const c of seedCompanies) {
                     const mStr = c.paymentMethods ? c.paymentMethods.join(',') : 'Efectivo,Yape/Plin';
-                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password, payment_methods) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)', [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password, mStr]);
+                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password, payment_methods, plan_name, services) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)', 
+                        [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password, mStr, c.planName, c.services]);
                 }
                 
                 // Cargar sedes
@@ -883,6 +1042,12 @@ app.post('/api/seed', async (req, res) => {
                 for (const m of seedMovilidades) {
                     await client.query('INSERT INTO movilidades (id, company_id, sede_id, plate, brand, model_type, route_from, route_to, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', [m.id, m.companyId, m.SedeId, m.plate, m.brand, m.modelType, m.routeFrom, m.routeTo, m.price]);
                 }
+
+                // Cargar pagos de prueba
+                for (const p of seedPayments) {
+                    await client.query('INSERT INTO company_payments (id, company_id, billing_period, amount, due_date, status, pay_date) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                        [p.id, p.companyId, p.billingPeriod, p.amount, p.dueDate, p.status, p.payDate]);
+                }
                 
                 await client.query('COMMIT');
             } catch (err) {
@@ -898,6 +1063,7 @@ app.post('/api/seed', async (req, res) => {
             localDb.trabajadores = seedTrabajadores;
             localDb.movilidades = seedMovilidades.map(m => ({ id: m.id, companyId: m.companyId, sedeId: m.SedeId, plate: m.plate, brand: m.brand, modelType: m.modelType, routeFrom: m.routeFrom, routeTo: m.routeTo, price: m.price }));
             localDb.tickets = [];
+            localDb.payments = seedPayments;
             saveLocalDb();
         }
         

@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initApp() {
     setupUIEventListeners();
     initSidebarBehavior();
+    initSuperAdminSaasBehavior();
     
     // Sincronizar dropdowns personalizados
     syncCustomDropdowns();
@@ -158,6 +159,8 @@ async function reloadAllApiData() {
         // Actualizar UI
         populateCompanySelectors();
         renderCompaniesList();
+        renderPlanesList();
+        renderPaymentsList();
         updateSuperStats();
         updateEstabUI();
         applyCompanyBrandTheme();
@@ -1244,7 +1247,7 @@ function switchRoleView(role) {
         }
     });
     
-    const panelSuperAdmin = document.getElementById('panel-super-admin');
+    const panelSuperAdmin = document.getElementById('panel-super-admin') || document.getElementById('apartado-ecosistema');
     const panelAdminEmpresa = document.getElementById('panel-admin-empresa');
     const panelEstablecimiento = document.getElementById('panel-establecimiento');
     
@@ -1731,6 +1734,28 @@ function initSidebarBehavior() {
             // Marcar activo
             navItems.forEach(n => n.classList.remove('active'));
             item.classList.add('active');
+
+            const targetId = item.getAttribute('data-nav-target');
+            if (targetId) {
+                // Ocultar todas las secciones del panel
+                const sections = document.querySelectorAll('.panel-section');
+                sections.forEach(sec => sec.classList.add('hidden'));
+
+                // Mostrar la sección seleccionada
+                const targetSec = document.getElementById(targetId);
+                if (targetSec) {
+                    targetSec.classList.remove('hidden');
+                }
+
+                // Cargar datos del apartado específico si estamos en Super Admin
+                if (targetId === 'apartado-ecosistema') {
+                    renderCompaniesList();
+                } else if (targetId === 'apartado-planes') {
+                    renderPlanesList();
+                } else if (targetId === 'apartado-pagos') {
+                    renderPaymentsList();
+                }
+            }
         });
     });
 }
@@ -2625,6 +2650,356 @@ async function generateAndSaveSedeCredentials(id, name, button) {
         button.disabled = false;
         button.innerHTML = '<i data-lucide="key" style="width: 10px; height: 10px;"></i> Generar Credenciales';
         lucide.createIcons();
+    }
+}
+
+// --- GESTIÓN SAAS DE PLANES, SERVICIOS Y PAGOS DESDE SUPER ADMIN ---
+
+function calcularMontoMensual(planName, servicesStr) {
+    let total = 0;
+    // Plan base
+    if (planName === 'Plan Básico') total = 100;
+    else if (planName === 'Plan Profesional') total = 250;
+    else if (planName === 'Plan Enterprise') total = 500;
+    else total = 250; // default
+
+    // Servicios adicionales
+    const services = servicesStr ? servicesStr.split(',') : [];
+    services.forEach(srv => {
+        const cleanSrv = srv.trim();
+        if (cleanSrv === 'Encomiendas') total += 50;
+        else if (cleanSrv === 'GPS Satelital') total += 80;
+        else if (cleanSrv === 'Pasarela Online') total += 30;
+    });
+
+    return total;
+}
+
+function renderPlanesList() {
+    const tbody = document.getElementById('table-planes-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (state.companies.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay empresas integradas en el ecosistema.</td></tr>';
+        return;
+    }
+
+    state.companies.forEach(company => {
+        const plan = company.planName || 'Plan Profesional';
+        const srvs = company.services || 'Boletería,Flota';
+        const totalCost = calcularMontoMensual(plan, srvs);
+
+        // Dar formato visual a los servicios/módulos
+        const srvArray = srvs.split(',');
+        const srvBadges = srvArray.map(s => {
+            const clean = s.trim();
+            if (clean === 'Boletería' || clean === 'Flota') {
+                return `<span class="badge-version" style="background: rgba(99, 102, 241, 0.08); color: #6366f1; border-color: rgba(99, 102, 241, 0.2); font-size: 0.65rem;">${clean}</span>`;
+            } else {
+                return `<span class="badge-version" style="background: rgba(16, 185, 129, 0.08); color: #10b981; border-color: rgba(16, 185, 129, 0.2); font-size: 0.65rem;">${clean}</span>`;
+            }
+        }).join(' ');
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="font-bold">${company.name}</td>
+            <td>
+                <span class="badge-version" style="background: var(--brand-sidebar-pale); color: var(--brand-sidebar-color); font-weight: 800; border-radius: 8px;">
+                    ${plan}
+                </span>
+            </td>
+            <td>${srvBadges}</td>
+            <td class="font-bold font-mono text-indigo-600">S/ ${totalCost.toFixed(2)}</td>
+            <td class="action-buttons-cell">
+                <button type="button" class="btn btn-secondary btn-sparkle" style="padding: 4px 10px; font-size: 0.7rem; gap: 0.25rem;" onclick="openEditServicesModal('${company.id}', '${company.name.replace(/'/g, "\\'")}', '${plan}', '${srvs.replace(/'/g, "\\'")}')">
+                    <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i> Configurar
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    lucide.createIcons();
+}
+
+window.openEditServicesModal = function(id, name, plan, services) {
+    const modal = document.getElementById('modal-edit-services');
+    if (!modal) return;
+
+    document.getElementById('edit-services-company-id').value = id;
+    document.getElementById('edit-services-company-name').value = name;
+    document.getElementById('edit-services-plan').value = plan;
+
+    // Resetear checkboxes
+    const checkboxes = modal.querySelectorAll('.service-checkbox');
+    const activeServices = services.split(',').map(s => s.trim());
+
+    checkboxes.forEach(chk => {
+        // Boletería siempre queda checked
+        if (chk.value === 'Boletería') {
+            chk.checked = true;
+        } else {
+            chk.checked = activeServices.includes(chk.value);
+        }
+    });
+
+    modal.classList.remove('hidden');
+};
+
+async function renderPaymentsList() {
+    const tbody = document.getElementById('table-payments-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    try {
+        const payments = await fetch('/api/payments').then(r => r.json());
+        
+        // Elementos métricos
+        const statTotal = document.getElementById('stat-pay-total');
+        const statCompleted = document.getElementById('stat-pay-completed');
+        const statPending = document.getElementById('stat-pay-pending');
+        const statOverdue = document.getElementById('stat-pay-overdue');
+
+        let totalIngresos = 0;
+        let cCompleted = 0;
+        let cPending = 0;
+        let cOverdue = 0;
+
+        if (payments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay registros de cobros mensuales.</td></tr>';
+            if (statTotal) statTotal.textContent = 'S/ 0.00';
+            if (statCompleted) statCompleted.textContent = '0';
+            if (statPending) statPending.textContent = '0';
+            if (statOverdue) statOverdue.textContent = '0';
+            return;
+        }
+
+        payments.forEach(pay => {
+            const totalCost = parseFloat(pay.amount);
+            
+            // Acumular métricas
+            if (pay.status === 'Pagado') {
+                totalIngresos += totalCost;
+                cCompleted++;
+            } else if (pay.status === 'Pendiente') {
+                cPending++;
+            } else if (pay.status === 'Vencido') {
+                cOverdue++;
+            }
+
+            let statusBadge = '';
+            let actionBtn = '';
+
+            if (pay.status === 'Pagado') {
+                statusBadge = `<span class="badge-version" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.3); font-weight: 700; border-radius: 8px;">Cobrado</span>`;
+            } else if (pay.status === 'Pendiente') {
+                statusBadge = `<span class="badge-version" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); font-weight: 700; border-radius: 8px;">Pendiente</span>`;
+                actionBtn = `
+                    <button type="button" class="btn btn-primary btn-sparkle" style="padding: 4px 10px; font-size: 0.65rem; background: #10b981; border-color: #10b981; gap: 0.2rem;" onclick="registerSaasPaymentPaid('${pay.id}')">
+                        <i data-lucide="check" style="width: 10px; height: 10px;"></i> Cobrar
+                    </button>
+                `;
+            } else if (pay.status === 'Vencido') {
+                statusBadge = `<span class="badge-version" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); font-weight: 700; border-radius: 8px;">Vencido</span>`;
+                actionBtn = `
+                    <button type="button" class="btn btn-primary btn-sparkle" style="padding: 4px 10px; font-size: 0.65rem; background: #ef4444; border-color: #ef4444; gap: 0.2rem;" onclick="registerSaasPaymentPaid('${pay.id}')">
+                        <i data-lucide="check" style="width: 10px; height: 10px;"></i> Cobrar
+                    </button>
+                `;
+            }
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="font-bold">${pay.companyName}</td>
+                <td class="font-semibold">${pay.billingPeriod}</td>
+                <td class="font-bold font-mono">S/ ${totalCost.toFixed(2)}</td>
+                <td class="font-medium">${pay.dueDate}</td>
+                <td class="font-medium text-emerald-600">${pay.payDate || '-'}</td>
+                <td>${statusBadge}</td>
+                <td class="action-buttons-cell">${actionBtn}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Actualizar UI de estadísticas
+        if (statTotal) statTotal.textContent = `S/ ${totalIngresos.toFixed(2)}`;
+        if (statCompleted) statCompleted.textContent = cCompleted;
+        if (statPending) statPending.textContent = cPending;
+        if (statOverdue) statOverdue.textContent = cOverdue;
+
+        lucide.createIcons();
+
+    } catch (err) {
+        console.error("Error al cargar pagos:", err);
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-red-500">Error de conexión al cargar pagos.</td></tr>';
+    }
+}
+
+window.registerSaasPaymentPaid = async function(id) {
+    const today = new Date().toISOString().split('T')[0];
+    try {
+        const res = await fetch(`/api/payments/${id}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'Pagado', payDate: today })
+        }).then(r => r.json());
+
+        if (res.success) {
+            showToast("Pago registrado como cobrado exitosamente.", "success");
+            await renderPaymentsList();
+        } else {
+            showToast("Error al cobrar pago: " + res.error, "error");
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error de conexión al procesar cobro.", "error");
+    }
+};
+
+function initSuperAdminSaasBehavior() {
+    const formEditServices = document.getElementById('form-edit-services');
+    const formCreatePayment = document.getElementById('form-create-payment');
+
+    const modalEdit = document.getElementById('modal-edit-services');
+    const modalCreatePay = document.getElementById('modal-create-payment');
+
+    const btnCloseEdit = document.getElementById('btn-close-edit-services-modal');
+    const btnCloseCreatePay = document.getElementById('btn-close-create-payment-modal');
+    const btnOpenCreatePay = document.getElementById('btn-open-create-payment-modal');
+
+    // Cerrar modal editar servicios
+    if (btnCloseEdit && modalEdit) {
+        btnCloseEdit.addEventListener('click', () => {
+            modalEdit.classList.add('hidden');
+        });
+    }
+
+    // Registrar pago / cobro
+    if (btnOpenCreatePay && modalCreatePay) {
+        btnOpenCreatePay.addEventListener('click', () => {
+            // Popular select de empresas
+            const selectCompany = document.getElementById('payment-company-id');
+            if (selectCompany) {
+                selectCompany.innerHTML = '<option value="">Seleccione empresa...</option>';
+                state.companies.forEach(c => {
+                    selectCompany.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+
+                // Auto calcular monto cuando se cambie de empresa
+                selectCompany.addEventListener('change', () => {
+                    const compId = selectCompany.value;
+                    const comp = state.companies.find(c => c.id === compId);
+                    const amountInput = document.getElementById('payment-amount');
+                    if (comp && amountInput) {
+                        const cost = calcularMontoMensual(comp.planName, comp.services);
+                        amountInput.value = cost;
+                    }
+                });
+            }
+
+            // Poner fecha de vencimiento por defecto (fin de mes actual)
+            const dueInput = document.getElementById('payment-due-date');
+            if (dueInput) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 15); // vencimiento a 15 días
+                dueInput.value = tomorrow.toISOString().split('T')[0];
+            }
+
+            modalCreatePay.classList.remove('hidden');
+        });
+    }
+
+    // Cerrar modal cobro
+    if (btnCloseCreatePay && modalCreatePay) {
+        btnCloseCreatePay.addEventListener('click', () => {
+            modalCreatePay.classList.add('hidden');
+        });
+    }
+
+    // Toggle de campo Fecha de Pago según estado
+    const selectStatus = document.getElementById('payment-status');
+    const containerPayDate = document.getElementById('payment-pay-date-container');
+    if (selectStatus && containerPayDate) {
+        selectStatus.addEventListener('change', () => {
+            if (selectStatus.value === 'Pagado') {
+                containerPayDate.classList.remove('hidden');
+                document.getElementById('payment-pay-date').value = new Date().toISOString().split('T')[0];
+            } else {
+                containerPayDate.classList.add('hidden');
+                document.getElementById('payment-pay-date').value = '';
+            }
+        });
+    }
+
+    // Enviar formulario editar servicios
+    if (formEditServices && modalEdit) {
+        formEditServices.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('edit-services-company-id').value;
+            const planName = document.getElementById('edit-services-plan').value;
+
+            // Recopilar checkboxes activos
+            const checkedValues = [];
+            modalEdit.querySelectorAll('.service-checkbox:checked').forEach(chk => {
+                checkedValues.push(chk.value);
+            });
+            const services = checkedValues.join(',');
+
+            try {
+                const res = await fetch(`/api/companies/${id}/services`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ planName, services })
+                }).then(r => r.json());
+
+                if (res.success) {
+                    showToast("Servicios y plan actualizados exitosamente.", "success");
+                    modalEdit.classList.add('hidden');
+                    await reloadAllApiData();
+                    renderPlanesList();
+                } else {
+                    showToast("Error al actualizar servicios: " + res.error, "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error de conexión al actualizar servicios.", "error");
+            }
+        });
+    }
+
+    // Enviar formulario crear cobro
+    if (formCreatePayment && modalCreatePay) {
+        formCreatePayment.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const companyId = document.getElementById('payment-company-id').value;
+            const billingPeriod = document.getElementById('payment-period').value;
+            const amount = parseFloat(document.getElementById('payment-amount').value);
+            const dueDate = document.getElementById('payment-due-date').value;
+            const status = document.getElementById('payment-status').value;
+            const payDate = document.getElementById('payment-pay-date').value || null;
+
+            try {
+                const res = await fetch('/api/payments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ companyId, billingPeriod, amount, dueDate, status, payDate })
+                }).then(r => r.json());
+
+                if (res.id) {
+                    showToast("Cobro mensual registrado exitosamente.", "success");
+                    modalCreatePay.classList.add('hidden');
+                    formCreatePayment.reset();
+                    if (containerPayDate) containerPayDate.classList.add('hidden');
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al registrar cobro: " + res.error, "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error de conexión al registrar cobro.", "error");
+            }
+        });
     }
 }
 

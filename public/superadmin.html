@@ -38,6 +38,18 @@
                                 <span class="nav-label">Ecosistema Global</span>
                             </a>
                         </li>
+                        <li class="nav-item" data-nav-target="apartado-planes">
+                            <a href="#" class="nav-link">
+                                <i data-lucide="layers"></i>
+                                <span class="nav-label">Servicios y Planes</span>
+                            </a>
+                        </li>
+                        <li class="nav-item" data-nav-target="apartado-pagos">
+                            <a href="#" class="nav-link">
+                                <i data-lucide="credit-card"></i>
+                                <span class="nav-label">Control de Pagos</span>
+                            </a>
+                        </li>
                     </ul>
                 </nav>
                 <div class="sidebar-footer">
@@ -73,7 +85,7 @@
 
             <div class="app-layout">
                 <main class="main-content">
-                    <section id="panel-super-admin" class="panel-section">
+                    <section id="apartado-ecosistema" class="panel-section">
                         <div class="panel-header-block">
                             <div>
                                 <h2>🌐 Gestión Global de Ecosistema</h2>
@@ -123,6 +135,92 @@
                                         </tr>
                                     </thead>
                                     <tbody id="table-companies-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- APARTADO DE SERVICIOS Y PLANES SAAS -->
+                    <section id="apartado-planes" class="panel-section hidden">
+                        <div class="panel-header-block">
+                            <div>
+                                <h2>🛠 Configuración de Planes y Servicios Activos</h2>
+                                <p class="section-desc">Mapea planes de suscripción y activa módulos opcionales para cada cliente SaaS.</p>
+                            </div>
+                        </div>
+
+                        <div class="list-container-card glass mt-6" style="width: 100%;">
+                            <h3 class="card-title"><i data-lucide="shield-check"></i> Distribución de Módulos Activos</h3>
+                            <div class="table-scroll-container">
+                                <table class="table-premium">
+                                    <thead>
+                                        <tr>
+                                            <th>Empresa</th>
+                                            <th>Plan Actual</th>
+                                            <th>Servicios / Módulos Activos</th>
+                                            <th>Monto Mensual Estimado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-planes-body">
+                                        <!-- Se rellenará dinámicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- APARTADO DE PAGOS MENSUALES SAAS -->
+                    <section id="apartado-pagos" class="panel-section hidden">
+                        <div class="panel-header-block">
+                            <div>
+                                <h2>💳 Control Financiero y Pagos Mensuales</h2>
+                                <p class="section-desc">Historial de facturación de suscripciones SaaS, vencimientos y estados de mora.</p>
+                            </div>
+                            <div class="header-actions">
+                                <button id="btn-open-create-payment-modal" class="btn btn-primary btn-sparkle animate-pulse">
+                                    <i data-lucide="plus-circle"></i> Registrar Cobro
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="metrics-grid">
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-indigo-500-10"><i data-lucide="trending-up"></i></div>
+                                <div class="metric-info"><h3>Ingresos del Mes</h3><p class="metric-value" id="stat-pay-total">S/ 0.00</p></div>
+                            </div>
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-emerald-500-10"><i data-lucide="badge-check"></i></div>
+                                <div class="metric-info"><h3>Pagos Cobrados</h3><p class="metric-value" id="stat-pay-completed">0</p></div>
+                            </div>
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-amber-500-10"><i data-lucide="alert-circle"></i></div>
+                                <div class="metric-info"><h3>Cobros Pendientes</h3><p class="metric-value" id="stat-pay-pending">0</p></div>
+                            </div>
+                            <div class="metric-card glass">
+                                <div class="metric-icon bg-red-500-10"><i data-lucide="alert-triangle"></i></div>
+                                <div class="metric-info"><h3>Clientes en Mora</h3><p class="metric-value" id="stat-pay-overdue">0</p></div>
+                            </div>
+                        </div>
+
+                        <div class="list-container-card glass mt-6" style="width: 100%;">
+                            <h3 class="card-title"><i data-lucide="receipt"></i> Historial de Facturación Mensual</h3>
+                            <div class="table-scroll-container">
+                                <table class="table-premium">
+                                    <thead>
+                                        <tr>
+                                            <th>Empresa</th>
+                                            <th>Periodo de Cobro</th>
+                                            <th>Monto Mensual</th>
+                                            <th>Fecha Vencimiento</th>
+                                            <th>Fecha Pago</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-payments-body">
+                                        <!-- Se rellenará dinámicamente -->
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -267,6 +365,106 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
                     <i data-lucide="save"></i> Guardar Empresa
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL EDITAR SERVICIOS Y PLANES SAAS -->
+    <div id="modal-edit-services" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i data-lucide="edit"></i> Editar Servicios y Plan</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-edit-services-modal">×</button>
+            </div>
+            <form id="form-edit-services" class="form-premium">
+                <input type="hidden" id="edit-services-company-id">
+                <div class="form-group">
+                    <label>Nombre de la Empresa</label>
+                    <input type="text" id="edit-services-company-name" readonly style="background: #f1f5f9; cursor: not-allowed; font-weight: 700;">
+                </div>
+                <div class="form-group">
+                    <label>Plan de Suscripción</label>
+                    <select id="edit-services-plan" class="select-premium" required>
+                        <option value="Plan Básico">Plan Básico (S/ 100/mes)</option>
+                        <option value="Plan Profesional">Plan Profesional (S/ 250/mes)</option>
+                        <option value="Plan Enterprise">Plan Enterprise (S/ 500/mes)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Módulos / Servicios Adicionales Activos</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.25rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: var(--text-xs); font-weight: 600; cursor: pointer; color: #334155;">
+                            <input type="checkbox" class="service-checkbox" value="Boletería" checked disabled style="width: 16px; height: 16px; accent-color: var(--brand-primary);"> Boletería (Módulo Núcleo - Incluido)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: var(--text-xs); font-weight: 600; cursor: pointer; color: #334155;">
+                            <input type="checkbox" class="service-checkbox" value="Flota" style="width: 16px; height: 16px; accent-color: var(--brand-primary);"> Flota y Movilidades (Incluido)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: var(--text-xs); font-weight: 600; cursor: pointer; color: #334155;">
+                            <input type="checkbox" class="service-checkbox" value="Encomiendas" style="width: 16px; height: 16px; accent-color: var(--brand-primary);"> Encomiendas y Carga (+S/ 50/mes)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: var(--text-xs); font-weight: 600; cursor: pointer; color: #334155;">
+                            <input type="checkbox" class="service-checkbox" value="GPS Satelital" style="width: 16px; height: 16px; accent-color: var(--brand-primary);"> Monitoreo GPS Satelital (+S/ 80/mes)
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; font-size: var(--text-xs); font-weight: 600; cursor: pointer; color: #334155;">
+                            <input type="checkbox" class="service-checkbox" value="Pasarela Online" style="width: 16px; height: 16px; accent-color: var(--brand-primary);"> Pasarelas de Pago Online (+S/ 30/mes)
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
+                    <i data-lucide="save"></i> Actualizar Servicios
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL REGISTRAR COBRO / PAGO -->
+    <div id="modal-create-payment" class="modal-overlay hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i data-lucide="plus-circle"></i> Registrar Cobro SaaS</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-create-payment-modal">×</button>
+            </div>
+            <form id="form-create-payment" class="form-premium">
+                <div class="form-group">
+                    <label>Empresa Cliente</label>
+                    <select id="payment-company-id" class="select-premium" required>
+                        <option value="">Seleccione empresa...</option>
+                        <!-- Rellenado dinámicamente -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Periodo de Cobro (Mes Año)</label>
+                    <select id="payment-period" class="select-premium" required>
+                        <option value="Mayo 2026">Mayo 2026</option>
+                        <option value="Junio 2026">Junio 2026</option>
+                        <option value="Julio 2026">Julio 2026</option>
+                        <option value="Agosto 2026">Agosto 2026</option>
+                        <option value="Septiembre 2026">Septiembre 2026</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Monto a Cobrar (S/.)</label>
+                    <input type="number" id="payment-amount" required placeholder="Ej: 250" min="1" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Fecha de Vencimiento</label>
+                    <input type="date" id="payment-due-date" required>
+                </div>
+                <div class="form-group">
+                    <label>Estado de Cobro</label>
+                    <select id="payment-status" class="select-premium" required>
+                        <option value="Pendiente">Pendiente (Sin Cobrar)</option>
+                        <option value="Pagado">Pagado (Completado)</option>
+                        <option value="Vencido">Vencido (En Mora)</option>
+                    </select>
+                </div>
+                <div class="form-group hidden" id="payment-pay-date-container">
+                    <label>Fecha de Pago</label>
+                    <input type="date" id="payment-pay-date">
+                </div>
+                <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
+                    <i data-lucide="save"></i> Registrar Cobro
                 </button>
             </form>
         </div>
