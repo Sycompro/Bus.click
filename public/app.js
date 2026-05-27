@@ -3242,7 +3242,7 @@ window.registerSaasPaymentPaid = async function(id) {
 
 function initSuperAdminSaasBehavior() {
     // === CONTROLADOR DE SUB-PESTAÑAS DE PLANES Y SERVICIOS ===
-    const subtabsButtons = document.querySelectorAll('#apartado-planes .tabs-premium-wrapper .tab-btn');
+    const subtabsButtons = document.querySelectorAll('#apartado-planes .tab-btn-compact');
     const subtabContents = document.querySelectorAll('#apartado-planes .subtab-content');
 
     subtabsButtons.forEach(btn => {

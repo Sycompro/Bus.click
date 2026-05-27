@@ -142,21 +142,20 @@
 
                     <!-- APARTADO DE SERVICIOS Y PLANES SAAS -->
                     <section id="apartado-planes" class="panel-section hidden">
-                        <div class="panel-header-block">
+                        <div class="panel-header-block" style="display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
                             <div>
                                 <h2><i data-lucide="layers"></i> Configuración de Planes y Servicios Activos</h2>
                                 <p class="section-desc">Mapea planes de suscripción y activa módulos opcionales para cada cliente SaaS.</p>
                             </div>
-                        </div>
-
-                        <!-- 🎛️ SUB-PESTAÑAS PREMIUM DE PLANES Y SERVICIOS -->
-                        <div class="tabs-premium-wrapper" style="margin-top: 1rem; margin-bottom: 1rem;">
-                            <button type="button" class="tab-btn active" data-subtab="subtab-asignacion">
-                                <i data-lucide="users"></i> Asignación a Clientes
-                            </button>
-                            <button type="button" class="tab-btn" data-subtab="subtab-catalogo">
-                                <i data-lucide="settings"></i> Configuración de Catálogo
-                            </button>
+                            <!-- 🎛️ SUB-PESTAÑAS COMPACTAS AL COSTADO DE LA CABECERA -->
+                            <div style="display: flex; align-items: center; gap: 0.25rem; padding: 4px; background: rgba(241, 245, 249, 0.6); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 12px; flex-shrink: 0; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+                                <button type="button" class="tab-btn-compact active" data-subtab="subtab-asignacion">
+                                    <i data-lucide="users" style="width: 11px; height: 11px;"></i> Asignación
+                                </button>
+                                <button type="button" class="tab-btn-compact" data-subtab="subtab-catalogo">
+                                    <i data-lucide="settings" style="width: 11px; height: 11px;"></i> Catálogo SaaS
+                                </button>
+                            </div>
                         </div>
 
                         <!-- SUBAPARTADO 1: ASIGNACIÓN A CLIENTES -->

@@ -3472,3 +3472,28 @@ body {
     }
 }
 
+/* ═══ Sub-pestañas Premium Compactas para Títulos de Panel ═══ */
+.tab-btn-compact {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 6px 12px;
+    font-size: var(--text-xxs) !important;
+    font-weight: 700;
+    color: #64748b;
+    background: transparent;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.tab-btn-compact:hover {
+    color: var(--brand-primary);
+    background: rgba(99, 102, 241, 0.05);
+}
+.tab-btn-compact.active {
+    color: var(--brand-primary) !important;
+    background: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.12) !important;
+}
+
