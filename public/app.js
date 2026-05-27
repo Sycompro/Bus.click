@@ -526,7 +526,7 @@ function renderCompaniesList() {
     tbody.innerHTML = '';
     
     if (state.companies.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay empresas. Carga datos semilla para empezar.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay empresas registradas actualmente.</td></tr>';
         return;
     }
     
@@ -540,24 +540,22 @@ function renderCompaniesList() {
         let credsHtml = '';
         if (!username && !password) {
             credsHtml = `
-                <div style="margin-top: 0.35rem;">
-                    <button type="button" class="btn-generate-cred-inline" onclick="generateAndSaveCompanyCredentials('${company.id}', '${company.name.replace(/'/g, "\\'")}', this)">
-                        <i data-lucide="key" style="width: 10px; height: 10px;"></i> Generar Credenciales
-                    </button>
-                </div>
+                <button type="button" class="btn-generate-cred-inline" style="margin: 0;" onclick="generateAndSaveCompanyCredentials('${company.id}', '${company.name.replace(/'/g, "\\'")}', this)">
+                    <i data-lucide="key" style="width: 10px; height: 10px;"></i> Generar Acceso
+                </button>
             `;
         } else {
             credsHtml = `
-                <div class="credentials-badge-container">
-                    <div class="credential-badge-premium user-badge" onclick="copyTextToClipboard('${username}', this)" title="Haz clic para copiar el usuario">
-                        <i data-lucide="user" style="width: 10px; height: 10px;"></i>
-                        <span>${username}</span>
-                        <span class="btn-copy-cred"><i data-lucide="copy"></i></span>
+                <div class="credentials-badge-container" style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin: 0; padding: 0;">
+                    <div class="credential-badge-premium user-badge" style="margin: 0;" onclick="copyTextToClipboard('${username}', this)" title="Copiar Usuario de Acceso">
+                        <i data-lucide="user" style="width: 9px; height: 9px;"></i>
+                        <span style="font-weight: 700; margin-left: 2px;">${username}</span>
+                        <span class="btn-copy-cred" style="margin-left: 4px;"><i data-lucide="copy" style="width: 8px; height: 8px;"></i></span>
                     </div>
-                    <div class="credential-badge-premium lock-badge" onclick="copyTextToClipboard('${password}', this)" title="Haz clic para copiar la contraseña">
-                        <i data-lucide="lock" style="width: 10px; height: 10px;"></i>
-                        <span>${password}</span>
-                        <span class="btn-copy-cred"><i data-lucide="copy"></i></span>
+                    <div class="credential-badge-premium lock-badge" style="margin: 0;" onclick="copyTextToClipboard('${password}', this)" title="Copiar Contraseña de Acceso">
+                        <i data-lucide="lock" style="width: 9px; height: 9px;"></i>
+                        <span style="font-weight: 700; margin-left: 2px;">${password}</span>
+                        <span class="btn-copy-cred" style="margin-left: 4px;"><i data-lucide="copy" style="width: 8px; height: 8px;"></i></span>
                     </div>
                 </div>
             `;
@@ -568,13 +566,13 @@ function renderCompaniesList() {
         const b2cLink = `${window.location.origin}/compra?empresa=${slug}`;
         
         const linkHtml = `
-            <div style="margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
-                <div class="credential-badge-premium user-badge" style="background: rgba(124, 58, 237, 0.08); border-color: rgba(124, 58, 237, 0.2); color: #7c3aed; padding: 2px 8px; font-size: 9px; cursor: pointer; max-width: max-content; display: inline-flex;" onclick="copyTextToClipboard('${b2cLink}', this)" title="Copiar enlace de venta B2C de la empresa">
+            <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                <div class="credential-badge-premium user-badge" style="background: rgba(124, 58, 237, 0.08); border-color: rgba(124, 58, 237, 0.2); color: #7c3aed; padding: 3px 8px; font-size: 9px; cursor: pointer; max-width: max-content; display: inline-flex; margin: 0;" onclick="copyTextToClipboard('${b2cLink}', this)" title="Copiar enlace de venta B2C de la empresa">
                     <i data-lucide="link" style="width: 10px; height: 10px;"></i>
-                    <span style="font-weight: 700; margin-left: 2px;">Link Ventas B2C</span>
+                    <span style="font-weight: 700; margin-left: 2px;">Copiar Link Ventas</span>
                     <span class="btn-copy-cred" style="margin-left: 4px;"><i data-lucide="copy" style="width: 8px; height: 8px;"></i></span>
                 </div>
-                <a href="${b2cLink}" target="_blank" class="btn-generate-cred-inline" style="padding: 2.5px 6px; font-size: 8px; height: auto; width: auto; background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); color: #059669; text-decoration: none; border-radius: 6px; display: inline-flex; align-items: center; gap: 2px; margin: 0;" title="Abrir portal de venta B2C">
+                <a href="${b2cLink}" target="_blank" class="btn-generate-cred-inline" style="padding: 3px 8px; font-size: 8px; height: auto; width: auto; background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); color: #059669; text-decoration: none; border-radius: 8px; display: inline-flex; align-items: center; gap: 2px; margin: 0; font-weight: 700;" title="Abrir portal de venta B2C">
                     <i data-lucide="external-link" style="width: 9px; height: 9px;"></i> Abrir
                 </a>
             </div>
@@ -582,22 +580,28 @@ function renderCompaniesList() {
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td class="font-bold">
-                <div style="font-size: var(--text-sm); font-weight: 700; color: #0f172a;">${company.name}</div>
-                ${credsHtml}
-                ${linkHtml}
+            <td>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="width: 10px; height: 10px; border-radius: 50%; background: ${company.color || '#6366f1'}; display: inline-block; flex-shrink: 0; box-shadow: 0 0 4px ${company.color || '#6366f1'};"></span>
+                    <div>
+                        <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b; line-height: 1.2;">${company.name}</div>
+                        <div style="font-size: 0.72rem; color: #94a3b8; font-weight: 600; margin-top: 1px;">RUC: ${company.ruc}</div>
+                    </div>
+                </div>
             </td>
-            <td>${company.ruc}</td>
+            <td>${credsHtml}</td>
+            <td>${linkHtml}</td>
             <td>
                 <span class="company-badge-color" style="background-color: ${company.color || '#6366f1'}"></span>
-                <span class="ml-2 font-mono">${company.color || '#6366F1'}</span>
+                <span class="ml-2 font-mono font-bold" style="font-size: 0.8rem; color: #475569;">${company.color || '#6366F1'}</span>
             </td>
-            <td>${sedesCount}</td>
-            <td>${movCount}</td>
+            <td style="text-align: center; font-weight: 800; color: #475569; font-size: 0.95rem;">${sedesCount}</td>
+            <td style="text-align: center; font-weight: 800; color: #475569; font-size: 0.95rem;">${movCount}</td>
             <td class="action-buttons-cell">
                 <button class="btn-delete-row" data-delete-type="company" data-delete-id="${company.id}">
                     <i data-lucide="trash-2"></i>
                 </button>
+            </td>
         `;
         tbody.appendChild(tr);
     });
