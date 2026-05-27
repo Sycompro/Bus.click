@@ -1697,14 +1697,16 @@ function initGenericModal(modalId, btnOpenId, btnCloseId, formId) {
  * rotación del icono toggle, y vincula el botón de cerrar sesión del sidebar.
  */
 function initSidebarBehavior() {
-    const sidebar = document.getElementById('sidebar-container-wrapper') || document.getElementById('sidebar-menu');
+    const wrapper = document.getElementById('sidebar-container-wrapper');
+    const menu = document.getElementById('sidebar-menu');
     const btnSidebarLogout = document.getElementById('btn-sidebar-logout');
 
-    if (!sidebar) return;
-
-    // Forzar estado expandido siempre
-    sidebar.classList.add('expanded');
+    // Forzar estado expandido siempre en ambos elementos (wrapper y tarjeta de navegación)
+    if (wrapper) wrapper.classList.add('expanded');
+    if (menu) menu.classList.add('expanded');
     localStorage.setItem('bus-click-sidebar-state', 'expanded');
+
+    if (!wrapper && !menu) return;
 
     // Vincular botón de cerrar sesión del sidebar
     if (btnSidebarLogout) {
@@ -1721,7 +1723,7 @@ function initSidebarBehavior() {
     }
 
     // Navegación del sidebar: items con data-nav-target que NO son enlaces externos
-    const navItems = sidebar.querySelectorAll('.nav-item[data-nav-target]');
+    const navItems = (wrapper || menu).querySelectorAll('.nav-item[data-nav-target]');
     navItems.forEach(item => {
         const link = item.querySelector('.nav-link');
         // Si el link tiene href real (no "#"), permitimos la navegación normal
