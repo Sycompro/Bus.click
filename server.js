@@ -474,6 +474,8 @@ app.put('/api/companies/:id/services', async (req, res) => {
         } else {
             res.status(404).json({ error: "Company not found" });
         }
+    }
+});
 // --- CATALOGO GLOBAL DE PLANES SAAS ---
 app.get('/api/saas/plans', async (req, res) => {
     if (usePostgres) {
