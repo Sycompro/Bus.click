@@ -2987,7 +2987,7 @@ body {
 :root {
     --sidebar-width-expanded: 260px;
     --sidebar-width-collapsed: 78px;
-    --sidebar-width: var(--sidebar-width-collapsed); /* por defecto colapsado */
+    --sidebar-width: var(--sidebar-width-expanded); /* Menú flotante siempre expandido y visible */
 }
 
 /* Contenedor principal horizontal flotante premium */
