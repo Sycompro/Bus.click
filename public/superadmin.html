@@ -576,7 +576,11 @@
                 </div>
                 <div class="form-group">
                     <label>Fecha de Vencimiento</label>
-                    <input type="date" id="payment-due-date" required>
+                    <div class="datepicker-wrapper">
+                        <input type="text" class="datepicker-input" id="payment-due-date-display" placeholder="Seleccione fecha..." readonly required style="cursor: pointer;">
+                        <input type="hidden" id="payment-due-date" required>
+                        <i data-lucide="calendar" class="datepicker-icon"></i>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Estado de Cobro</label>
@@ -588,7 +592,11 @@
                 </div>
                 <div class="form-group hidden" id="payment-pay-date-container">
                     <label>Fecha de Pago</label>
-                    <input type="date" id="payment-pay-date">
+                    <div class="datepicker-wrapper">
+                        <input type="text" class="datepicker-input" id="payment-pay-date-display" placeholder="Seleccione fecha..." readonly style="cursor: pointer;">
+                        <input type="hidden" id="payment-pay-date">
+                        <i data-lucide="calendar" class="datepicker-icon"></i>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-full" style="margin-top: 1rem;">
                     <i data-lucide="save"></i> Registrar Cobro

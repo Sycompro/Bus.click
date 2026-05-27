@@ -3321,13 +3321,11 @@ function initSuperAdminSaasBehavior() {
                 });
             }
 
-            // Poner fecha de vencimiento por defecto (fin de mes actual)
-            const dueInput = document.getElementById('payment-due-date');
-            if (dueInput) {
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 15); // vencimiento a 15 días
-                dueInput.value = tomorrow.toISOString().split('T')[0];
-            }
+            // Poner fecha de vencimiento por defecto (vencimiento a 15 días)
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 15);
+            const yyyymmdd = tomorrow.toISOString().split('T')[0];
+            setPremiumDatepickerValue('payment-due-date', yyyymmdd);
 
             modalCreatePay.classList.remove('hidden');
         });
@@ -3347,10 +3345,10 @@ function initSuperAdminSaasBehavior() {
         selectStatus.addEventListener('change', () => {
             if (selectStatus.value === 'Pagado') {
                 containerPayDate.classList.remove('hidden');
-                document.getElementById('payment-pay-date').value = new Date().toISOString().split('T')[0];
+                setPremiumDatepickerValue('payment-pay-date', new Date().toISOString().split('T')[0]);
             } else {
                 containerPayDate.classList.add('hidden');
-                document.getElementById('payment-pay-date').value = '';
+                setPremiumDatepickerValue('payment-pay-date', '');
             }
         });
     }
@@ -3413,6 +3411,8 @@ function initSuperAdminSaasBehavior() {
                     showToast("Cobro mensual registrado exitosamente.", "success");
                     modalCreatePay.classList.add('hidden');
                     formCreatePayment.reset();
+                    setPremiumDatepickerValue('payment-due-date', '');
+                    setPremiumDatepickerValue('payment-pay-date', '');
                     if (containerPayDate) containerPayDate.classList.add('hidden');
                     await reloadAllApiData();
                 } else {
@@ -3531,7 +3531,234 @@ function initSuperAdminSaasBehavior() {
                 console.error(err);
                 showToast("Error de conexión al guardar servicio.", "error");
             }
-        });
     }
+
+    // Inicializar Datepickers Premium del Super Admin
+    initPremiumDatepickers();
 }
+
+/* ══════════════════════════════════════════════════════════
+   DATEPICKER PREMIUM PERSONALIZADO (CSS-VANILLA / JS-NATIVO)
+   ══════════════════════════════════════════════════════════ */
+function initPremiumDatepickers() {
+    const datepickerInputs = document.querySelectorAll('.datepicker-input');
+
+    datepickerInputs.forEach(input => {
+        const wrapper = input.closest('.datepicker-wrapper');
+        if (!wrapper) return;
+
+        const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+        
+        input.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Cerrar cualquier popover abierto
+            closeAllPremiumDatepickers();
+
+            input.classList.add('active');
+            
+            const popover = document.createElement('div');
+            popover.className = 'datepicker-calendar-popover';
+            
+            let initialDate = new Date();
+            if (hiddenInput.value) {
+                const parts = hiddenInput.value.split('-');
+                if (parts.length === 3) {
+                    initialDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                }
+            }
+
+            let currentMonth = initialDate.getMonth();
+            let currentYear = initialDate.getFullYear();
+
+            function renderCalendar(month, year) {
+                popover.innerHTML = '';
+
+                const header = document.createElement('div');
+                header.className = 'datepicker-header';
+                
+                const monthNames = [
+                    "enero", "febrero", "marzo", "abril", "mayo", "junio",
+                    "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+                ];
+
+                header.innerHTML = `
+                    <button type="button" class="datepicker-nav-btn btn-prev"><i data-lucide="chevron-left" style="width: 12px; height: 12px;"></i></button>
+                    <div class="datepicker-month-title">${monthNames[month]} de ${year}</div>
+                    <button type="button" class="datepicker-nav-btn btn-next"><i data-lucide="chevron-right" style="width: 12px; height: 12px;"></i></button>
+                `;
+                popover.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'datepicker-grid';
+
+                const weekdays = ["do", "lu", "ma", "mi", "ju", "vi", "sa"];
+                weekdays.forEach(day => {
+                    grid.innerHTML += `<div class="datepicker-weekday">${day}</div>`;
+                });
+
+                const firstDayIndex = new Date(year, month, 1).getDay();
+                const totalDays = new Date(year, month + 1, 0).getDate();
+                const prevTotalDays = new Date(year, month, 0).getDate();
+
+                // Relleno mes anterior
+                for (let i = firstDayIndex - 1; i >= 0; i--) {
+                    const dayNum = prevTotalDays - i;
+                    const prevMonth = month === 0 ? 11 : month - 1;
+                    const prevYear = month === 0 ? year - 1 : year;
+                    
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'datepicker-day other-month';
+                    dayDiv.textContent = dayNum;
+                    dayDiv.addEventListener('click', () => {
+                        selectDate(dayNum, prevMonth, prevYear);
+                    });
+                    grid.appendChild(dayDiv);
+                }
+
+                // Mes actual
+                const today = new Date();
+                for (let dayNum = 1; dayNum <= totalDays; dayNum++) {
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'datepicker-day';
+                    dayDiv.textContent = dayNum;
+
+                    if (dayNum === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                        dayDiv.classList.add('today');
+                    }
+
+                    if (hiddenInput.value) {
+                        const parts = hiddenInput.value.split('-');
+                        if (parts.length === 3) {
+                            const selDay = parseInt(parts[2]);
+                            const selMonth = parseInt(parts[1]) - 1;
+                            const selYear = parseInt(parts[0]);
+                            if (dayNum === selDay && month === selMonth && year === selYear) {
+                                dayDiv.classList.add('selected');
+                            }
+                        }
+                    }
+
+                    dayDiv.addEventListener('click', () => {
+                        selectDate(dayNum, month, year);
+                    });
+                    grid.appendChild(dayDiv);
+                }
+
+                // Relleno mes siguiente
+                const totalGridCells = firstDayIndex + totalDays;
+                const remainingCells = 42 - totalGridCells;
+                for (let dayNum = 1; dayNum <= remainingCells; dayNum++) {
+                    const nextMonth = month === 11 ? 0 : month + 1;
+                    const nextYear = month === 11 ? year + 1 : year;
+
+                    const dayDiv = document.createElement('div');
+                    dayDiv.className = 'datepicker-day other-month';
+                    dayDiv.textContent = dayNum;
+                    dayDiv.addEventListener('click', () => {
+                        selectDate(dayNum, nextMonth, nextYear);
+                    });
+                    grid.appendChild(dayDiv);
+                }
+
+                popover.appendChild(grid);
+
+                const footer = document.createElement('div');
+                footer.className = 'datepicker-footer';
+                footer.innerHTML = `
+                    <button type="button" class="datepicker-footer-btn datepicker-btn-clear">Borrar</button>
+                    <button type="button" class="datepicker-footer-btn datepicker-btn-today">Hoy</button>
+                `;
+                popover.appendChild(footer);
+
+                popover.querySelector('.btn-prev').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    if (currentMonth === 0) {
+                        currentMonth = 11;
+                        currentYear--;
+                    } else {
+                        currentMonth--;
+                    }
+                    renderCalendar(currentMonth, currentYear);
+                });
+
+                popover.querySelector('.btn-next').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    if (currentMonth === 11) {
+                        currentMonth = 0;
+                        currentYear++;
+                    } else {
+                        currentMonth++;
+                    }
+                    renderCalendar(currentMonth, currentYear);
+                });
+
+                popover.querySelector('.datepicker-btn-clear').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    hiddenInput.value = '';
+                    input.value = '';
+                    hiddenInput.dispatchEvent(new Event('change'));
+                    closeAllPremiumDatepickers();
+                });
+
+                popover.querySelector('.datepicker-btn-today').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    const now = new Date();
+                    selectDate(now.getDate(), now.getMonth(), now.getFullYear());
+                });
+
+                lucide.createIcons();
+            }
+
+            function selectDate(day, month, year) {
+                const formattedMonth = String(month + 1).padStart(2, '0');
+                const formattedDay = String(day).padStart(2, '0');
+                const dbDate = `${year}-${formattedMonth}-${formattedDay}`;
+                const displayDate = `${formattedDay}/${formattedMonth}/${year}`;
+
+                hiddenInput.value = dbDate;
+                input.value = displayDate;
+                hiddenInput.dispatchEvent(new Event('change'));
+                closeAllPremiumDatepickers();
+            }
+
+            renderCalendar(currentMonth, currentYear);
+            wrapper.appendChild(popover);
+        });
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.datepicker-wrapper') && !e.target.closest('.datepicker-calendar-popover')) {
+            closeAllPremiumDatepickers();
+        }
+    });
+}
+
+function closeAllPremiumDatepickers() {
+    document.querySelectorAll('.datepicker-calendar-popover').forEach(pop => pop.remove());
+    document.querySelectorAll('.datepicker-input').forEach(input => input.classList.remove('active'));
+}
+
+window.setPremiumDatepickerValue = function(id, yyyymmdd) {
+    const hidden = document.getElementById(id);
+    if (!hidden) return;
+    
+    const wrapper = hidden.closest('.datepicker-wrapper');
+    if (!wrapper) return;
+
+    const display = wrapper.querySelector('.datepicker-input');
+    if (!display) return;
+
+    hidden.value = yyyymmdd;
+    if (yyyymmdd) {
+        const parts = yyyymmdd.split('-');
+        if (parts.length === 3) {
+            display.value = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        } else {
+            display.value = yyyymmdd;
+        }
+    } else {
+        display.value = '';
+    }
+};
 
