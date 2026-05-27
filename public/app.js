@@ -356,11 +356,11 @@ function lightenColor(color, percent) {
 // 4. OPERACIONES DE ESCRITURA API (POST/DELETE)
 // ==========================================
 
-async function createCompany(name, ruc, logo, color, username, password) {
+async function createCompany(name, ruc, logo, color, username, password, planName, billingCycle) {
     const res = await fetch('/api/companies', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, ruc, logo, color, username, password })
+        body: JSON.stringify({ name, ruc, logo, color, username, password, planName, billingCycle })
     });
     if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
@@ -1373,8 +1373,10 @@ function setupUIEventListeners() {
             const color = document.getElementById('company-color').value;
             const username = document.getElementById('company-username').value.trim();
             const password = document.getElementById('company-password').value.trim();
+            const planName = document.getElementById('company-plan').value;
+            const billingCycle = document.getElementById('company-billing-cycle').value;
             
-            await createCompany(name, ruc, logo, color, username, password);
+            await createCompany(name, ruc, logo, color, username, password, planName, billingCycle);
             formCompany.reset();
             const cu = document.getElementById('company-username');
             const cp = document.getElementById('company-password');
@@ -2756,6 +2758,67 @@ async function renderPaymentsList() {
 
     try {
         const payments = await fetch('/api/payments').then(r => r.json());
+        
+        // TABLA DE SUSCRIPCIONES ACTIVAS Y VENCIMIENTO DE SERVICIOS
+        const tbodyVencimientos = document.getElementById('table-vencimientos-body');
+        if (tbodyVencimientos) {
+            tbodyVencimientos.innerHTML = '';
+            if (state.companies && state.companies.length > 0) {
+                state.companies.forEach(comp => {
+                    const compPayments = payments.filter(p => p.companyId === comp.id);
+                    let nextDueDate = '';
+                    let latestPaymentStatus = 'Pendiente';
+                    if (compPayments.length > 0) {
+                        compPayments.sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+                        nextDueDate = compPayments[0].dueDate;
+                        latestPaymentStatus = compPayments[0].status;
+                    } else {
+                        // Calcular fecha en base a createdAt
+                        const baseDate = comp.createdAt ? new Date(comp.createdAt) : new Date("2026-05-26");
+                        let monthsToAdd = 1;
+                        if (comp.billingCycle === 'Trimestral') monthsToAdd = 3;
+                        else if (comp.billingCycle === 'Semestral') monthsToAdd = 6;
+                        else if (comp.billingCycle === 'Anual') monthsToAdd = 12;
+                        baseDate.setMonth(baseDate.getMonth() + monthsToAdd);
+                        nextDueDate = baseDate.toISOString().split('T')[0];
+                    }
+
+                    let statusBadge = '';
+                    const todayStr = new Date().toISOString().split('T')[0];
+                    if (nextDueDate < todayStr) {
+                        if (latestPaymentStatus === 'Pagado') {
+                            statusBadge = `<span class="badge-version" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.3); font-weight: 700; border-radius: 8px;">Activo</span>`;
+                        } else {
+                            statusBadge = `<span class="badge-version" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); font-weight: 700; border-radius: 8px;">Vencido (Mora)</span>`;
+                        }
+                    } else {
+                        if (latestPaymentStatus === 'Pagado') {
+                            statusBadge = `<span class="badge-version" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.3); font-weight: 700; border-radius: 8px;">Activo</span>`;
+                        } else {
+                            statusBadge = `<span class="badge-version" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); font-weight: 700; border-radius: 8px;">Por Vencer</span>`;
+                        }
+                    }
+
+                    const regDate = comp.createdAt ? comp.createdAt.split('T')[0] : '2026-05-26';
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="font-bold">${comp.name}</td>
+                        <td class="font-semibold">${comp.planName || 'Plan Profesional'}</td>
+                        <td class="font-medium text-indigo-600">${comp.billingCycle || 'Mensual'}</td>
+                        <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <span class="text-xs text-slate-500">${comp.services || 'Boletería'}</span>
+                        </td>
+                        <td class="font-medium font-mono">${regDate}</td>
+                        <td class="font-bold font-mono text-slate-700">${nextDueDate}</td>
+                        <td>${statusBadge}</td>
+                    `;
+                    tbodyVencimientos.appendChild(tr);
+                });
+            } else {
+                tbodyVencimientos.innerHTML = '<tr><td colspan="7" class="text-center">No hay empresas registradas.</td></tr>';
+            }
+        }
         
         // Elementos métricos
         const statTotal = document.getElementById('stat-pay-total');

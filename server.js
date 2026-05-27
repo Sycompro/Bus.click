@@ -95,7 +95,8 @@ async function initializePostgresTables() {
             ADD COLUMN IF NOT EXISTS username VARCHAR(100),
             ADD COLUMN IF NOT EXISTS password VARCHAR(100),
             ADD COLUMN IF NOT EXISTS plan_name VARCHAR(100) DEFAULT 'Plan Profesional',
-            ADD COLUMN IF NOT EXISTS services TEXT DEFAULT 'Boletería,Flota';
+            ADD COLUMN IF NOT EXISTS services TEXT DEFAULT 'Boletería,Flota',
+            ADD COLUMN IF NOT EXISTS billing_cycle VARCHAR(50) DEFAULT 'Mensual';
         `);
         
         // Auto-reparar credenciales de empresas nulas si existen
@@ -243,6 +244,8 @@ app.get('/api/companies', async (req, res) => {
                 password: r.password,
                 planName: r.plan_name || 'Plan Profesional',
                 services: r.services || 'Boletería,Flota',
+                billingCycle: r.billing_cycle || 'Mensual',
+                createdAt: r.created_at,
                 paymentMethods: (r.payment_methods !== null && r.payment_methods !== undefined) ? (r.payment_methods === '' ? [] : r.payment_methods.split(',')) : ['Efectivo', 'Yape/Plin']
             })));
         } catch (e) {
@@ -259,29 +262,34 @@ app.get('/api/companies', async (req, res) => {
             }
             c.planName = c.planName || 'Plan Profesional';
             c.services = c.services || 'Boletería,Flota';
+            c.billingCycle = c.billingCycle || 'Mensual';
+            c.createdAt = c.createdAt || new Date().toISOString();
         });
         saveLocalDb();
         res.json(localDb.companies.map(c => ({
             ...c,
             planName: c.planName || 'Plan Profesional',
             services: c.services || 'Boletería,Flota',
+            billingCycle: c.billingCycle || 'Mensual',
+            createdAt: c.createdAt || new Date().toISOString(),
             paymentMethods: c.paymentMethods || ['Efectivo', 'Yape/Plin']
         })));
     }
 });
 
 app.post('/api/companies', async (req, res) => {
-    const { name, ruc, logo, color, username, password, planName, services } = req.body;
+    const { name, ruc, logo, color, username, password, planName, services, billingCycle } = req.body;
     const id = generateId();
     const defaultMethods = 'Efectivo,Yape/Plin';
     const finalPlanName = planName || 'Plan Profesional';
     const finalServices = services || 'Boletería,Flota';
+    const finalBillingCycle = billingCycle || 'Mensual';
     
     if (usePostgres) {
         try {
             await pool.query(
-                'INSERT INTO companies (id, name, ruc, logo, color, payment_methods, username, password, plan_name, services) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
-                [id, name, ruc, logo || "", color || "#6366f1", defaultMethods, username || "", password || "", finalPlanName, finalServices]
+                'INSERT INTO companies (id, name, ruc, logo, color, payment_methods, username, password, plan_name, services, billing_cycle) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)',
+                [id, name, ruc, logo || "", color || "#6366f1", defaultMethods, username || "", password || "", finalPlanName, finalServices, finalBillingCycle]
             );
             res.json({ id });
         } catch (e) {
@@ -298,6 +306,8 @@ app.post('/api/companies', async (req, res) => {
             password: password || "",
             planName: finalPlanName,
             services: finalServices,
+            billingCycle: finalBillingCycle,
+            createdAt: new Date().toISOString(),
             paymentMethods: ['Efectivo', 'Yape/Plin'] 
         };
         localDb.companies.push(company);
@@ -970,9 +980,9 @@ app.post('/api/seed', async (req, res) => {
         
         // Estructura semilla
         const seedCompanies = [
-            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Encomiendas,GPS Satelital' },
-            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa', 'Transferencia BCP'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Pasarela Online,GPS Satelital' },
-            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin'], planName: 'Plan Básico', services: 'Boletería' }
+            { id: "flores", name: "Expreso Flores", ruc: "20456789123", logo: "", color: "#f97316", username: "flores", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Encomiendas,GPS Satelital', billingCycle: 'Semestral' },
+            { id: "cruzdelsur", name: "Cruz del Sur VIP", ruc: "20102030401", logo: "", color: "#3b82f6", username: "cruzdelsur", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin', 'Tarjeta Visa', 'Transferencia BCP'], planName: 'Plan Enterprise', services: 'Boletería,Flota,Pasarela Online,GPS Satelital', billingCycle: 'Anual' },
+            { id: "combi", name: "Combi Rápido Express", ruc: "20998877665", logo: "", color: "#f59e0b", username: "combi", password: "123", paymentMethods: ['Efectivo', 'Yape/Plin'], planName: 'Plan Básico', services: 'Boletería', billingCycle: 'Mensual' }
         ];
         
         const seedSedes = [
@@ -1024,8 +1034,8 @@ app.post('/api/seed', async (req, res) => {
                 // Cargar empresas
                 for (const c of seedCompanies) {
                     const mStr = c.paymentMethods ? c.paymentMethods.join(',') : 'Efectivo,Yape/Plin';
-                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password, payment_methods, plan_name, services) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)', 
-                        [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password, mStr, c.planName, c.services]);
+                    await client.query('INSERT INTO companies (id, name, ruc, logo, color, username, password, payment_methods, plan_name, services, billing_cycle) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)', 
+                        [c.id, c.name, c.ruc, c.logo, c.color, c.username, c.password, mStr, c.planName, c.services, c.billingCycle || 'Mensual']);
                 }
                 
                 // Cargar sedes
