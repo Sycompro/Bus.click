@@ -14,9 +14,10 @@
 <body class="panel-admin-empresa-view">
 
     <div id="app-container" class="app-container">
-        <!-- BARRA LATERAL IZQUIERDA (SIDEBAR) -->
-        <aside id="sidebar-menu" class="sidebar-premium">
-            <div class="sidebar-brand">
+        <!-- COLUMNA LATERAL (MARCA + NAVEGACIÓN FLOTANTES) -->
+        <div id="sidebar-container-wrapper" class="sidebar-container-wrapper">
+            <!-- TARJETA DE MARCA SUPERIOR INDEPENDIENTE -->
+            <div class="brand-card-premium">
                 <div class="brand-logo-container">
                     <div id="sidebar-logo-icon" class="brand-icon"><i data-lucide="building-2"></i></div>
                     <div class="brand-text">
@@ -28,29 +29,33 @@
                     <i data-lucide="chevron-left" id="toggle-icon"></i>
                 </button>
             </div>
-            <nav class="sidebar-nav">
-                <ul class="nav-list">
-                    <li class="nav-item active" data-nav-target="apartado-organizacion">
-                        <a href="#" class="nav-link">
-                            <i data-lucide="building-2"></i>
-                            <span class="nav-label">Organización</span>
-                        </a>
-                    </li>
-                    <li class="nav-item" data-nav-target="apartado-ventas">
-                        <a href="index.html" class="nav-link">
-                            <i data-lucide="ticket"></i>
-                            <span class="nav-label">Ventas / Pasajes</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="btn-sidebar-logout" class="btn-logout">
-                    <i data-lucide="log-out"></i>
-                    <span class="nav-label">Cerrar Sesión</span>
-                </button>
-            </div>
-        </aside>
+
+            <!-- TARJETA DE NAVEGACIÓN INFERIOR -->
+            <aside id="sidebar-menu" class="sidebar-premium">
+                <nav class="sidebar-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item active" data-nav-target="apartado-organizacion">
+                            <a href="#" class="nav-link">
+                                <i data-lucide="building-2"></i>
+                                <span class="nav-label">Organización</span>
+                            </a>
+                        </li>
+                        <li class="nav-item" data-nav-target="apartado-ventas">
+                            <a href="index.html" class="nav-link">
+                                <i data-lucide="ticket"></i>
+                                <span class="nav-label">Ventas / Pasajes</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="sidebar-footer">
+                    <button id="btn-sidebar-logout" class="btn-logout">
+                        <i data-lucide="log-out"></i>
+                        <span class="nav-label">Cerrar Sesión</span>
+                    </button>
+                </div>
+            </aside>
+        </div>
 
         <!-- CONTENEDOR PRINCIPAL DERECHO -->
         <div class="main-layout-wrapper">

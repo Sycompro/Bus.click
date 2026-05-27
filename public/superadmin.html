@@ -15,9 +15,10 @@
 <body class="panel-super-admin-view">
 
     <div id="app-container" class="app-container">
-        <!-- BARRA LATERAL IZQUIERDA (SIDEBAR) -->
-        <aside id="sidebar-menu" class="sidebar-premium">
-            <div class="sidebar-brand">
+        <!-- COLUMNA LATERAL (MARCA + NAVEGACIÓN FLOTANTES) -->
+        <div id="sidebar-container-wrapper" class="sidebar-container-wrapper">
+            <!-- TARJETA DE MARCA SUPERIOR INDEPENDIENTE -->
+            <div class="brand-card-premium">
                 <div class="brand-logo-container">
                     <div class="brand-icon"><i data-lucide="shield-check"></i></div>
                     <div class="brand-text">
@@ -29,23 +30,27 @@
                     <i data-lucide="chevron-left" id="toggle-icon"></i>
                 </button>
             </div>
-            <nav class="sidebar-nav">
-                <ul class="nav-list">
-                    <li class="nav-item active" data-nav-target="apartado-ecosistema">
-                        <a href="#" class="nav-link">
-                            <i data-lucide="globe"></i>
-                            <span class="nav-label">Ecosistema Global</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <button id="btn-sidebar-logout" class="btn-logout">
-                    <i data-lucide="log-out"></i>
-                    <span class="nav-label">Cerrar Sesión</span>
-                </button>
-            </div>
-        </aside>
+
+            <!-- TARJETA DE NAVEGACIÓN INFERIOR -->
+            <aside id="sidebar-menu" class="sidebar-premium">
+                <nav class="sidebar-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item active" data-nav-target="apartado-ecosistema">
+                            <a href="#" class="nav-link">
+                                <i data-lucide="globe"></i>
+                                <span class="nav-label">Ecosistema Global</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="sidebar-footer">
+                    <button id="btn-sidebar-logout" class="btn-logout">
+                        <i data-lucide="log-out"></i>
+                        <span class="nav-label">Cerrar Sesión</span>
+                    </button>
+                </div>
+            </aside>
+        </div>
 
         <!-- CONTENEDOR PRINCIPAL DERECHO -->
         <div class="main-layout-wrapper">

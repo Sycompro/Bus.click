@@ -3000,58 +3000,73 @@ body {
     overflow: hidden;
 }
 
-/* El contenedor lateral Flotante */
-.sidebar-premium {
-    --brand-sidebar-color: var(--brand-primary, #6366f1);
-    --brand-sidebar-pale: rgba(99, 102, 241, 0.06);
-    --brand-sidebar-border: rgba(99, 102, 241, 0.15);
+/* Contenedor de la columna del sidebar (Marca + Menú) */
+.sidebar-container-wrapper {
     width: var(--sidebar-width);
     min-width: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0 1rem 1rem;
     height: calc(100vh - 2rem);
     position: sticky;
     top: 1rem;
     left: 1rem;
     z-index: 1100;
+    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                min-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    overflow: visible;
+}
+
+.sidebar-container-wrapper.expanded {
+    --sidebar-width: var(--sidebar-width-expanded);
+}
+
+/* Tarjeta de Marca Superior (Independiente del menú) */
+.brand-card-premium {
+    background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.98) 100%);
+    backdrop-filter: blur(24px) saturate(200%);
+    border: 1px solid rgba(226, 232, 240, 0.85);
+    border-radius: 20px;
+    padding: 0 1rem;
+    height: 75px;
+    min-height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04), 
+                1px 1px 0 rgba(255,255,255,0.7) inset;
+    position: relative;
+    overflow: visible; /* Permitir que el botón toggle flote hacia afuera */
+    transition: all 0.3s ease;
+}
+
+/* El contenedor lateral Flotante de Navegación */
+.sidebar-premium {
+    --brand-sidebar-color: var(--brand-primary, #6366f1);
+    --brand-sidebar-pale: rgba(99, 102, 241, 0.06);
+    --brand-sidebar-border: rgba(99, 102, 241, 0.15);
+    width: 100%;
     display: flex;
     flex-direction: column;
     background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(248,250,252,0.97) 100%);
     backdrop-filter: blur(24px) saturate(200%);
     border: 1px solid rgba(226, 232, 240, 0.85);
     border-radius: 24px;
-    margin: 1rem 0 1rem 1rem;
     box-shadow: 0 16px 40px rgba(15, 23, 42, 0.05), 
                 1px 1px 0 rgba(255,255,255,0.7) inset;
-    transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-                min-width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-                box-shadow 0.4s ease;
-    overflow: visible; /* Permitir que el botón toggle flote hacia afuera */
-}
-
-.sidebar-premium.expanded {
-    --sidebar-width: var(--sidebar-width-expanded);
-    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.08), 
-                1px 1px 0 rgba(255,255,255,0.7) inset;
+    transition: box-shadow 0.4s ease;
+    overflow: hidden;
+    flex: 1; /* Ocupa el espacio vertical restante */
 }
 
 /* Indicador visual sutil al hacer hover-expand */
-.sidebar-premium.hover-expand {
-    box-shadow: 8px 0 40px rgba(99, 102, 241, 0.08), 
-                1px 0 0 rgba(255,255,255,0.5) inset;
+.sidebar-container-wrapper:hover .sidebar-premium {
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.07);
 }
 
-/* Cabecera de marca */
-.sidebar-brand {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem 1rem;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
-    height: 75px;
-    overflow: visible; /* Permitir que el botón toggle flote hacia afuera */
-    position: relative;
-}
-
-.brand-logo-container {
+/* Cabecera de marca (Ahora se aplica dentro de la tarjeta de marca) */
+.brand-card-premium .brand-logo-container {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -3088,7 +3103,7 @@ body {
 }
 
 /* Ocultar texto si está colapsado */
-.sidebar-premium:not(.expanded) .brand-text {
+.sidebar-container-wrapper:not(.expanded) .brand-text {
     opacity: 0;
     transform: translateX(-8px);
     pointer-events: none;
@@ -3151,16 +3166,16 @@ body {
 }
 
 /* Mantener el botón toggle siempre visible y activo para usabilidad premium */
-.sidebar-premium:not(.expanded) .btn-toggle-sidebar {
+.sidebar-container-wrapper:not(.expanded) .btn-toggle-sidebar {
     opacity: 0.9;
     pointer-events: auto;
 }
 
-.sidebar-premium:not(.expanded):hover .btn-toggle-sidebar {
+.sidebar-container-wrapper:not(.expanded):hover .btn-toggle-sidebar {
     opacity: 1;
 }
 
-.sidebar-premium:not(.expanded) .brand-logo-container {
+.sidebar-container-wrapper:not(.expanded) .brand-logo-container {
     justify-content: center;
     width: 100%;
 }
@@ -3379,37 +3394,51 @@ body {
         flex-direction: column !important;
         background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     }
-    .sidebar-premium {
+    .sidebar-container-wrapper {
         width: calc(100% - 1rem) !important;
         min-width: calc(100% - 1rem) !important;
         height: auto !important;
         position: relative !important;
+        margin: 0.5rem 0.5rem 0 0.5rem !important;
+        gap: 0.5rem !important;
+    }
+    .brand-card-premium {
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 60px !important;
+        min-height: 60px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+        padding: 0 1rem !important;
+    }
+    .sidebar-premium {
+        width: 100% !important;
+        min-width: 100% !important;
+        height: auto !important;
+        position: relative !important;
         border: 1px solid rgba(226, 232, 240, 0.8) !important;
         border-radius: 16px !important;
-        margin: 0.5rem 0.5rem 0 0.5rem !important;
         box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
+        flex: none !important;
     }
     .main-layout-wrapper {
         margin: 0.5rem !important;
         height: auto !important;
-        min-height: calc(100vh - 150px) !important;
+        min-height: calc(100vh - 160px) !important;
         border-radius: 16px !important;
         box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03) !important;
     }
     .main-header {
         margin: 0.75rem 0.75rem 0.5rem 0.75rem !important;
     }
-    .sidebar-brand {
-        height: 60px !important;
-    }
-    .sidebar-premium:not(.expanded) .brand-text {
+    .sidebar-container-wrapper:not(.expanded) .brand-text {
         opacity: 1 !important;
         transform: none !important;
         width: auto !important;
         display: flex !important;
         pointer-events: auto !important;
     }
-    .sidebar-premium:not(.expanded) .nav-label {
+    .sidebar-container-wrapper:not(.expanded) .nav-label {
         opacity: 1 !important;
         width: auto !important;
         display: inline !important;

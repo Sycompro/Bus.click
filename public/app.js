@@ -331,12 +331,12 @@ function applyCompanyBrandTheme() {
         sidebarIcon.style.background = `linear-gradient(135deg, ${brandColor}, ${lightenColor(brandColor, 15)})`;
     }
 
-    // Actualizar variables CSS de marca para elementos activos del sidebar
-    const sidebar = document.getElementById('sidebar-menu');
-    if (sidebar) {
-        sidebar.style.setProperty('--brand-sidebar-color', brandColor);
-        sidebar.style.setProperty('--brand-sidebar-pale', brandColor + '14');
-        sidebar.style.setProperty('--brand-sidebar-border', brandColor + '28');
+    // Actualizar variables CSS de marca para elementos activos del sidebar (y del wrapper)
+    const sidebarWrapper = document.getElementById('sidebar-container-wrapper') || document.getElementById('sidebar-menu');
+    if (sidebarWrapper) {
+        sidebarWrapper.style.setProperty('--brand-sidebar-color', brandColor);
+        sidebarWrapper.style.setProperty('--brand-sidebar-pale', brandColor + '14');
+        sidebarWrapper.style.setProperty('--brand-sidebar-border', brandColor + '28');
     }
 }
 
@@ -1694,7 +1694,7 @@ function initGenericModal(modalId, btnOpenId, btnCloseId, formId) {
  * rotación del icono toggle, y vincula el botón de cerrar sesión del sidebar.
  */
 function initSidebarBehavior() {
-    const sidebar = document.getElementById('sidebar-menu');
+    const sidebar = document.getElementById('sidebar-container-wrapper') || document.getElementById('sidebar-menu');
     const btnToggle = document.getElementById('btn-toggle-sidebar');
     const toggleIcon = document.getElementById('toggle-icon');
     const btnSidebarLogout = document.getElementById('btn-sidebar-logout');
