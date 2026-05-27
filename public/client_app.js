@@ -1103,6 +1103,11 @@ function showHelpModal() {
     overlay.style.alignItems = "flex-end";
     overlay.style.animation = "fadeInOverlay 0.25s ease";
     
+    const activeComp = state.activeCompany || {};
+    const supportPhone = activeComp.supportPhone || '+51 987 654 321';
+    const supportEmail = activeComp.supportEmail || 'soporte@bus.click';
+    const supportMsg = activeComp.supportMessage || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
+
     overlay.innerHTML = `
         <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; box-sizing: border-box; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); border-top: 1px solid #eef2f7; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
@@ -1117,20 +1122,20 @@ function showHelpModal() {
                     <i data-lucide="message-square" style="width: 22px; height: 22px;"></i>
                 </div>
                 <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">¿Necesitas ayuda con tu pasaje?</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; line-height: 1.5;">Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.</p>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; line-height: 1.5;">${supportMsg}</p>
                 
                 <div style="background: #f8f9fc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #059669; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: +51 987 654 321</span>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: ${supportPhone}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="width: 24px; height: 24px; border-radius: 50%; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: soporte@bus.click</span>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: ${supportEmail}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="width: 24px; height: 24px; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Bus.click Seguridad de Compra</span>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Seguridad de Compra Garantizada</span>
                     </div>
                 </div>
                 

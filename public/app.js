@@ -2514,6 +2514,15 @@ function initAdminSettingsTab() {
         companyNameInput.value = `${activeCompanyObj.name} (RUC: ${activeCompanyObj.ruc})`;
     }
     
+    // Cargar datos del canal de soporte corporativo
+    const phoneInput = document.getElementById('admin-support-phone');
+    const emailInput = document.getElementById('admin-support-email');
+    const msgInput = document.getElementById('admin-support-message');
+    
+    if (phoneInput) phoneInput.value = activeCompanyObj.supportPhone || '+51 987 654 321';
+    if (emailInput) emailInput.value = activeCompanyObj.supportEmail || 'soporte@empresa.com';
+    if (msgInput) msgInput.value = activeCompanyObj.supportMessage || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
+    
     // Cargar métodos actuales
     adminSettingsPaymentMethods = [...(activeCompanyObj.paymentMethods || ['Efectivo', 'Yape/Plin'])];
     
@@ -2633,6 +2642,46 @@ function setupAdminSettingsEvents() {
                 btnSave.disabled = false;
                 btnSave.innerHTML = originalText;
                 lucide.createIcons();
+            }
+        });
+    }
+    
+    // Configuración del Formulario de Soporte Marca Blanca
+    const formSupport = document.getElementById('form-admin-support-settings');
+    if (formSupport) {
+        formSupport.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phoneVal = document.getElementById('admin-support-phone').value.trim();
+            const emailVal = document.getElementById('admin-support-email').value.trim();
+            const msgVal = document.getElementById('admin-support-message').value.trim();
+            
+            const btnSupportSave = document.getElementById('btn-save-support-settings');
+            if (btnSupportSave) btnSupportSave.disabled = true;
+            
+            try {
+                const res = await fetch(`/api/companies/${state.activeCompanyId}/support`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        supportPhone: phoneVal,
+                        supportEmail: emailVal,
+                        supportMessage: msgVal
+                    })
+                });
+                
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast("Configuración del Canal de Soporte guardada con éxito.", "success");
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al guardar los ajustes de soporte corporativo.", "error");
+                }
+            } catch (err) {
+                console.error("Error al guardar soporte:", err);
+                showToast("Fallo al conectar con el servidor de base de datos.", "error");
+            } finally {
+                if (btnSupportSave) btnSupportSave.disabled = false;
             }
         });
     }

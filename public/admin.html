@@ -179,6 +179,31 @@
                                     </button>
                                 </div>
                             </div>
+                            
+                            <!-- 📞 CONFIGURACIÓN DE CANAL DE SOPORTE B2C -->
+                            <div class="form-container-card glass mt-6" style="width: 100%; box-sizing: border-box;">
+                                <h3 class="card-title"><i data-lucide="headphones"></i> Canal de Soporte B2C (Marca Blanca)</h3>
+                                <p class="section-desc">Personaliza los datos de contacto que verán tus pasajeros en el portal de compras al presionar el botón "Soporte".</p>
+                                <form id="form-admin-support-settings" class="form-premium" style="margin-top: 1.25rem;">
+                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; width: 100%;">
+                                        <div class="form-group">
+                                            <label for="admin-support-phone">WhatsApp / Celular de Soporte</label>
+                                            <input type="text" id="admin-support-phone" required placeholder="Ej: +51 987 654 321">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="admin-support-email">Correo Electrónico de Soporte</label>
+                                            <input type="email" id="admin-support-email" required placeholder="Ej: soporte@miempresa.com">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mt-3" style="width: 100%;">
+                                        <label for="admin-support-message">Mensaje Personalizado de Ayuda</label>
+                                        <textarea id="admin-support-message" required placeholder="Ej: Escríbenos por WhatsApp o envíanos un correo para reprogramaciones, anulaciones o consultas sobre tu viaje..." style="width: 100%; min-height: 80px; background: rgba(15, 23, 42, 0.3); border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #fff; padding: 0.55rem 0.85rem; font-family: inherit; font-size: var(--text-xs); box-sizing: border-box; outline: none; transition: all 0.2s ease; resize: vertical;"></textarea>
+                                    </div>
+                                    <button type="submit" id="btn-save-support-settings" class="btn btn-primary mt-4" style="width: auto; padding: 0.65rem 1.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                                        <i data-lucide="save"></i> Guardar Ajustes de Soporte
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </section>

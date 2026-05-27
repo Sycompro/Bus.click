@@ -110,14 +110,17 @@ async function initializePostgresTables() {
             )
         `);
         
-        // Agregar columnas payment_methods, username, password, plan_name y services si no existen
+        // Agregar columnas payment_methods, username, password, plan_name, services y soporte si no existen
         await client.query(`
             ALTER TABLE companies ADD COLUMN IF NOT EXISTS payment_methods TEXT DEFAULT 'Efectivo,Yape/Plin',
             ADD COLUMN IF NOT EXISTS username VARCHAR(100),
             ADD COLUMN IF NOT EXISTS password VARCHAR(100),
             ADD COLUMN IF NOT EXISTS plan_name VARCHAR(100) DEFAULT 'Plan Profesional',
             ADD COLUMN IF NOT EXISTS services TEXT DEFAULT 'Boletería,Flota',
-            ADD COLUMN IF NOT EXISTS billing_cycle VARCHAR(50) DEFAULT 'Mensual';
+            ADD COLUMN IF NOT EXISTS billing_cycle VARCHAR(50) DEFAULT 'Mensual',
+            ADD COLUMN IF NOT EXISTS support_phone VARCHAR(50) DEFAULT '+51 987 654 321',
+            ADD COLUMN IF NOT EXISTS support_email VARCHAR(100) DEFAULT 'soporte@empresa.com',
+            ADD COLUMN IF NOT EXISTS support_message VARCHAR(300) DEFAULT 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
         `);
         
         // Auto-reparar credenciales de empresas nulas si existen
@@ -311,6 +314,9 @@ app.get('/api/companies', async (req, res) => {
                 planName: r.plan_name || 'Plan Profesional',
                 services: r.services || 'Boletería,Flota',
                 billingCycle: r.billing_cycle || 'Mensual',
+                supportPhone: r.support_phone || '+51 987 654 321',
+                supportEmail: r.support_email || 'soporte@empresa.com',
+                supportMessage: r.support_message || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.',
                 createdAt: r.created_at,
                 paymentMethods: (r.payment_methods !== null && r.payment_methods !== undefined) ? (r.payment_methods === '' ? [] : r.payment_methods.split(',')) : ['Efectivo', 'Yape/Plin']
             })));
@@ -418,6 +424,34 @@ app.put('/api/companies/:id/payment-methods', async (req, res) => {
         const company = localDb.companies.find(c => c.id === id);
         if (company) {
             company.paymentMethods = Array.isArray(paymentMethods) ? paymentMethods : ['Efectivo', 'Yape/Plin'];
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: "Company not found" });
+        }
+    }
+});
+
+app.put('/api/companies/:id/support', async (req, res) => {
+    const { id } = req.params;
+    const { supportPhone, supportEmail, supportMessage } = req.body;
+
+    if (usePostgres) {
+        try {
+            await pool.query(
+                'UPDATE companies SET support_phone = $1, support_email = $2, support_message = $3 WHERE id = $4',
+                [supportPhone || "", supportEmail || "", supportMessage || "", id]
+            );
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const company = localDb.companies.find(c => c.id === id);
+        if (company) {
+            company.supportPhone = supportPhone || "";
+            company.supportEmail = supportEmail || "";
+            company.supportMessage = supportMessage || "";
             saveLocalDb();
             res.json({ success: true });
         } else {
