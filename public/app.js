@@ -3531,6 +3531,7 @@ function initSuperAdminSaasBehavior() {
                 console.error(err);
                 showToast("Error de conexión al guardar servicio.", "error");
             }
+        });
     }
 
     // Inicializar Datepickers Premium del Super Admin
