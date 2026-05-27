@@ -3683,71 +3683,44 @@ body {
    MOBILE-FIRST CLIENT B2C BOOKING APP STYLES (BUS.CLICK)
    ══════════════════════════════════════════════════════════ */
 
-/* Contenedor simulador móvil en escritorio */
-.mobile-frame-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-    padding: 1.5rem 0;
-    box-sizing: border-box;
-    font-family: var(--font-primary), sans-serif;
-}
-
-/* Marco simulador físico del celular */
-.mobile-app-wrapper {
-    position: relative;
+/* Contenedor global de la Web B2C responsiva */
+.b2c-app-container {
     width: 100%;
-    max-width: 410px; /* Ancho idóneo para simulación */
-    height: 820px; /* Alto proporcional */
-    background: #090d16;
-    border: 12px solid #1e293b;
-    border-radius: 40px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 40px rgba(99, 102, 241, 0.15);
-    overflow: hidden;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
     display: flex;
     flex-direction: column;
+    font-family: var(--font-primary), sans-serif;
     box-sizing: border-box;
+    position: relative;
 }
 
-/* Bocina superior del celular física simulada */
-.mobile-app-wrapper::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120px;
-    height: 25px;
-    background: #1e293b;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    z-index: 10000;
-}
-
-/* Contenido interno escroleable de la aplicación */
+/* Contenido interno responsivo centrado */
 .mobile-content-area {
     flex: 1;
-    overflow-y: auto;
-    padding: 1.5rem 1rem 5.5rem 1rem; /* margen inferior para no taparse con la tab bar */
+    width: 100%;
+    max-width: 680px; /* Ancho óptimo de lectura y acción para SPA B2C */
+    margin: 0 auto;
+    padding: 1.5rem 1rem 6.5rem 1rem; /* margen inferior para no taparse con la tab bar */
     box-sizing: border-box;
-    scrollbar-width: none; /* ocultar scrollbar */
-}
-.mobile-content-area::-webkit-scrollbar {
-    display: none;
 }
 
-/* Cabecera Móvil Premium */
+/* Cabecera Responsiva Premium Centrada */
 .mobile-header-premium {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1.25rem 1rem 0.75rem 1rem;
-    background: rgba(9, 13, 22, 0.85);
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 1.25rem 1.25rem 0.75rem 1.25rem;
+    background: rgba(9, 13, 22, 0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     z-index: 100;
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
 }
 .mobile-header-title {
     font-size: var(--text-sm);
@@ -3762,22 +3735,26 @@ body {
     color: var(--brand-primary);
 }
 
-/* Barra inferior nativa premium (Tab Bar) */
+/* Barra inferior responsiva flotante (Tab Bar) */
 .mobile-tab-bar {
-    position: absolute;
+    position: fixed;
     bottom: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
+    max-width: 680px;
     height: 64px;
-    background: rgba(13, 18, 30, 0.95);
+    background: rgba(13, 18, 30, 0.96);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px 20px 0 0;
     display: flex;
     justify-content: space-around;
     align-items: center;
     z-index: 1000;
     padding-bottom: 8px; /* Espacio para barra de gestos */
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
 }
 .tab-bar-item {

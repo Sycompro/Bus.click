@@ -867,7 +867,7 @@ function showMobileNotification(message, type = "success") {
     toast.style.zIndex = "1000";
     toast.style.pointerEvents = "none";
     
-    const wrapper = document.querySelector(".mobile-app-wrapper");
+    const wrapper = document.querySelector(".b2c-app-container");
     if (wrapper) {
         wrapper.appendChild(toast);
         lucide.createIcons();
@@ -997,7 +997,7 @@ function showHistoryModal() {
         </div>
     `;
     
-    const wrapper = document.querySelector(".mobile-app-wrapper");
+    const wrapper = document.querySelector(".b2c-app-container");
     if (wrapper) {
         wrapper.appendChild(overlay);
         lucide.createIcons();
@@ -1088,7 +1088,7 @@ function showHelpModal() {
         </div>
     `;
     
-    const wrapper = document.querySelector(".mobile-app-wrapper");
+    const wrapper = document.querySelector(".b2c-app-container");
     if (wrapper) {
         wrapper.appendChild(overlay);
         lucide.createIcons();
@@ -1125,11 +1125,6 @@ function initPremiumDatepickers() {
             
             const popover = document.createElement('div');
             popover.className = 'datepicker-calendar-popover';
-            popover.style.position = 'absolute';
-            popover.style.zIndex = '999';
-            popover.style.left = '50%';
-            popover.style.transform = 'translateX(-50%)';
-            popover.style.bottom = '10%'; // Posicionamiento óptimo en celulares
             
             let initialDate = new Date();
             if (hiddenInput.value) {
