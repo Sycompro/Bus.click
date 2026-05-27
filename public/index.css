@@ -592,6 +592,20 @@ body {
     font-weight: 800;
     letter-spacing: -0.5px;
     color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.panel-header-block h2 i,
+.panel-header-block-establecimiento h2 i {
+    width: 24px;
+    height: 24px;
+    color: var(--brand-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 .section-desc {
