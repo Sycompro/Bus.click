@@ -1351,6 +1351,10 @@ app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
+app.get('/compra', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'compra.html'));
+});
+
 // Redireccionar cualquier otra ruta a index.html (Soporte SPA)
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
