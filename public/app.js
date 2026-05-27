@@ -15,6 +15,10 @@ const state = {
     movilidades: [],
     tickets: [],
     
+    // Catálogos globales SaaS dinámicos
+    saasPlans: [],
+    saasServices: [],
+    
     // Variables de selección activa
     activeCompanyId: '',
     activeSedeId: '',
@@ -142,12 +146,14 @@ async function initApp() {
 // Cargar todos los datos desde los endpoints Express
 async function reloadAllApiData() {
     try {
-        const [resComp, resSede, resTrab, resMov, resTick] = await Promise.all([
+        const [resComp, resSede, resTrab, resMov, resTick, resPlans, resServices] = await Promise.all([
             fetch('/api/companies').then(r => r.json()),
             fetch('/api/sedes').then(r => r.json()),
             fetch('/api/trabajadores').then(r => r.json()),
             fetch('/api/movilidades').then(r => r.json()),
-            fetch('/api/tickets').then(r => r.json())
+            fetch('/api/tickets').then(r => r.json()),
+            fetch('/api/saas/plans').then(r => r.json()).catch(() => []),
+            fetch('/api/saas/services').then(r => r.json()).catch(() => [])
         ]);
         
         state.companies = resComp || [];
@@ -155,6 +161,8 @@ async function reloadAllApiData() {
         state.trabajadores = resTrab || [];
         state.movilidades = resMov || [];
         state.tickets = resTick || [];
+        state.saasPlans = resPlans || [];
+        state.saasServices = resServices || [];
         
         // Actualizar UI
         populateCompanySelectors();
@@ -164,6 +172,12 @@ async function reloadAllApiData() {
         updateSuperStats();
         updateEstabUI();
         applyCompanyBrandTheme();
+        
+        // Reactividad de catálogos globales SaaS
+        renderCatalogoPlanes();
+        renderCatalogoServicios();
+        populatePlanSelectors();
+        populateServiceCheckboxes();
         
         if (state.activeVehicleId) {
             renderSeatingMaqueta(state.activeVehicleId);
@@ -2743,19 +2757,46 @@ async function generateAndSaveSedeCredentials(id, name, button) {
 
 function calcularMontoMensual(planName, servicesStr) {
     let total = 0;
-    // Plan base
-    if (planName === 'Plan Básico') total = 100;
-    else if (planName === 'Plan Profesional') total = 250;
-    else if (planName === 'Plan Enterprise') total = 500;
-    else total = 250; // default
+    // 1. Obtener costo del Plan base dinámico
+    const foundPlan = state.saasPlans && state.saasPlans.find(p => p.name === planName);
+    if (foundPlan) {
+        total = parseFloat(foundPlan.price);
+    } else {
+        // Fallback histórico estable
+        if (planName === 'Plan Básico') total = 100;
+        else if (planName === 'Plan Profesional') total = 250;
+        else if (planName === 'Plan Enterprise') total = 500;
+        else total = 250; // default
+    }
 
-    // Servicios adicionales
+    // 2. Obtener costo de Servicios adicionales dinámicos (extrayendo el precio de la descripción)
     const services = servicesStr ? servicesStr.split(',') : [];
     services.forEach(srv => {
         const cleanSrv = srv.trim();
-        if (cleanSrv === 'Encomiendas') total += 50;
-        else if (cleanSrv === 'GPS Satelital') total += 80;
-        else if (cleanSrv === 'Pasarela Online') total += 30;
+        let servicePrice = 0;
+        const foundService = state.saasServices && state.saasServices.find(s => s.name === cleanSrv);
+        if (foundService && foundService.description) {
+            // Intentar extraer patrón numérico como "+S/ 50" o "S/ 50" o "costo de S/50.00"
+            const match = foundService.description.match(/(?:\+\s*S\/\.?|S\/\.?\s*\+?)\s*(\d+(?:\.\d+)?)/i);
+            if (match) {
+                servicePrice = parseFloat(match[1]);
+            } else {
+                // Segundo intento para cualquier número precedido por S/
+                const match2 = foundService.description.match(/(\d+(?:\.\d+)?)/);
+                if (match2 && foundService.description.toLowerCase().includes('s/')) {
+                    servicePrice = parseFloat(match2[1]);
+                }
+            }
+        }
+        
+        // Fallback histórico para compatibilidad nativa
+        if (servicePrice === 0) {
+            if (cleanSrv === 'Encomiendas') servicePrice = 50;
+            else if (cleanSrv === 'GPS Satelital') servicePrice = 80;
+            else if (cleanSrv === 'Pasarela Online') servicePrice = 30;
+        }
+        
+        total += servicePrice;
     });
 
     return total;
@@ -2832,7 +2873,188 @@ window.openEditServicesModal = function(id, name, plan, services) {
 
     modal.classList.remove('hidden');
 };
+function renderCatalogoPlanes() {
+    const tbody = document.getElementById('table-catalogo-planes-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
 
+    if (!state.saasPlans || state.saasPlans.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center" style="color: #94a3b8; padding: 1rem;">No hay planes registrados en el catálogo.</td></tr>';
+        return;
+    }
+
+    state.saasPlans.forEach(plan => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="font-bold">${plan.name}</td>
+            <td class="font-bold font-mono text-indigo-600">S/ ${parseFloat(plan.price).toFixed(2)}</td>
+            <td class="action-buttons-cell" style="justify-content: center; gap: 0.25rem;">
+                <button type="button" class="btn btn-secondary btn-sparkle" style="padding: 3px 6px; font-size: 0.65rem;" onclick="openEditPlanModal('${plan.id}', '${plan.name.replace(/'/g, "\\'")}', ${plan.price})">
+                    <i data-lucide="edit" style="width: 10px; height: 10px;"></i>
+                </button>
+                <button type="button" class="btn btn-primary" style="padding: 3px 6px; font-size: 0.65rem; background: #ef4444; border-color: #ef4444;" onclick="deletePlanSaas('${plan.id}', '${plan.name.replace(/'/g, "\\'")}')">
+                    <i data-lucide="trash-2" style="width: 10px; height: 10px;"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    lucide.createIcons();
+}
+
+function renderCatalogoServicios() {
+    const tbody = document.getElementById('table-catalogo-servicios-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!state.saasServices || state.saasServices.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center" style="color: #94a3b8; padding: 1rem;">No hay servicios registrados en el catálogo.</td></tr>';
+        return;
+    }
+
+    state.saasServices.forEach(srv => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="font-bold">${srv.name}</td>
+            <td style="color: #64748b; font-size: var(--text-xxs); line-height: 1.2;">${srv.description || '-'}</td>
+            <td class="action-buttons-cell" style="justify-content: center; gap: 0.25rem;">
+                <button type="button" class="btn btn-secondary btn-sparkle" style="padding: 3px 6px; font-size: 0.65rem;" onclick="openEditServiceModal('${srv.id}', '${srv.name.replace(/'/g, "\\'")}', '${(srv.description || '').replace(/'/g, "\\'")}')">
+                    <i data-lucide="edit" style="width: 10px; height: 10px;"></i>
+                </button>
+                <button type="button" class="btn btn-primary" style="padding: 3px 6px; font-size: 0.65rem; background: #ef4444; border-color: #ef4444;" onclick="deleteServiceSaas('${srv.id}', '${srv.name.replace(/'/g, "\\'")}')">
+                    <i data-lucide="trash-2" style="width: 10px; height: 10px;"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    lucide.createIcons();
+}
+
+window.openEditPlanModal = function(id, name, price) {
+    const modal = document.getElementById('modal-create-plan');
+    if (!modal) return;
+    document.getElementById('plan-id-hidden').value = id;
+    document.getElementById('plan-name').value = name;
+    document.getElementById('plan-price').value = price;
+    document.getElementById('modal-plan-title').innerHTML = `<i data-lucide="edit"></i> Editar Plan SaaS`;
+    modal.classList.remove('hidden');
+    lucide.createIcons();
+};
+
+window.openEditServiceModal = function(id, name, description) {
+    const modal = document.getElementById('modal-create-service');
+    if (!modal) return;
+    document.getElementById('service-id-hidden').value = id;
+    document.getElementById('service-name').value = name;
+    document.getElementById('service-description').value = description;
+    document.getElementById('modal-service-title').innerHTML = `<i data-lucide="edit"></i> Editar Módulo / Servicio`;
+    modal.classList.remove('hidden');
+    lucide.createIcons();
+};
+
+window.deletePlanSaas = async function(id, name) {
+    if (!confirm(`¿Está seguro de que desea eliminar permanentemente el plan "${name}" del catálogo?\n\nLas empresas activas que tengan asignado este plan lo conservarán, pero no se podrá asignar a nuevas empresas.`)) {
+        return;
+    }
+    try {
+        const res = await fetch(`/api/saas/plans/${id}`, { method: 'DELETE' }).then(r => r.json());
+        if (res.success) {
+            showToast(`Plan "${name}" eliminado correctamente.`, "success");
+            await reloadAllApiData();
+        } else {
+            showToast("Error al eliminar plan: " + res.error, "error");
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error al conectar con el servidor.", "error");
+    }
+};
+
+window.deleteServiceSaas = async function(id, name) {
+    if (name === 'Boletería') {
+        showToast("No se puede eliminar el servicio núcleo 'Boletería'.", "error");
+        return;
+    }
+    if (!confirm(`¿Está seguro de que desea eliminar permanentemente el servicio "${name}" del catálogo?\n\nLas empresas activas que tengan habilitado este servicio lo conservarán, pero no se podrá activar para nuevas empresas.`)) {
+        return;
+    }
+    try {
+        const res = await fetch(`/api/saas/services/${id}`, { method: 'DELETE' }).then(r => r.json());
+        if (res.success) {
+            showToast(`Servicio "${name}" eliminado correctamente.`, "success");
+            await reloadAllApiData();
+        } else {
+            showToast("Error al eliminar servicio: " + res.error, "error");
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error al conectar con el servidor.", "error");
+    }
+};
+
+function populatePlanSelectors() {
+    const selectCompanyPlan = document.getElementById('company-plan');
+    const selectEditServicesPlan = document.getElementById('edit-services-plan');
+    
+    const selectedCompanyPlanVal = selectCompanyPlan ? selectCompanyPlan.value : '';
+    const selectedEditServicesPlanVal = selectEditServicesPlan ? selectEditServicesPlan.value : '';
+
+    if (selectCompanyPlan) {
+        selectCompanyPlan.innerHTML = '';
+        state.saasPlans.forEach(plan => {
+            const opt = document.createElement('option');
+            opt.value = plan.name;
+            opt.textContent = `${plan.name} (S/ ${parseFloat(plan.price).toFixed(2)}/mes)`;
+            selectCompanyPlan.appendChild(opt);
+        });
+        if (selectedCompanyPlanVal) {
+            selectCompanyPlan.value = selectedCompanyPlanVal;
+        } else if (state.saasPlans.length > 1) {
+            const proPlan = state.saasPlans.find(p => p.name.includes('Profesional'));
+            if (proPlan) selectCompanyPlan.value = proPlan.name;
+        }
+    }
+
+    if (selectEditServicesPlan) {
+        selectEditServicesPlan.innerHTML = '';
+        state.saasPlans.forEach(plan => {
+            const opt = document.createElement('option');
+            opt.value = plan.name;
+            opt.textContent = `${plan.name} (S/ ${parseFloat(plan.price).toFixed(2)}/mes)`;
+            selectEditServicesPlan.appendChild(opt);
+        });
+        if (selectedEditServicesPlanVal) {
+            selectEditServicesPlan.value = selectedEditServicesPlanVal;
+        }
+    }
+}
+
+function populateServiceCheckboxes() {
+    const container = document.getElementById('edit-services-checkboxes-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!state.saasServices || state.saasServices.length === 0) {
+        container.innerHTML = '<p style="font-size: var(--text-xs); color: #94a3b8;">No hay servicios definidos en el catálogo.</p>';
+        return;
+    }
+
+    state.saasServices.forEach(srv => {
+        const isCore = srv.name === 'Boletería';
+        const checkedAttr = isCore ? 'checked disabled' : '';
+        const coreTag = isCore ? ' (Módulo Núcleo - Incluido)' : '';
+        
+        container.innerHTML += `
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: var(--text-xs); font-weight: 600; cursor: pointer; color: #334155;">
+                <input type="checkbox" class="service-checkbox" value="${srv.name}" ${checkedAttr} style="width: 16px; height: 16px; accent-color: var(--brand-primary);"> 
+                ${srv.name}${coreTag} ${srv.description ? `<span style="font-weight: normal; color: #64748b; font-size: var(--text-xxs); margin-left: 4px;">(${srv.description})</span>` : ''}
+            </label>
+        `;
+    });
+}
 async function renderPaymentsList() {
     const tbody = document.getElementById('table-payments-body');
     if (!tbody) return;
@@ -3159,6 +3381,115 @@ function initSuperAdminSaasBehavior() {
             } catch (err) {
                 console.error(err);
                 showToast("Error de conexión al registrar cobro.", "error");
+            }
+        });
+    }
+
+    // === LÓGICA DE CONTROLADORES DE MODALES Y FORMULARIOS DE PLANES Y SERVICIOS SAAS ===
+    const btnOpenCreatePlan = document.getElementById('btn-open-create-plan-modal');
+    const btnCloseCreatePlan = document.getElementById('btn-close-create-plan-modal');
+    const modalCreatePlan = document.getElementById('modal-create-plan');
+    const formCreatePlan = document.getElementById('form-create-plan');
+
+    const btnOpenCreateService = document.getElementById('btn-open-create-service-modal');
+    const btnCloseCreateService = document.getElementById('btn-close-create-service-modal');
+    const modalCreateService = document.getElementById('modal-create-service');
+    const formCreateService = document.getElementById('form-create-service');
+
+    // Cerrar / Abrir Modal de Plan
+    if (btnOpenCreatePlan && modalCreatePlan) {
+        btnOpenCreatePlan.addEventListener('click', () => {
+            if (formCreatePlan) formCreatePlan.reset();
+            document.getElementById('plan-id-hidden').value = '';
+            document.getElementById('modal-plan-title').innerHTML = `<i data-lucide="gem"></i> Registrar Nuevo Plan SaaS`;
+            modalCreatePlan.classList.remove('hidden');
+            lucide.createIcons();
+        });
+    }
+    if (btnCloseCreatePlan && modalCreatePlan) {
+        btnCloseCreatePlan.addEventListener('click', () => {
+            modalCreatePlan.classList.add('hidden');
+        });
+    }
+
+    // Cerrar / Abrir Modal de Servicio
+    if (btnOpenCreateService && modalCreateService) {
+        btnOpenCreateService.addEventListener('click', () => {
+            if (formCreateService) formCreateService.reset();
+            document.getElementById('service-id-hidden').value = '';
+            document.getElementById('modal-service-title').innerHTML = `<i data-lucide="package-plus"></i> Registrar Nuevo Módulo / Servicio`;
+            modalCreateService.classList.remove('hidden');
+            lucide.createIcons();
+        });
+    }
+    if (btnCloseCreateService && modalCreateService) {
+        btnCloseCreateService.addEventListener('click', () => {
+            modalCreateService.classList.add('hidden');
+        });
+    }
+
+    // Envío del Formulario de Crear / Editar Plan
+    if (formCreatePlan && modalCreatePlan) {
+        formCreatePlan.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('plan-id-hidden').value;
+            const name = document.getElementById('plan-name').value.trim();
+            const price = parseFloat(document.getElementById('plan-price').value);
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/saas/plans/${id}` : '/api/saas/plans';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, price })
+                }).then(r => r.json());
+
+                if (res.id || res.success) {
+                    showToast(id ? "Plan actualizado exitosamente." : "Plan registrado exitosamente.", "success");
+                    modalCreatePlan.classList.add('hidden');
+                    formCreatePlan.reset();
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al guardar plan: " + res.error, "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error de conexión al guardar plan.", "error");
+            }
+        });
+    }
+
+    // Envío del Formulario de Crear / Editar Servicio
+    if (formCreateService && modalCreateService) {
+        formCreateService.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('service-id-hidden').value;
+            const name = document.getElementById('service-name').value.trim();
+            const description = document.getElementById('service-description').value.trim();
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/saas/services/${id}` : '/api/saas/services';
+
+            try {
+                const res = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description })
+                }).then(r => r.json());
+
+                if (res.id || res.success) {
+                    showToast(id ? "Servicio actualizado exitosamente." : "Servicio registrado exitosamente.", "success");
+                    modalCreateService.classList.add('hidden');
+                    formCreateService.reset();
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al guardar servicio: " + res.error, "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error de conexión al guardar servicio.", "error");
             }
         });
     }

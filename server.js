@@ -41,6 +41,27 @@ if (fs.existsSync(jsonDbPath)) {
     }
 }
 
+// Asegurar catálogo de planes y servicios en localDb si no existen
+if (!localDb.saas_plans) localDb.saas_plans = [];
+if (!localDb.saas_services) localDb.saas_services = [];
+
+if (localDb.saas_plans.length === 0) {
+    localDb.saas_plans = [
+        { id: 'plan-bas', name: 'Plan Básico', price: 100.00 },
+        { id: 'plan-pro', name: 'Plan Profesional', price: 250.00 },
+        { id: 'plan-ent', name: 'Plan Enterprise', price: 500.00 }
+    ];
+}
+if (localDb.saas_services.length === 0) {
+    localDb.saas_services = [
+        { id: 'serv-bol', name: 'Boletería', description: 'Sistema de emisión de pasajes y mapa de asientos.' },
+        { id: 'serv-flo', name: 'Flota', description: 'Administración y control de vehículos.' },
+        { id: 'serv-enc', name: 'Encomiendas', description: 'Gestión de envíos y paquetes.' },
+        { id: 'serv-gps', name: 'GPS Satelital', description: 'Monitoreo en tiempo real.' },
+        { id: 'serv-pas', name: 'Pasarela Online', description: 'Cobros digitales.' }
+    ];
+}
+
 function saveLocalDb() {
     try {
         fs.writeFileSync(jsonDbPath, JSON.stringify(localDb, null, 2), 'utf8');
@@ -194,9 +215,49 @@ async function initializePostgresTables() {
                 status VARCHAR(20) DEFAULT 'Pendiente'
             )
         `);
+
+        // Tabla Planes SaaS Globales
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS saas_plans (
+                id VARCHAR(50) PRIMARY KEY,
+                name VARCHAR(100) UNIQUE NOT NULL,
+                price DECIMAL(10,2) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Tabla Servicios SaaS Globales
+        await client.query(`
+            CREATE TABLE IF NOT EXISTS saas_services (
+                id VARCHAR(50) PRIMARY KEY,
+                name VARCHAR(100) UNIQUE NOT NULL,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Sembrar Planes SaaS si la tabla está vacía
+        const planCheck = await client.query('SELECT COUNT(*) FROM saas_plans');
+        if (parseInt(planCheck.rows[0].count) === 0) {
+            console.log("🌱 Sembrando planes SaaS globales en PostgreSQL...");
+            await client.query("INSERT INTO saas_plans (id, name, price) VALUES ('plan-bas', 'Plan Básico', 100.00)");
+            await client.query("INSERT INTO saas_plans (id, name, price) VALUES ('plan-pro', 'Plan Profesional', 250.00)");
+            await client.query("INSERT INTO saas_plans (id, name, price) VALUES ('plan-ent', 'Plan Enterprise', 500.00)");
+        }
+
+        // Sembrar Servicios SaaS si la tabla está vacía
+        const servCheck = await client.query('SELECT COUNT(*) FROM saas_services');
+        if (parseInt(servCheck.rows[0].count) === 0) {
+            console.log("🌱 Sembrando servicios SaaS globales en PostgreSQL...");
+            await client.query("INSERT INTO saas_services (id, name, description) VALUES ('serv-bol', 'Boletería', 'Sistema de emisión de pasajes y mapa de asientos en tiempo real.')");
+            await client.query("INSERT INTO saas_services (id, name, description) VALUES ('serv-flo', 'Flota', 'Administración y control de vehículos, buses, minibuses y combis.')");
+            await client.query("INSERT INTO saas_services (id, name, description) VALUES ('serv-enc', 'Encomiendas', 'Gestión de envíos, almacén y entrega de paquetes.')");
+            await client.query("INSERT INTO saas_services (id, name, description) VALUES ('serv-gps', 'GPS Satelital', 'Monitoreo en tiempo real de vehículos de la flota.')");
+            await client.query("INSERT INTO saas_services (id, name, description) VALUES ('serv-pas', 'Pasarela Online', 'Cobros digitales e integración de pasarelas de pago.')");
+        }
         
         await client.query('COMMIT');
-        console.log("✔ Estructura de tablas de PostgreSQL verificada/creada correctamente.");
+        console.log("✔ Estructura de tablas y catálogos SaaS de PostgreSQL verificados/creados correctamente.");
     } catch (e) {
         await client.query('ROLLBACK');
         console.error("❌ Error inicializando tablas PostgreSQL en la nube:", e);
@@ -413,6 +474,163 @@ app.put('/api/companies/:id/services', async (req, res) => {
         } else {
             res.status(404).json({ error: "Company not found" });
         }
+// --- CATALOGO GLOBAL DE PLANES SAAS ---
+app.get('/api/saas/plans', async (req, res) => {
+    if (usePostgres) {
+        try {
+            const { rows } = await pool.query('SELECT * FROM saas_plans ORDER BY price ASC');
+            res.json(rows.map(r => ({ id: r.id, name: r.name, price: parseFloat(r.price) })));
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        res.json(localDb.saas_plans || []);
+    }
+});
+
+app.post('/api/saas/plans', async (req, res) => {
+    const { name, price } = req.body;
+    const id = 'plan-' + generateId();
+    if (!name || isNaN(price)) {
+        return res.status(400).json({ error: 'Nombre de plan y precio válidos requeridos.' });
+    }
+
+    if (usePostgres) {
+        try {
+            await pool.query('INSERT INTO saas_plans (id, name, price) VALUES ($1, $2, $3)', [id, name, price]);
+            res.json({ success: true, plan: { id, name, price: parseFloat(price) } });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const plan = { id, name, price: parseFloat(price) };
+        localDb.saas_plans = localDb.saas_plans || [];
+        localDb.saas_plans.push(plan);
+        saveLocalDb();
+        res.json({ success: true, plan });
+    }
+});
+
+app.put('/api/saas/plans/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, price } = req.body;
+    if (!name || isNaN(price)) {
+        return res.status(400).json({ error: 'Nombre de plan y precio válidos requeridos.' });
+    }
+
+    if (usePostgres) {
+        try {
+            await pool.query('UPDATE saas_plans SET name = $1, price = $2 WHERE id = $3', [name, price, id]);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const plan = localDb.saas_plans.find(p => p.id === id);
+        if (plan) {
+            plan.name = name;
+            plan.price = parseFloat(price);
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: 'Plan no encontrado' });
+        }
+    }
+});
+
+app.delete('/api/saas/plans/:id', async (req, res) => {
+    const { id } = req.params;
+    if (usePostgres) {
+        try {
+            await pool.query('DELETE FROM saas_plans WHERE id = $1', [id]);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        localDb.saas_plans = localDb.saas_plans.filter(p => p.id !== id);
+        saveLocalDb();
+        res.json({ success: true });
+    }
+});
+
+// --- CATALOGO GLOBAL DE SERVICIOS SAAS ---
+app.get('/api/saas/services', async (req, res) => {
+    if (usePostgres) {
+        try {
+            const { rows } = await pool.query('SELECT * FROM saas_services ORDER BY name ASC');
+            res.json(rows.map(r => ({ id: r.id, name: r.name, description: r.description })));
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        res.json(localDb.saas_services || []);
+    }
+});
+
+app.post('/api/saas/services', async (req, res) => {
+    const { name, description } = req.body;
+    const id = 'serv-' + generateId();
+    if (!name) {
+        return res.status(400).json({ error: 'El nombre del servicio es obligatorio.' });
+    }
+
+    if (usePostgres) {
+        try {
+            await pool.query('INSERT INTO saas_services (id, name, description) VALUES ($1, $2, $3)', [id, name, description || '']);
+            res.json({ success: true, service: { id, name, description } });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const service = { id, name, description: description || '' };
+        localDb.saas_services = localDb.saas_services || [];
+        localDb.saas_services.push(service);
+        saveLocalDb();
+        res.json({ success: true, service });
+    }
+});
+
+app.put('/api/saas/services/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, description } = req.body;
+    if (!name) {
+        return res.status(400).json({ error: 'El nombre del servicio es obligatorio.' });
+    }
+
+    if (usePostgres) {
+        try {
+            await pool.query('UPDATE saas_services SET name = $1, description = $2 WHERE id = $3', [name, description || '', id]);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const service = localDb.saas_services.find(s => s.id === id);
+        if (service) {
+            service.name = name;
+            service.description = description || '';
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: 'Servicio no encontrado' });
+        }
+    }
+});
+
+app.delete('/api/saas/services/:id', async (req, res) => {
+    const { id } = req.params;
+    if (usePostgres) {
+        try {
+            await pool.query('DELETE FROM saas_services WHERE id = $1', [id]);
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        localDb.saas_services = localDb.saas_services.filter(s => s.id !== id);
+        saveLocalDb();
+        res.json({ success: true });
     }
 });
 
