@@ -293,7 +293,7 @@ async function handleSearchSubmit() {
         
         renderAvailableBuses();
     } catch (e) {
-        console.error("Error al buscar viajes:", e);
+        routesList.innerHTML = `
             <div style="text-align: center; padding: 3rem 1.5rem; color: #e11d48; background: #fff; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #fee2e2;">
                 <div style="width: 48px; height: 48px; border-radius: 50%; background: #fee2e2; color: #e11d48; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
                     <i data-lucide="wifi-off" style="width: 22px; height: 22px;"></i>
@@ -304,6 +304,7 @@ async function handleSearchSubmit() {
                     <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i> Reintentar
                 </button>
             </div>
+        `;
         lucide.createIcons();
     }
 }
