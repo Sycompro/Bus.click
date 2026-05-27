@@ -435,6 +435,99 @@ async function seedDefaultRailwayData() {
     }
 }
 
+async function diagnoseDatabase() {
+    const modal = document.getElementById('modal-diagnose-db');
+    if (!modal) return;
+    
+    // Mostrar modal en estado cargando
+    modal.classList.remove('hidden');
+    
+    const connBadge = document.getElementById('diagnostic-conn-badge');
+    const tableBody = document.getElementById('table-diag-db-body');
+    
+    connBadge.innerHTML = '<span><i class="animate-spin" data-lucide="loader-2"></i> Consultando base de datos física...</span>';
+    connBadge.style.background = 'rgba(234, 179, 8, 0.1)';
+    connBadge.style.color = 'var(--color-warning)';
+    
+    tableBody.innerHTML = '<tr><td colspan="5" class="text-center" style="color: #64748b;">Consultando base de datos de producción...</td></tr>';
+    
+    document.getElementById('diag-count-companies').textContent = '...';
+    document.getElementById('diag-count-sedes').textContent = '...';
+    document.getElementById('diag-count-trabajadores').textContent = '...';
+    document.getElementById('diag-count-movilidades').textContent = '...';
+    document.getElementById('diag-count-tickets').textContent = '...';
+    lucide.createIcons();
+
+    try {
+        const data = await fetch('/api/diagnose-db').then(r => r.json());
+        
+        // Renderizar estado de conexión
+        if (data.postgresActive) {
+            connBadge.innerHTML = `
+                <span><i data-lucide="shield-check"></i> Base de Datos: POSTGRESQL (Nube de Railway) ACTIVO</span>
+                <span style="font-size: var(--text-xs); opacity: 0.8; font-weight: 500;">Conectado físicamente y persistente</span>
+            `;
+            connBadge.style.background = 'rgba(16, 185, 129, 0.1)';
+            connBadge.style.color = 'var(--color-success)';
+        } else {
+            connBadge.innerHTML = `
+                <span><i data-lucide="shield-alert"></i> Base de Datos: JSON LOCAL (Fallback Volátil)</span>
+                <span style="font-size: var(--text-xs); opacity: 0.8; font-weight: 500;">Advertencia: Datos efímeros en contenedor</span>
+            `;
+            connBadge.style.background = 'rgba(239, 68, 68, 0.1)';
+            connBadge.style.color = 'var(--color-danger)';
+        }
+        
+        // Renderizar conteos
+        document.getElementById('diag-count-companies').textContent = data.counts.companies;
+        document.getElementById('diag-count-sedes').textContent = data.counts.sedes;
+        document.getElementById('diag-count-trabajadores').textContent = data.counts.trabajadores;
+        document.getElementById('diag-count-movilidades').textContent = data.counts.movilidades;
+        document.getElementById('diag-count-tickets').textContent = data.counts.tickets;
+        
+        // Renderizar tabla detallada de empresas y sedes
+        tableBody.innerHTML = '';
+        
+        if (data.companies.length === 0 && data.sedes.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center" style="color: #64748b;">No hay empresas ni sedes en la base de datos física actualmente.</td></tr>';
+        } else {
+            // Inyectar empresas
+            data.companies.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge badge-premium" style="background: rgba(99, 102, 241, 0.1); color: var(--color-indigo);">EMPRESA</span></td>
+                    <td class="font-bold">${c.name} <span style="font-size: var(--text-xs); color: #64748b; font-weight: 500;">(ID: ${c.id})</span></td>
+                    <td><code>${c.username || '---'}</code></td>
+                    <td><code>${c.password || '---'}</code></td>
+                    <td><span style="color: #94a3b8; font-style: italic;">N/A (Es Principal)</span></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            
+            // Inyectar sedes
+            data.sedes.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><span class="badge badge-premium" style="background: rgba(16, 185, 129, 0.1); color: var(--color-success);">SEDE / BOLETO</span></td>
+                    <td class="font-bold">${s.name} <span style="font-size: var(--text-xs); color: #64748b; font-weight: 500;">(ID: ${s.id})</span></td>
+                    <td><code>${s.username || '---'}</code></td>
+                    <td><code>${s.password || '---'}</code></td>
+                    <td><code>${s.company_id || s.companyId || '---'}</code></td>
+                `;
+                tableBody.appendChild(tr);
+            });
+        }
+        lucide.createIcons();
+    } catch (err) {
+        console.error("Error en diagnóstico de base de datos:", err);
+        connBadge.innerHTML = '<span><i data-lucide="alert-octagon"></i> ERROR al comunicarse con la API de diagnóstico</span>';
+        connBadge.style.background = 'rgba(239, 68, 68, 0.1)';
+        connBadge.style.color = 'var(--color-danger)';
+        tableBody.innerHTML = `<tr><td colspan="5" class="text-center" style="color: var(--color-danger); font-weight: bold;">Error: ${err.message}</td></tr>`;
+        lucide.createIcons();
+    }
+}
+
 // ==========================================
 // 6. RENDERIZACIÓN DE TABLAS DE GESTIÓN (ADMIN)
 // ==========================================
@@ -1361,6 +1454,23 @@ function setupUIEventListeners() {
     const btnSeed = document.getElementById('btn-seed-data');
     if (btnSeed) {
         btnSeed.addEventListener('click', seedDefaultRailwayData);
+    }
+
+    const btnDiag = document.getElementById('btn-diagnose-db');
+    if (btnDiag) {
+        btnDiag.addEventListener('click', diagnoseDatabase);
+    }
+
+    const modalDiag = document.getElementById('modal-diagnose-db');
+    if (modalDiag) {
+        const btnCloseDiag = document.getElementById('btn-close-diagnose-modal');
+        const btnCloseDiagBottom = document.getElementById('btn-close-diagnose-modal-bottom');
+        if (btnCloseDiag) {
+            btnCloseDiag.addEventListener('click', () => modalDiag.classList.add('hidden'));
+        }
+        if (btnCloseDiagBottom) {
+            btnCloseDiagBottom.addEventListener('click', () => modalDiag.classList.add('hidden'));
+        }
     }
 
     const formCompany = document.getElementById('form-create-company');

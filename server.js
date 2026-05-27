@@ -65,8 +65,8 @@ if (process.env.DATABASE_URL) {
         // Inicializar tablas
         initializePostgresTables();
     } catch (error) {
-        console.error("❌ Falló la inicialización de PostgreSQL. Usando fallback JSON local.", error);
-        usePostgres = false;
+        console.error("❌ Falló la inicialización de PostgreSQL. Requiriendo base de datos real.", error);
+        usePostgres = true; // Forzar uso de Postgres
     }
 } else {
     console.log("ℹ No se detectó DATABASE_URL. Usando almacenamiento JSON local persistente.");
@@ -199,8 +199,13 @@ async function initializePostgresTables() {
         console.log("✔ Estructura de tablas de PostgreSQL verificada/creada correctamente.");
     } catch (e) {
         await client.query('ROLLBACK');
-        console.error("❌ Error inicializando tablas PostgreSQL, fallback a JSON:", e);
-        usePostgres = false;
+        console.error("❌ Error inicializando tablas PostgreSQL en la nube:", e);
+        // Si hay DATABASE_URL, debemos mantener el uso de Postgres de manera mandatoria
+        if (process.env.DATABASE_URL) {
+            usePostgres = true;
+        } else {
+            usePostgres = false;
+        }
     } finally {
         client.release();
     }
@@ -905,7 +910,7 @@ app.post('/api/login/admin', async (req, res) => {
 app.post('/api/login/sede', async (req, res) => {
     const { username, password } = req.body;
     
-    console.log(`[LOGIN SEDE] Intento de ingreso. Usuario recibido: "${username}", Contraseña: "${password}"`);
+    console.log(`[LOGIN SEDE] Intento de ingreso. Usuario recibido: "${username}", Contraseña: "${password}" (Postgres activo: ${usePostgres})`);
 
     if (!username || !password) {
         return res.status(400).json({ success: false, error: 'Falta proporcionar usuario y contraseña.' });
@@ -941,6 +946,18 @@ app.post('/api/login/sede', async (req, res) => {
                 }
             } else {
                 console.log(`[LOGIN SEDE] Usuario "${uClean}" NO existe en la base de datos de PostgreSQL.`);
+                
+                // DIAGNÓSTICO EN TIEMPO REAL EN CONSOLA: Listar sedes para ver qué hay en BD
+                try {
+                    const allS = await pool.query('SELECT id, name, username, password FROM sedes LIMIT 20');
+                    console.log(`[DIAGNÓSTICO LOGIN SEDE] Lista de sedes en Postgres físicas (${allS.rows.length}):`);
+                    allS.rows.forEach(item => {
+                        console.log(`   - ID: ${item.id} | Sede: "${item.name}" | Usuario BD: "${item.username}" | Pass BD: "${item.password}"`);
+                    });
+                } catch (diagErr) {
+                    console.error('[DIAGNÓSTICO LOGIN SEDE] Falló la consulta de apoyo diagnóstica:', diagErr.message);
+                }
+                
                 res.status(401).json({ success: false, error: 'Usuario o contraseña de sede incorrectos.' });
             }
         } catch (e) {
@@ -1101,6 +1118,63 @@ app.get('/', (req, res) => {
     
     // Default: Panel de Ventas
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Endpoint de Diagnóstico del estado real de la base de datos
+app.get('/api/diagnose-db', async (req, res) => {
+    try {
+        const diagnostics = {
+            postgresActive: usePostgres,
+            databaseUrlPresent: !!process.env.DATABASE_URL,
+            timestamp: new Date().toISOString(),
+            counts: {
+                companies: 0,
+                sedes: 0,
+                trabajadores: 0,
+                movilidades: 0,
+                tickets: 0
+            },
+            companies: [],
+            sedes: []
+        };
+
+        if (usePostgres) {
+            try {
+                const countComp = await pool.query('SELECT COUNT(*) FROM companies');
+                const countSede = await pool.query('SELECT COUNT(*) FROM sedes');
+                const countTrab = await pool.query('SELECT COUNT(*) FROM trabajadores');
+                const countMov  = await pool.query('SELECT COUNT(*) FROM movilidades');
+                const countTick = await pool.query('SELECT COUNT(*) FROM tickets');
+
+                diagnostics.counts.companies = parseInt(countComp.rows[0].count);
+                diagnostics.counts.sedes = parseInt(countSede.rows[0].count);
+                diagnostics.counts.trabajadores = parseInt(countTrab.rows[0].count);
+                diagnostics.counts.movilidades = parseInt(countMov.rows[0].count);
+                diagnostics.counts.tickets = parseInt(countTick.rows[0].count);
+
+                const compRows = await pool.query('SELECT id, name, ruc, username, password, plan_name, billing_cycle FROM companies');
+                diagnostics.companies = compRows.rows;
+
+                const sedeRows = await pool.query('SELECT id, company_id, name, username, password FROM sedes');
+                diagnostics.sedes = sedeRows.rows;
+            } catch (dbErr) {
+                diagnostics.error = "Error al consultar tablas de PostgreSQL: " + dbErr.message;
+            }
+        } else {
+            diagnostics.counts.companies = localDb.companies.length;
+            diagnostics.counts.sedes = localDb.sedes.length;
+            diagnostics.counts.trabajadores = localDb.trabajadores.length;
+            diagnostics.counts.movilidades = localDb.movilidades.length;
+            diagnostics.counts.tickets = localDb.tickets.length;
+
+            diagnostics.companies = localDb.companies.map(c => ({ id: c.id, name: c.name, ruc: c.ruc, username: c.username, password: c.password, plan_name: c.planName, billing_cycle: c.billingCycle }));
+            diagnostics.sedes = localDb.sedes.map(s => ({ id: s.id, company_id: s.companyId, name: s.name, username: s.username, password: s.password }));
+        }
+
+        res.json(diagnostics);
+    } catch (err) {
+        res.status(500).json({ error: "Error grave en diagnóstico: " + err.message });
+    }
 });
 
 // Rutas explícitas para desarrollo local

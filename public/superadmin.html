@@ -92,6 +92,9 @@
                                 <p class="section-desc">Crea y monitorea todas las empresas integradas en la plataforma.</p>
                             </div>
                             <div class="header-actions" style="display: flex; gap: 0.75rem;">
+                                <button id="btn-diagnose-db" class="btn btn-secondary btn-sparkle" style="background: rgba(99, 102, 241, 0.1); color: var(--color-indigo); border: 1px solid rgba(99, 102, 241, 0.2);">
+                                    <i data-lucide="activity"></i> Diagnóstico DB
+                                </button>
                                 <button id="btn-open-create-company-modal" class="btn btn-primary btn-sparkle">
                                     <i data-lucide="plus-circle"></i> Registrar Empresa
                                 </button>
@@ -511,6 +514,82 @@
                     <i data-lucide="save"></i> Registrar Cobro
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE DIAGNÓSTICO DB PREMIUM -->
+    <div id="modal-diagnose-db" class="modal-overlay hidden">
+        <div class="modal-card" style="max-width: 750px; width: 90%;">
+            <div class="modal-header">
+                <h3><i data-lucide="activity"></i> Diagnóstico Físico de Base de Datos</h3>
+                <button type="button" class="btn-close-modal" id="btn-close-diagnose-modal">×</button>
+            </div>
+            <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem; max-height: 70vh; overflow-y: auto;">
+                <div id="diagnostic-conn-badge" style="padding: 0.75rem 1rem; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: var(--text-sm);">
+                    <!-- Rellenado dinámicamente -->
+                </div>
+                
+                <div>
+                    <h4 style="margin-bottom: 0.5rem; color: #475569; font-size: var(--text-sm);">Conteo Físico Real de Tablas (Nube):</h4>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                        <div class="metric-card glass" style="padding: 0.75rem; text-align: center;">
+                            <div class="metric-info">
+                                <h3 style="font-size: var(--text-xs); color: #64748b; margin-bottom: 0.25rem;">Empresas</h3>
+                                <p class="metric-value" id="diag-count-companies" style="font-size: 1.5rem; font-weight: 800; color: var(--color-indigo);">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card glass" style="padding: 0.75rem; text-align: center;">
+                            <div class="metric-info">
+                                <h3 style="font-size: var(--text-xs); color: #64748b; margin-bottom: 0.25rem;">Sedes</h3>
+                                <p class="metric-value" id="diag-count-sedes" style="font-size: 1.5rem; font-weight: 800; color: var(--color-indigo);">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card glass" style="padding: 0.75rem; text-align: center;">
+                            <div class="metric-info">
+                                <h3 style="font-size: var(--text-xs); color: #64748b; margin-bottom: 0.25rem;">Personal</h3>
+                                <p class="metric-value" id="diag-count-trabajadores" style="font-size: 1.5rem; font-weight: 800; color: var(--color-indigo);">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card glass" style="padding: 0.75rem; text-align: center;">
+                            <div class="metric-info">
+                                <h3 style="font-size: var(--text-xs); color: #64748b; margin-bottom: 0.25rem;">Flota</h3>
+                                <p class="metric-value" id="diag-count-movilidades" style="font-size: 1.5rem; font-weight: 800; color: var(--color-indigo);">0</p>
+                            </div>
+                        </div>
+                        <div class="metric-card glass" style="padding: 0.75rem; text-align: center;">
+                            <div class="metric-info">
+                                <h3 style="font-size: var(--text-xs); color: #64748b; margin-bottom: 0.25rem;">Tickets</h3>
+                                <p class="metric-value" id="diag-count-tickets" style="font-size: 1.5rem; font-weight: 800; color: var(--color-indigo);">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="margin-bottom: 0.5rem; color: #475569; font-size: var(--text-sm);">Empresas y Sedes Existentes (Detallado):</h4>
+                    <div style="background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: var(--radius-md); padding: 0.5rem; overflow-x: auto; max-height: 250px; overflow-y: auto;">
+                        <table class="table-premium" style="font-size: var(--text-xs); margin-bottom: 0; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Nombre / ID</th>
+                                    <th>Usuario en BD</th>
+                                    <th>Contraseña en BD</th>
+                                    <th>Pertenece a (Empresa ID)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-diag-db-body">
+                                <tr>
+                                    <td colspan="5" class="text-center" style="color: #64748b;">Cargando diagnóstico...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div style="padding: 1rem; border-top: 1px solid rgba(226, 232, 240, 0.8); display: flex; justify-content: flex-end; gap: 0.5rem; background: rgba(248, 250, 252, 0.5);">
+                <button type="button" class="btn btn-secondary" id="btn-close-diagnose-modal-bottom">Cerrar</button>
+            </div>
         </div>
     </div>
 </body>
