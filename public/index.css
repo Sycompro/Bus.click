@@ -337,7 +337,9 @@ body {
     display: grid;
     grid-template-columns: auto 1fr auto;
     align-items: center;
-    padding: 0.75rem 1.5rem;
+    padding: 0 1.5rem; /* Centrado vertical mediante flex/grid align-items */
+    height: 75px; /* Altura fija idéntica a .brand-card-premium para alineación horizontal perfecta */
+    box-sizing: border-box;
     margin: 0; /* Sin márgenes toscos, ya que la columna flex tiene margen y gap */
     border-radius: 20px;
     background: linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(248,250,252,0.97) 100%);
@@ -2999,6 +3001,7 @@ body {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e0e7ff 100%);
     position: relative;
     overflow: hidden;
+    gap: 0.75rem; /* Separación elegante horizontal entre la columna izquierda y derecha */
 }
 
 /* Contenedor de la columna del sidebar (Marca + Menú) */
@@ -3417,6 +3420,12 @@ body {
     .app-container {
         flex-direction: column !important;
         background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        gap: 0.5rem !important; /* Gap adaptado a pantallas más pequeñas */
+    }
+    .main-content-column {
+        height: auto !important;
+        margin: 0 0.5rem 0.5rem 0.5rem !important;
+        gap: 0.5rem !important;
     }
     .sidebar-container-wrapper {
         width: calc(100% - 1rem) !important;
