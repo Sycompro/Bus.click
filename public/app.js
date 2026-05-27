@@ -2866,18 +2866,32 @@ async function renderPaymentsList() {
                     }
 
                     let statusBadge = '';
-                    const todayStr = new Date().toISOString().split('T')[0];
-                    if (nextDueDate < todayStr) {
+                    const today = new Date();
+                    today.setHours(0,0,0,0);
+                    const dueDate = new Date(nextDueDate);
+                    dueDate.setHours(0,0,0,0);
+                    
+                    const diffTime = dueDate.getTime() - today.getTime();
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays < 0) {
+                        // Ya venció
                         if (latestPaymentStatus === 'Pagado') {
                             statusBadge = `<span class="badge-version" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.3); font-weight: 700; border-radius: 8px;">Activo</span>`;
                         } else {
                             statusBadge = `<span class="badge-version" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border-color: rgba(239, 68, 68, 0.3); font-weight: 700; border-radius: 8px;">Vencido (Mora)</span>`;
                         }
                     } else {
+                        // Aún no vence
                         if (latestPaymentStatus === 'Pagado') {
                             statusBadge = `<span class="badge-version" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.3); font-weight: 700; border-radius: 8px;">Activo</span>`;
                         } else {
-                            statusBadge = `<span class="badge-version" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); font-weight: 700; border-radius: 8px;">Por Vencer</span>`;
+                            // Si falta 4 días o menos, se marca como "Por Vencer"
+                            if (diffDays <= 4) {
+                                statusBadge = `<span class="badge-version" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); font-weight: 700; border-radius: 8px;">Por Vencer</span>`;
+                            } else {
+                                statusBadge = `<span class="badge-version" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border-color: rgba(16, 185, 129, 0.3); font-weight: 700; border-radius: 8px;">Activo</span>`;
+                            }
                         }
                     }
 
