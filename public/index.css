@@ -3421,6 +3421,11 @@ body {
         border-radius: 16px !important;
         box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04) !important;
         flex: none !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0.25rem 0.5rem !important;
     }
     .main-layout-wrapper {
         margin: 0.5rem !important;
@@ -3449,7 +3454,8 @@ body {
         display: none !important;
     }
     .sidebar-nav {
-        padding: 0.5rem 1rem !important;
+        flex: 1 !important;
+        padding: 0.25rem 0.5rem !important;
     }
     .nav-list {
         flex-direction: row !important;
@@ -3465,6 +3471,31 @@ body {
         display: none !important;
     }
     .sidebar-footer {
+        display: flex !important;
+        align-items: center !important;
+        padding: 0 !important;
+        margin: 0 0.5rem 0 0 !important;
+        border-top: none !important;
+    }
+    .btn-logout {
+        padding: 0.5rem !important;
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: rgba(239, 68, 68, 0.08) !important;
+        color: #ef4444 !important;
+        border: 1px solid rgba(239, 68, 68, 0.15) !important;
+        margin: 0 !important;
+        transition: all 0.2s ease !important;
+    }
+    .btn-logout:hover {
+        background: rgba(239, 68, 68, 0.15) !important;
+        transform: scale(1.05) !important;
+    }
+    .btn-logout .nav-label {
         display: none !important;
     }
     .sidebar-premium:not(.expanded) .sidebar-footer .btn-logout .nav-label {
@@ -4456,6 +4487,24 @@ body {
 
 /* ── Utility ── */
 .hidden { display: none !important; }
+
+/* ─── Cabecera Responsiva para Celulares Estrechos ─── */
+@media (max-width: 480px) {
+    .header-center {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 0.5rem !important;
+    }
+    .company-selector-container, .sede-selector-container {
+        width: 100% !important;
+        justify-content: flex-start !important;
+        box-sizing: border-box !important;
+    }
+    .company-selector-container select, .sede-selector-container select {
+        width: 100% !important;
+    }
+}
 
 
 
