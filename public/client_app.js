@@ -47,6 +47,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Inicializar iconos
     lucide.createIcons();
     
+    // Obtener parámetros de multi-tenancy de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    state.companyId = urlParams.get('companyId') || urlParams.get('empresa');
+    
     // Inicializar Datepicker Premium
     initPremiumDatepickers();
     
@@ -70,6 +74,36 @@ async function loadInitialData() {
         // Cargar Empresas
         const compRes = await fetch('/api/companies');
         state.companies = await compRes.json();
+        
+        // Aplicar filtrado y marca multi-inquilino (Multi-Tenancy SaaS)
+        if (state.companyId) {
+            const foundCompany = state.companies.find(c => 
+                c.id == state.companyId || 
+                c.name.toLowerCase().replace(/\s+/g, '-').trim() === state.companyId.toLowerCase().trim()
+            );
+            
+            if (foundCompany) {
+                state.activeCompany = foundCompany;
+                state.companyId = foundCompany.id; // Fijar ID numérico
+                
+                // Filtrar sedes: Solo las que pertenecen a la empresa seleccionada
+                state.sedes = state.sedes.filter(s => s.companyId == foundCompany.id);
+                
+                // Personalizar dinámicamente la identidad de la Navbar (Marca Blanca)
+                const logoText = document.querySelector(".b2c-logo span");
+                if (logoText) {
+                    const nameParts = foundCompany.name.split(' ');
+                    const firstPart = nameParts[0] || "Empresa";
+                    const secondPart = nameParts.slice(1).join(' ') || "";
+                    logoText.innerHTML = `${firstPart}<strong>.${secondPart || 'click'}</strong>`;
+                }
+                
+                // Mensaje de bienvenida corporativo
+                setTimeout(() => {
+                    showMobileNotification(`Portal oficial de ${foundCompany.name}`, "info");
+                }, 800);
+            }
+        }
         
         // Poblar selectores de ciudades
         populateOriginDestinationSelects();
@@ -283,11 +317,16 @@ async function handleSearchSubmit() {
         state.movilidades = await movRes.json();
         state.tickets = await tickRes.json();
         
-        // Filtrar movilidades que coincidan con la ruta
-        const filteredBuses = state.movilidades.filter(m => 
-            m.routeFrom && m.routeFrom.trim().toLowerCase() === origin.trim().toLowerCase() && 
-            m.routeTo && m.routeTo.trim().toLowerCase() === destination.trim().toLowerCase()
-        );
+        // Filtrar movilidades que coincidan con la ruta y con la empresa activa
+        const filteredBuses = state.movilidades.filter(m => {
+            const routeMatch = m.routeFrom && m.routeFrom.trim().toLowerCase() === origin.trim().toLowerCase() && 
+                               m.routeTo && m.routeTo.trim().toLowerCase() === destination.trim().toLowerCase();
+            
+            if (state.companyId) {
+                return routeMatch && m.companyId == state.companyId;
+            }
+            return routeMatch;
+        });
         
         state.availableBuses = filteredBuses;
         
