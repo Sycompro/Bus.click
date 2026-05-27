@@ -3241,6 +3241,26 @@ window.registerSaasPaymentPaid = async function(id) {
 };
 
 function initSuperAdminSaasBehavior() {
+    // === CONTROLADOR DE SUB-PESTAÑAS DE PLANES Y SERVICIOS ===
+    const subtabsButtons = document.querySelectorAll('#apartado-planes .tabs-premium-wrapper .tab-btn');
+    const subtabContents = document.querySelectorAll('#apartado-planes .subtab-content');
+
+    subtabsButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            subtabsButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            subtabContents.forEach(content => content.classList.add('hidden'));
+
+            const targetSubtab = btn.getAttribute('data-subtab');
+            const targetContent = document.getElementById(targetSubtab);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        });
+    });
+
     const formEditServices = document.getElementById('form-edit-services');
     const formCreatePayment = document.getElementById('form-create-payment');
 

@@ -149,77 +149,93 @@
                             </div>
                         </div>
 
-                        <div class="list-container-card glass mt-6" style="width: 100%;">
-                            <h3 class="card-title"><i data-lucide="shield-check"></i> Distribución de Módulos Activos por Cliente</h3>
-                            <div class="table-scroll-container">
-                                <table class="table-premium">
-                                    <thead>
-                                        <tr>
-                                            <th>Empresa</th>
-                                            <th>Plan Actual</th>
-                                            <th>Servicios / Módulos Activos</th>
-                                            <th>Monto Mensual Estimado</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="table-planes-body">
-                                        <!-- Se rellenará dinámicamente -->
-                                    </tbody>
-                                </table>
+                        <!-- 🎛️ SUB-PESTAÑAS PREMIUM DE PLANES Y SERVICIOS -->
+                        <div class="tabs-premium-wrapper" style="margin-top: 1rem; margin-bottom: 1rem;">
+                            <button type="button" class="tab-btn active" data-subtab="subtab-asignacion">
+                                <i data-lucide="users"></i> Asignación a Clientes
+                            </button>
+                            <button type="button" class="tab-btn" data-subtab="subtab-catalogo">
+                                <i data-lucide="settings"></i> Configuración de Catálogo
+                            </button>
+                        </div>
+
+                        <!-- SUBAPARTADO 1: ASIGNACIÓN A CLIENTES -->
+                        <div id="subtab-asignacion" class="subtab-content">
+                            <div class="list-container-card glass" style="width: 100%; margin-top: 1rem;">
+                                <h3 class="card-title"><i data-lucide="shield-check"></i> Distribución de Módulos Activos por Cliente</h3>
+                                <div class="table-scroll-container">
+                                    <table class="table-premium">
+                                        <thead>
+                                            <tr>
+                                                <th>Empresa</th>
+                                                <th>Plan Actual</th>
+                                                <th>Servicios / Módulos Activos</th>
+                                                <th>Monto Mensual Estimado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-planes-body">
+                                            <!-- Se rellenará dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- 🛠️ SECCIÓN PREMIUM: CATÁLOGO SAAS GLOBAL (CREACIÓN DE PLANES Y SERVICIOS) -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
-                            
-                            <!-- COLUMNA IZQUIERDA: PLANES DE SUSCRIPCIÓN -->
-                            <div class="list-container-card glass" style="width: 100%;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(226, 232, 240, 0.8);">
-                                    <h3 class="card-title" style="margin: 0;"><i data-lucide="gem"></i> Catálogo de Planes</h3>
-                                    <button type="button" id="btn-open-create-plan-modal" class="btn btn-primary btn-sparkle" style="padding: 0.4rem 0.8rem; font-size: var(--text-xs);">
-                                        <i data-lucide="plus-circle"></i> Nuevo Plan
-                                    </button>
+                        <!-- SUBAPARTADO 2: CATÁLOGO SAAS GLOBAL -->
+                        <div id="subtab-catalogo" class="subtab-content hidden">
+                            <!-- 🛠️ SECCIÓN PREMIUM: CATÁLOGO SAAS GLOBAL (CREACIÓN DE PLANES Y SERVICIOS) -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                                
+                                <!-- COLUMNA IZQUIERDA: PLANES DE SUSCRIPCIÓN -->
+                                <div class="list-container-card glass" style="width: 100%;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(226, 232, 240, 0.8);">
+                                        <h3 class="card-title" style="margin: 0;"><i data-lucide="gem"></i> Catálogo de Planes</h3>
+                                        <button type="button" id="btn-open-create-plan-modal" class="btn btn-primary btn-sparkle" style="padding: 0.4rem 0.8rem; font-size: var(--text-xs);">
+                                            <i data-lucide="plus-circle"></i> Nuevo Plan
+                                        </button>
+                                    </div>
+                                    <div class="table-scroll-container">
+                                        <table class="table-premium" style="font-size: var(--text-xs);">
+                                            <thead>
+                                                <tr>
+                                                    <th>Plan</th>
+                                                    <th>Costo Mensual</th>
+                                                    <th style="width: 80px; text-align: center;">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="table-catalogo-planes-body">
+                                                <!-- Se rellenará dinámicamente -->
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="table-scroll-container">
-                                    <table class="table-premium" style="font-size: var(--text-xs);">
-                                        <thead>
-                                            <tr>
-                                                <th>Plan</th>
-                                                <th>Costo Mensual</th>
-                                                <th style="width: 80px; text-align: center;">Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="table-catalogo-planes-body">
-                                            <!-- Se rellenará dinámicamente -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
 
-                            <!-- COLUMNA DERECHA: SERVICIOS ADICIONALES -->
-                            <div class="list-container-card glass" style="width: 100%;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(226, 232, 240, 0.8);">
-                                    <h3 class="card-title" style="margin: 0;"><i data-lucide="package-plus"></i> Módulos de Servicio</h3>
-                                    <button type="button" id="btn-open-create-service-modal" class="btn btn-primary btn-sparkle" style="padding: 0.4rem 0.8rem; font-size: var(--text-xs);">
-                                        <i data-lucide="plus-circle"></i> Nuevo Servicio
-                                    </button>
+                                <!-- COLUMNA DERECHA: SERVICIOS ADICIONALES -->
+                                <div class="list-container-card glass" style="width: 100%;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(226, 232, 240, 0.8);">
+                                        <h3 class="card-title" style="margin: 0;"><i data-lucide="package-plus"></i> Módulos de Servicio</h3>
+                                        <button type="button" id="btn-open-create-service-modal" class="btn btn-primary btn-sparkle" style="padding: 0.4rem 0.8rem; font-size: var(--text-xs);">
+                                            <i data-lucide="plus-circle"></i> Nuevo Servicio
+                                        </button>
+                                    </div>
+                                    <div class="table-scroll-container">
+                                        <table class="table-premium" style="font-size: var(--text-xs);">
+                                            <thead>
+                                                <tr>
+                                                    <th>Módulo / Servicio</th>
+                                                    <th>Descripción</th>
+                                                    <th style="width: 80px; text-align: center;">Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="table-catalogo-servicios-body">
+                                                <!-- Se rellenará dinámicamente -->
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
-                                <div class="table-scroll-container">
-                                    <table class="table-premium" style="font-size: var(--text-xs);">
-                                        <thead>
-                                            <tr>
-                                                <th>Módulo / Servicio</th>
-                                                <th>Descripción</th>
-                                                <th style="width: 80px; text-align: center;">Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="table-catalogo-servicios-body">
-                                            <!-- Se rellenará dinámicamente -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
 
+                            </div>
                         </div>
                     </section>
 
