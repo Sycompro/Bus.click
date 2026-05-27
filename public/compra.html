@@ -2,338 +2,351 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bus.click - Compra de Pasajes</title>
-    <!-- Fonts -->
+    <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Tailwind CSS (Solo clases de reset y utilidades para compatibilidad) -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        body {
-            background: #090d16;
-            font-family: 'Outfit', sans-serif;
-            color: #ffffff;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
 </head>
-<body>
-    <div class="b2c-app-container">
-        
-        <!-- CABECERA MÓVIL PREMIUM -->
-        <header class="mobile-header-premium">
-                <h1 class="mobile-header-title">
-                    <i data-lucide="bus"></i> Bus.click
-                </h1>
-                <span style="font-size: 9px; font-weight: 800; color: #10b981; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); padding: 2px 8px; border-radius: 20px;">
-                    Pasajeros B2C
-                </span>
-            </header>
+<body class="b2c-body">
 
-            <!-- ÁREA DE CONTENIDO ESCROLEABLE -->
-            <main class="mobile-content-area" id="mobile-main-content">
-
-                <!-- 🎫 PASO 1: BUSCADOR DE VIAJES (WIZARD_STEP 1) -->
-                <section id="step-search" class="wizard-step">
-                    <div style="text-align: center; margin-bottom: 1.5rem; margin-top: 0.5rem;">
-                        <h2 style="font-size: 1.25rem; font-weight: 800; background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">¡Compra tu Pasaje al Instante!</h2>
-                        <p style="font-size: 10px; color: #64748b; margin-top: 0.25rem;">Rutas nacionales con las mejores empresas de transportes.</p>
-                    </div>
-
-                    <form id="form-mobile-search" class="mobile-card-glass">
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Sede de Origen</label>
-                            <select id="search-origin" class="mobile-input-premium" required style="appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 0.55rem auto;">
-                                <option value="" disabled selected>Seleccione origen...</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 1rem; position: relative;">
-                            <div style="display: flex; justify-content: center; position: absolute; left: 50%; top: -0.75rem; transform: translateX(-50%); z-index: 10;">
-                                <button type="button" id="btn-mobile-swap" style="background: var(--brand-primary); width: 24px; height: 24px; border-radius: 50%; border: 2px solid #090d16; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ffffff; box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);">
-                                    <i data-lucide="arrow-up-down" style="width: 10px; height: 10px;"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Sede de Destino</label>
-                            <select id="search-destination" class="mobile-input-premium" required style="appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 0.55rem auto;">
-                                <option value="" disabled selected>Seleccione destino...</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 1.25rem;">
-                            <label style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Fecha del Viaje</label>
-                            <div class="datepicker-wrapper">
-                                <input type="text" class="datepicker-input" id="search-date-display" placeholder="Seleccione fecha..." readonly required style="cursor: pointer;">
-                                <input type="hidden" id="search-date" required>
-                                <i data-lucide="calendar" class="datepicker-icon"></i>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="mobile-btn-primary">
-                            <i data-lucide="search"></i> Buscar Pasajes
-                        </button>
-                    </form>
-
-                    <!-- Beneficios Rápidos B2C -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; text-align: center; margin-top: 1rem;">
-                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 0.5rem; border-radius: 12px;">
-                            <i data-lucide="shield-check" style="width: 14px; height: 14px; margin: 0 auto 0.25rem auto; color: #10b981;"></i>
-                            <div style="font-size: 8px; font-weight: 700; color: #ffffff;">Pago Seguro</div>
-                        </div>
-                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 0.5rem; border-radius: 12px;">
-                            <i data-lucide="ticket" style="width: 14px; height: 14px; margin: 0 auto 0.25rem auto; color: #6366f1;"></i>
-                            <div style="font-size: 8px; font-weight: 700; color: #ffffff;">Emisión Directa</div>
-                        </div>
-                        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); padding: 0.5rem; border-radius: 12px;">
-                            <i data-lucide="zap" style="width: 14px; height: 14px; margin: 0 auto 0.25rem auto; color: #f59e0b;"></i>
-                            <div style="font-size: 8px; font-weight: 700; color: #ffffff;">Abordaje Rápido</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 🚌 PASO 2: RESULTADOS DE BUSES (WIZARD_STEP 2) -->
-                <section id="step-routes" class="wizard-step hidden">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; margin-top: 0.25rem;">
-                        <div>
-                            <h2 style="font-size: 14px; font-weight: 800; color: #ffffff;" id="results-route-title">Buses Disponibles</h2>
-                            <p style="font-size: 9px; color: #64748b;" id="results-date-subtitle">27 de mayo de 2026</p>
-                        </div>
-                        <button type="button" class="mobile-btn-secondary btn-back-to-search" style="padding: 4px 8px; font-size: 9px; width: auto; height: auto; gap: 0.2rem;">
-                            <i data-lucide="chevron-left" style="width: 10px; height: 10px;"></i> Volver
-                        </button>
-                    </div>
-
-                    <!-- Listado dinámico de buses -->
-                    <div id="mobile-routes-list">
-                        <!-- Rellenado dinámicamente -->
-                    </div>
-                </section>
-
-                <!-- 💺 PASO 3: SELECCIÓN DE ASIENTO (WIZARD_STEP 3) -->
-                <section id="step-seats" class="wizard-step hidden">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; margin-top: 0.25rem;">
-                        <div>
-                            <h2 style="font-size: 14px; font-weight: 800; color: #ffffff;">Escoge tu Asiento</h2>
-                            <p style="font-size: 9px; color: #64748b;" id="seats-bus-subtitle">Mercedes Benz - 1 Piso</p>
-                        </div>
-                        <button type="button" class="mobile-btn-secondary btn-back-to-routes" style="padding: 4px 8px; font-size: 9px; width: auto; height: auto; gap: 0.2rem;">
-                            <i data-lucide="chevron-left" style="width: 10px; height: 10px;"></i> Volver
-                        </button>
-                    </div>
-
-                    <!-- Alternar piso si es de 2 pisos -->
-                    <div class="seating-floor-toggle hidden" id="floor-toggle-container">
-                        <button type="button" class="tab-btn-compact active" id="btn-floor-1" style="padding: 5px 15px;">Piso 1</button>
-                        <button type="button" class="tab-btn-compact" id="btn-floor-2" style="padding: 5px 15px;">Piso 2</button>
-                    </div>
-
-                    <!-- Mapa de Autobús -->
-                    <div class="mobile-bus-body">
-                        <div class="mobile-bus-cabin">
-                            <span style="font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;"><i data-lucide="navigation" style="width: 10px; height: 10px; display: inline; transform: rotate(45deg);"></i> Cabina Chofer</span>
-                            <i data-lucide="compass" style="width: 14px; height: 14px;"></i>
-                        </div>
-                        <div class="mobile-bus-grid" id="mobile-bus-seats-container">
-                            <!-- Se generará dinámicamente -->
-                        </div>
-                    </div>
-
-                    <!-- Leyenda del mapa -->
-                    <div style="display: flex; justify-content: space-around; font-size: 9px; color: #64748b; background: rgba(255,255,255,0.02); padding: 0.5rem; border-radius: 12px; margin-bottom: 1.25rem;">
-                        <div style="display: flex; align-items: center; gap: 0.3rem;">
-                            <div style="width: 10px; height: 10px; background: rgba(30, 41, 59, 0.8); border: 1.5px solid #475569; border-radius: 2px;"></div> Libre
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.3rem;">
-                            <div style="width: 10px; height: 10px; background: rgba(239, 68, 68, 0.15); border: 1.5px solid rgba(239, 68, 68, 0.4); border-radius: 2px;"></div> Ocupado
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.3rem;">
-                            <div style="width: 10px; height: 10px; background: var(--brand-primary); border-radius: 2px;"></div> Tu Selección
-                        </div>
-                    </div>
-
-                    <!-- Resumen del Asiento -->
-                    <div class="mobile-card-glass" style="margin-bottom: 1rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Asiento Seleccionado</div>
-                                <div style="font-size: var(--text-sm); font-weight: 800; color: #ffffff;" id="selected-seat-text">-</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Total a Pagar</div>
-                                <div style="font-size: var(--text-sm); font-weight: 900; color: #10b981;" id="selected-seat-price">S/ 0.00</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="button" class="mobile-btn-primary" id="btn-confirm-seat" disabled>
-                        Continuar <i data-lucide="chevron-right"></i>
-                    </button>
-                </section>
-
-                <!-- 👤 PASO 4: DATOS DEL PASAJERO (WIZARD_STEP 4) -->
-                <section id="step-passenger" class="wizard-step hidden">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; margin-top: 0.25rem;">
-                        <div>
-                            <h2 style="font-size: 14px; font-weight: 800; color: #ffffff;">Datos del Pasajero</h2>
-                            <p style="font-size: 9px; color: #64748b;">Ingresa la información para emitir tu pasaje.</p>
-                        </div>
-                        <button type="button" class="mobile-btn-secondary btn-back-to-seats" style="padding: 4px 8px; font-size: 9px; width: auto; height: auto; gap: 0.2rem;">
-                            <i data-lucide="chevron-left" style="width: 10px; height: 10px;"></i> Volver
-                        </button>
-                    </div>
-
-                    <form id="form-mobile-passenger" class="mobile-card-glass">
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Documento de Identidad (DNI)</label>
-                            <div style="display: flex; gap: 0.5rem; width: 100%;">
-                                <input type="text" id="passenger-dni" class="mobile-input-premium" required placeholder="DNI de 8 dígitos" maxlength="8" style="flex: 1;">
-                                <button type="button" id="btn-mobile-reniec" class="mobile-btn-primary" style="width: auto; padding: 0.75rem 1rem; border-radius: 12px; box-shadow: none;">
-                                    <i data-lucide="search"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 1rem;">
-                            <label style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Nombre y Apellidos</label>
-                            <input type="text" id="passenger-name" class="mobile-input-premium" required placeholder="Nombres completos">
-                        </div>
-
-                        <!-- Métodos de pago móviles B2C -->
-                        <div class="form-group" style="margin-bottom: 1.25rem;">
-                            <label style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem; display: block;">Método de Pago</label>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                                <label style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255, 255, 255, 0.06); padding: 0.6rem; border-radius: 12px; display: flex; align-items: center; gap: 0.5rem; font-size: 10px; font-weight: 700; cursor: pointer; color: #ffffff;">
-                                    <input type="radio" name="mobile-payment" value="Yape/Plin" checked style="accent-color: var(--brand-primary);"> Yape / Plin
-                                </label>
-                                <label style="background: rgba(15,23,42,0.6); border: 1px solid rgba(255, 255, 255, 0.06); padding: 0.6rem; border-radius: 12px; display: flex; align-items: center; gap: 0.5rem; font-size: 10px; font-weight: 700; cursor: pointer; color: #ffffff;">
-                                    <input type="radio" name="mobile-payment" value="Tarjeta" style="accent-color: var(--brand-primary);"> Tarjeta Crédito
-                                </label>
-                            </div>
-                        </div>
-
-                        <button type="submit" class="mobile-btn-primary" id="btn-mobile-pay">
-                            <i data-lucide="credit-card"></i> Pagar y Emitir Pasaje
-                        </button>
-                    </form>
-                </section>
-
-                <!-- 🎫 PASO 5: BOLETO VIRTUAL GENERADO (WIZARD_STEP 5) -->
-                <section id="step-ticket" class="wizard-step hidden">
-                    <div style="text-align: center; margin-bottom: 1rem; margin-top: 0.25rem;">
-                        <i data-lucide="check-circle" style="width: 32px; height: 32px; color: #10b981; margin: 0 auto 0.5rem auto;"></i>
-                        <h2 style="font-size: 16px; font-weight: 900; color: #ffffff;">¡Compra Confirmada!</h2>
-                        <p style="font-size: 9px; color: #64748b;">Tu boleto electrónico está listo para el abordaje.</p>
-                    </div>
-
-                    <!-- Boleto Perforado de Alta Fidelidad -->
-                    <div class="premium-digital-ticket">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="font-size: 12px; font-weight: 900; color: #ffffff; letter-spacing: 0.5px;"><i data-lucide="bus" style="width: 12px; height: 12px; display: inline-block; color: var(--brand-primary); margin-right: 4px;"></i> BOLETO DE VIAJE</div>
-                            <div style="font-size: 8px; font-weight: 800; color: #e2e8f0; background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 20px;" id="ticket-company-name">Herrera Trans</div>
-                        </div>
-
-                        <!-- Origen y Destino Flujo -->
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem;">
-                            <div>
-                                <div style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Origen</div>
-                                <div style="font-size: var(--text-sm); font-weight: 800; color: #ffffff;" id="ticket-origin">-</div>
-                            </div>
-                            <div style="color: rgba(255,255,255,0.15); display: flex; flex-direction: column; align-items: center;">
-                                <i data-lucide="arrow-right" style="width: 16px; height: 16px; color: var(--brand-primary);"></i>
-                            </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Destino</div>
-                                <div style="font-size: var(--text-sm); font-weight: 800; color: #ffffff;" id="ticket-destination">-</div>
-                            </div>
-                        </div>
-
-                        <div class="ticket-perforated-line"></div>
-
-                        <!-- Información del viaje -->
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
-                            <div>
-                                <div style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Fecha de Viaje</div>
-                                <div style="font-size: 11px; font-weight: 700; color: #ffffff;" id="ticket-date">-</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Pasajero</div>
-                                <div style="font-size: 11px; font-weight: 700; color: #ffffff;" id="ticket-passenger">-</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">DNI del Pasajero</div>
-                                <div style="font-size: 11px; font-weight: 700; color: #ffffff;" id="ticket-dni">-</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase;">Asiento - Piso</div>
-                                <div style="font-size: 11px; font-weight: 800; color: var(--brand-primary);" id="ticket-seat">-</div>
-                            </div>
-                        </div>
-
-                        <div class="ticket-perforated-line"></div>
-
-                        <!-- Código QR Premium del boleto -->
-                        <div class="ticket-qr-container">
-                            <div class="ticket-qr-code" style="display: flex; align-items: center; justify-content: center;">
-                                <!-- QR Mockup -->
-                                <div style="width: 100%; height: 100%; border: 3px solid #000; display: flex; flex-wrap: wrap; background: #fff; padding: 2px;">
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #fff;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #fff;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #fff;"></div>
-                                    <div style="width: 25%; height: 25%; background: #fff;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #fff;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                    <div style="width: 25%; height: 25%; background: #fff;"></div>
-                                    <div style="width: 25%; height: 25%; background: #000;"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="text-align: center; font-size: 8px; font-weight: 700; color: #a5b4fc;">
-                            Código de Embarque Único. Muestre este boleto al conductor.
-                        </div>
-                    </div>
-
-                    <button type="button" class="mobile-btn-primary btn-new-booking" style="margin-top: 1.5rem;">
-                        <i data-lucide="plus-circle"></i> Comprar Otro Pasaje
-                    </button>
-                </section>
-
-            </main>
-
-            <!-- BARRA LATERAL INFERIOR DE MENÚ (TAB BAR) -->
-            <footer class="mobile-tab-bar">
-                <button type="button" class="tab-bar-item active" id="tab-home">
-                    <i data-lucide="home"></i>
-                    <span>Buscar Viaje</span>
+    <!-- NAVBAR SUPERIOR -->
+    <nav class="b2c-navbar">
+        <div class="b2c-navbar-inner">
+            <a href="/compra" class="b2c-logo">
+                <div class="b2c-logo-icon"><i data-lucide="bus"></i></div>
+                <span>Bus<strong>.click</strong></span>
+            </a>
+            <div class="b2c-nav-links">
+                <button type="button" class="b2c-nav-btn active" id="tab-home">
+                    <i data-lucide="search"></i> <span>Buscar</span>
                 </button>
-                <button type="button" class="tab-bar-item" id="tab-history">
-                    <i data-lucide="ticket"></i>
-                    <span>Mis Pasajes</span>
+                <button type="button" class="b2c-nav-btn" id="tab-history">
+                    <i data-lucide="ticket"></i> <span>Mis Pasajes</span>
                 </button>
-                <button type="button" class="tab-bar-item" id="tab-help">
-                    <i data-lucide="help-circle"></i>
-                    <span>Soporte</span>
+                <button type="button" class="b2c-nav-btn" id="tab-help">
+                    <i data-lucide="headphones"></i> <span>Soporte</span>
                 </button>
-            </footer>
-
+            </div>
         </div>
-    
-    <!-- Cargar Lógica B2C del Cliente -->
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="b2c-app-container">
+        <main class="b2c-main" id="mobile-main-content">
+
+            <!-- ═══ PASO 1: BUSCADOR ═══ -->
+            <section id="step-search" class="wizard-step">
+
+                <!-- Hero del Buscador -->
+                <div class="b2c-hero">
+                    <h1 class="b2c-hero-title">Encuentra tu próximo viaje</h1>
+                    <p class="b2c-hero-sub">Compra pasajes seguros con las mejores empresas de transporte del Perú.</p>
+                </div>
+
+                <!-- Formulario de búsqueda -->
+                <form id="form-mobile-search" class="b2c-search-card">
+                    <div class="b2c-field">
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #7c3aed;"></i> Origen</label>
+                        <select id="search-origin" class="b2c-select" required>
+                            <option value="" disabled selected>¿Desde dónde sales?</option>
+                        </select>
+                    </div>
+
+                    <div class="b2c-swap-row">
+                        <div class="b2c-swap-line"></div>
+                        <button type="button" id="btn-mobile-swap" class="b2c-swap-btn">
+                            <i data-lucide="arrow-up-down"></i>
+                        </button>
+                        <div class="b2c-swap-line"></div>
+                    </div>
+
+                    <div class="b2c-field">
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #e11d48;"></i> Destino</label>
+                        <select id="search-destination" class="b2c-select" required>
+                            <option value="" disabled selected>¿A dónde vas?</option>
+                        </select>
+                    </div>
+
+                    <div class="b2c-field">
+                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #0891b2;"></i> Fecha del viaje</label>
+                        <div class="datepicker-wrapper">
+                            <input type="text" class="datepicker-input b2c-input" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
+                            <input type="hidden" id="search-date" required>
+                            <i data-lucide="calendar" class="datepicker-icon"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="b2c-btn-primary">
+                        <i data-lucide="search"></i> Buscar Pasajes
+                    </button>
+                </form>
+
+                <!-- Beneficios -->
+                <div class="b2c-benefits">
+                    <div class="b2c-benefit">
+                        <div class="b2c-benefit-icon" style="background: #ede9fe; color: #7c3aed;">
+                            <i data-lucide="shield-check"></i>
+                        </div>
+                        <div>
+                            <div class="b2c-benefit-title">Pago 100% Seguro</div>
+                            <div class="b2c-benefit-desc">Transacciones protegidas y cifradas</div>
+                        </div>
+                    </div>
+                    <div class="b2c-benefit">
+                        <div class="b2c-benefit-icon" style="background: #fce7f3; color: #db2777;">
+                            <i data-lucide="ticket"></i>
+                        </div>
+                        <div>
+                            <div class="b2c-benefit-title">Boleto Digital</div>
+                            <div class="b2c-benefit-desc">Recibe tu pasaje al instante</div>
+                        </div>
+                    </div>
+                    <div class="b2c-benefit">
+                        <div class="b2c-benefit-icon" style="background: #d1fae5; color: #059669;">
+                            <i data-lucide="zap"></i>
+                        </div>
+                        <div>
+                            <div class="b2c-benefit-title">Abordaje Rápido</div>
+                            <div class="b2c-benefit-desc">Sube al bus con tu código QR</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══ PASO 2: RESULTADOS ═══ -->
+            <section id="step-routes" class="wizard-step hidden">
+                <div class="b2c-step-header">
+                    <div>
+                        <h2 class="b2c-step-title" id="results-route-title">Buses Disponibles</h2>
+                        <p class="b2c-step-sub" id="results-date-subtitle">27 de mayo de 2026</p>
+                    </div>
+                    <button type="button" class="b2c-btn-back btn-back-to-search">
+                        <i data-lucide="arrow-left"></i> Volver
+                    </button>
+                </div>
+                <div id="mobile-routes-list"></div>
+            </section>
+
+            <!-- ═══ PASO 3: ASIENTOS ═══ -->
+            <section id="step-seats" class="wizard-step hidden">
+                <div class="b2c-step-header">
+                    <div>
+                        <h2 class="b2c-step-title">Escoge tu Asiento</h2>
+                        <p class="b2c-step-sub" id="seats-bus-subtitle">Mercedes Benz - 1 Piso</p>
+                    </div>
+                    <button type="button" class="b2c-btn-back btn-back-to-routes">
+                        <i data-lucide="arrow-left"></i> Volver
+                    </button>
+                </div>
+
+                <!-- Toggle pisos -->
+                <div class="b2c-floor-toggle hidden" id="floor-toggle-container">
+                    <button type="button" class="b2c-floor-btn active" id="btn-floor-1">Piso 1</button>
+                    <button type="button" class="b2c-floor-btn" id="btn-floor-2">Piso 2</button>
+                </div>
+
+                <!-- Mapa del bus -->
+                <div class="b2c-bus-map">
+                    <div class="b2c-bus-cabin-header">
+                        <i data-lucide="navigation" style="width: 12px; height: 12px;"></i>
+                        <span>Cabina del Conductor</span>
+                        <i data-lucide="compass" style="width: 14px; height: 14px;"></i>
+                    </div>
+                    <div class="mobile-bus-grid" id="mobile-bus-seats-container"></div>
+                </div>
+
+                <!-- Leyenda -->
+                <div class="b2c-legend">
+                    <div class="b2c-legend-item">
+                        <div class="b2c-legend-dot" style="background: #f1f5f9; border: 2px solid #cbd5e1;"></div> Libre
+                    </div>
+                    <div class="b2c-legend-item">
+                        <div class="b2c-legend-dot" style="background: #fee2e2; border: 2px solid #fca5a5;"></div> Ocupado
+                    </div>
+                    <div class="b2c-legend-item">
+                        <div class="b2c-legend-dot" style="background: #7c3aed; border: 2px solid #7c3aed;"></div> Tu Selección
+                    </div>
+                </div>
+
+                <!-- Resumen -->
+                <div class="b2c-summary-card">
+                    <div>
+                        <span class="b2c-summary-label">Asiento Seleccionado</span>
+                        <span class="b2c-summary-value" id="selected-seat-text">—</span>
+                    </div>
+                    <div style="text-align: right;">
+                        <span class="b2c-summary-label">Total a Pagar</span>
+                        <span class="b2c-summary-value b2c-price" id="selected-seat-price">S/ 0.00</span>
+                    </div>
+                </div>
+
+                <button type="button" class="b2c-btn-primary" id="btn-confirm-seat" disabled>
+                    Continuar <i data-lucide="arrow-right"></i>
+                </button>
+            </section>
+
+            <!-- ═══ PASO 4: DATOS PASAJERO ═══ -->
+            <section id="step-passenger" class="wizard-step hidden">
+                <div class="b2c-step-header">
+                    <div>
+                        <h2 class="b2c-step-title">Datos del Pasajero</h2>
+                        <p class="b2c-step-sub">Ingresa tu información para emitir el boleto.</p>
+                    </div>
+                    <button type="button" class="b2c-btn-back btn-back-to-seats">
+                        <i data-lucide="arrow-left"></i> Volver
+                    </button>
+                </div>
+
+                <form id="form-mobile-passenger" class="b2c-passenger-card">
+                    <div class="b2c-field">
+                        <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #7c3aed;"></i> DNI del Pasajero</label>
+                        <div class="b2c-dni-row">
+                            <input type="text" id="passenger-dni" class="b2c-input" required placeholder="Ej: 12345678" maxlength="8">
+                            <button type="button" id="btn-mobile-reniec" class="b2c-btn-reniec">
+                                <i data-lucide="search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="b2c-field">
+                        <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #0891b2;"></i> Nombre Completo</label>
+                        <input type="text" id="passenger-name" class="b2c-input" required placeholder="Nombres y apellidos">
+                    </div>
+
+                    <div class="b2c-field">
+                        <label class="b2c-label"><i data-lucide="wallet" class="b2c-label-icon" style="color: #059669;"></i> Método de Pago</label>
+                        <div class="b2c-payment-options">
+                            <label class="b2c-payment-opt selected">
+                                <input type="radio" name="mobile-payment" value="Yape/Plin" checked>
+                                <div class="b2c-payment-icon" style="background: #ede9fe; color: #7c3aed;"><i data-lucide="smartphone"></i></div>
+                                <span>Yape / Plin</span>
+                            </label>
+                            <label class="b2c-payment-opt">
+                                <input type="radio" name="mobile-payment" value="Tarjeta">
+                                <div class="b2c-payment-icon" style="background: #fce7f3; color: #db2777;"><i data-lucide="credit-card"></i></div>
+                                <span>Tarjeta</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="b2c-btn-primary" id="btn-mobile-pay">
+                        <i data-lucide="lock"></i> Pagar y Emitir Pasaje
+                    </button>
+                </form>
+            </section>
+
+            <!-- ═══ PASO 5: BOLETO ═══ -->
+            <section id="step-ticket" class="wizard-step hidden">
+                <div class="b2c-success-header">
+                    <div class="b2c-success-icon"><i data-lucide="check"></i></div>
+                    <h2 class="b2c-step-title" style="color: #059669;">¡Compra Confirmada!</h2>
+                    <p class="b2c-step-sub">Tu boleto digital está listo. Muéstralo al abordar.</p>
+                </div>
+
+                <div class="b2c-ticket">
+                    <div class="b2c-ticket-top">
+                        <div class="b2c-ticket-brand">
+                            <div class="b2c-ticket-bus-icon"><i data-lucide="bus"></i></div>
+                            <span>BOLETO DE VIAJE</span>
+                        </div>
+                        <span class="b2c-ticket-company" id="ticket-company-name">Herrera Trans</span>
+                    </div>
+
+                    <div class="b2c-ticket-route">
+                        <div>
+                            <span class="b2c-ticket-label">Origen</span>
+                            <span class="b2c-ticket-city" id="ticket-origin">—</span>
+                        </div>
+                        <div class="b2c-ticket-arrow"><i data-lucide="plane" style="transform: rotate(90deg);"></i></div>
+                        <div style="text-align: right;">
+                            <span class="b2c-ticket-label">Destino</span>
+                            <span class="b2c-ticket-city" id="ticket-destination">—</span>
+                        </div>
+                    </div>
+
+                    <div class="b2c-ticket-divider"></div>
+
+                    <div class="b2c-ticket-details">
+                        <div>
+                            <span class="b2c-ticket-label">Fecha</span>
+                            <span class="b2c-ticket-val" id="ticket-date">—</span>
+                        </div>
+                        <div>
+                            <span class="b2c-ticket-label">Pasajero</span>
+                            <span class="b2c-ticket-val" id="ticket-passenger">—</span>
+                        </div>
+                        <div>
+                            <span class="b2c-ticket-label">DNI</span>
+                            <span class="b2c-ticket-val" id="ticket-dni">—</span>
+                        </div>
+                        <div>
+                            <span class="b2c-ticket-label">Asiento</span>
+                            <span class="b2c-ticket-val b2c-ticket-seat" id="ticket-seat">—</span>
+                        </div>
+                    </div>
+
+                    <div class="b2c-ticket-divider"></div>
+
+                    <div class="b2c-ticket-qr">
+                        <div class="b2c-qr-box">
+                            <div class="b2c-qr-mock">
+                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
+                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
+                            </div>
+                        </div>
+                        <p class="b2c-qr-text">Código de embarque único — Muestre al conductor</p>
+                    </div>
+                </div>
+
+                <button type="button" class="b2c-btn-primary btn-new-booking" style="margin-top: 1.5rem;">
+                    <i data-lucide="plus"></i> Comprar Otro Pasaje
+                </button>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- TAB BAR MÓVIL (solo visible en pantallas pequeñas) -->
+    <footer class="b2c-mobile-tabbar">
+        <button type="button" class="b2c-tabbar-item active" data-tab="tab-home">
+            <i data-lucide="search"></i><span>Buscar</span>
+        </button>
+        <button type="button" class="b2c-tabbar-item" data-tab="tab-history">
+            <i data-lucide="ticket"></i><span>Pasajes</span>
+        </button>
+        <button type="button" class="b2c-tabbar-item" data-tab="tab-help">
+            <i data-lucide="headphones"></i><span>Soporte</span>
+        </button>
+    </footer>
+
     <script src="client_app.js"></script>
+    <script>
+        // Sincronizar tab bar móvil con la de arriba
+        document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.dataset.tab;
+                const mainBtn = document.getElementById(tabId);
+                if (mainBtn) mainBtn.click();
+                document.querySelectorAll('.b2c-tabbar-item').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        // Sync radio buttons para estilo visual de método de pago
+        document.querySelectorAll('.b2c-payment-opt input[type="radio"]').forEach(radio => {
+            radio.addEventListener('change', () => {
+                document.querySelectorAll('.b2c-payment-opt').forEach(opt => opt.classList.remove('selected'));
+                radio.closest('.b2c-payment-opt').classList.add('selected');
+            });
+        });
+    </script>
 </body>
 </html>

@@ -254,9 +254,9 @@ async function handleSearchSubmit() {
     // Mostrar loader de búsqueda
     const routesList = document.getElementById("mobile-routes-list");
     routesList.innerHTML = `
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 0; color: #a5b4fc;">
-            <div class="mobile-loading-spinner" style="width: 28px; height: 28px; border: 3px solid rgba(99, 102, 241, 0.2); border-top-color: var(--brand-primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1rem;"></div>
-            <span style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Buscando buses en tiempo real...</span>
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 0; color: #7c3aed;">
+            <div style="width: 32px; height: 32px; border: 3.5px solid #ede9fe; border-top-color: #7c3aed; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 1.25rem;"></div>
+            <span style="font-size: 0.85rem; font-weight: 700; color: #475569; letter-spacing: 0.2px;">Buscando buses disponibles...</span>
         </div>
     `;
     
@@ -294,14 +294,16 @@ async function handleSearchSubmit() {
         renderAvailableBuses();
     } catch (e) {
         console.error("Error al buscar viajes:", e);
-        routesList.innerHTML = `
-            <div style="text-align: center; padding: 2rem 1rem; color: #ef4444;">
-                <i data-lucide="wifi-off" style="width: 24px; height: 24px; margin: 0 auto 0.5rem auto;"></i>
-                <div style="font-size: 11px; font-weight: 800;">Fallo de Conexión</div>
-                <div style="font-size: 9px; color: #64748b; margin-top: 0.25rem;">No pudimos conectarnos al servidor. Inténtalo nuevamente.</div>
-                <button type="button" class="mobile-btn-secondary" onclick="handleSearchSubmit()" style="margin-top: 1rem; padding: 6px 12px; width: auto; font-size: 10px; margin-left: auto; margin-right: auto;">Reintentar</button>
+            <div style="text-align: center; padding: 3rem 1.5rem; color: #e11d48; background: #fff; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #fee2e2;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: #fee2e2; color: #e11d48; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
+                    <i data-lucide="wifi-off" style="width: 22px; height: 22px;"></i>
+                </div>
+                <div style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">Error de conexión</div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.4rem; line-height: 1.4;">No pudimos comunicarnos con el servidor. Por favor, inténtalo de nuevo.</div>
+                <button type="button" class="b2c-btn-back" onclick="handleSearchSubmit()" style="margin: 1.25rem auto 0 auto; display: inline-flex; gap: 0.4rem; border-color: #fca5a5; color: #e11d48; background: #fff;">
+                    <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i> Reintentar
+                </button>
             </div>
-        `;
         lucide.createIcons();
     }
 }
@@ -313,12 +315,14 @@ function renderAvailableBuses() {
     
     if (state.availableBuses.length === 0) {
         container.innerHTML = `
-            <div style="text-align: center; padding: 3rem 1rem;" class="mobile-card-glass">
-                <i data-lucide="alert-circle" style="width: 28px; height: 28px; color: #a5b4fc; margin: 0 auto 0.75rem auto;"></i>
-                <div style="font-size: 12px; font-weight: 800; color: #ffffff;">Sin Buses Disponibles</div>
-                <div style="font-size: 9px; color: #64748b; margin-top: 0.25rem; line-height: 1.4;">No se encontraron servicios programados entre ${state.selectedOrigin} y ${state.selectedDestination} para la fecha seleccionada.</div>
-                <button type="button" class="mobile-btn-secondary btn-back-to-search" style="margin-top: 1rem; width: auto; display: inline-flex; font-size: 10px; padding: 6px 12px; margin-left: auto; margin-right: auto;">
-                    Cambiar Búsqueda
+            <div style="text-align: center; padding: 3.5rem 1.5rem; background: #ffffff; border-radius: 20px; border: 1px solid #eef2f7; box-shadow: 0 4px 16px rgba(0,0,0,0.02);">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
+                    <i data-lucide="alert-circle" style="width: 26px; height: 26px;"></i>
+                </div>
+                <div style="font-size: 1rem; font-weight: 800; color: #1e293b;">Sin servicios disponibles</div>
+                <div style="font-size: 0.82rem; color: #64748b; margin-top: 0.5rem; line-height: 1.5;">Lo sentimos, actualmente no hay salidas programadas de <strong>${state.selectedOrigin}</strong> a <strong>${state.selectedDestination}</strong> para el día seleccionado.</div>
+                <button type="button" class="b2c-btn-back btn-back-to-search" style="margin: 1.5rem auto 0 auto; display: inline-flex; gap: 0.4rem;">
+                    <i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i> Cambiar Búsqueda
                 </button>
             </div>
         `;
@@ -349,48 +353,51 @@ function renderAvailableBuses() {
         
         // Crear tarjeta de bus premium
         const card = document.createElement("div");
-        card.className = "mobile-card-glass bus-route-card";
-        card.style.position = "relative";
-        card.style.cursor = "pointer";
-        card.style.marginBottom = "0.75rem";
+        card.className = "b2c-route-card";
         
         // Determinar icono del modelo
         const isTwoFloors = bus.modelType === "bus2p";
         const busTypeLabel = isTwoFloors ? "2 Pisos (VIP)" : "1 Piso (Premium)";
         const busIcon = isTwoFloors ? "layers" : "bus";
         
+        // Generar colores pasteles según empresa
+        const hash = company.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        const hue = hash % 360;
+        const pastelBg = `hsl(${hue}, 85%, 96%)`;
+        const pastelColor = `hsl(${hue}, 85%, 35%)`;
+        
         card.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <span class="bus-feature-badge" style="color: var(--brand-primary); background: rgba(99, 102, 241, 0.1); font-weight: 800;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <span class="bus-feature-badge" style="color: ${pastelColor}; background: ${pastelBg}; font-weight: 800; font-size: 0.68rem; padding: 3px 8px; border-radius: 6px;">
                     ${company.name}
                 </span>
-                <span class="bus-feature-badge">
-                    <i data-lucide="${busIcon}" style="width: 8px; height: 8px;"></i> ${busTypeLabel}
+                <span class="bus-feature-badge" style="background: #f1f5f9; color: #475569; font-size: 0.68rem; padding: 3px 8px; border-radius: 6px;">
+                    <i data-lucide="${busIcon}" style="width: 10px; height: 10px;"></i> ${busTypeLabel}
                 </span>
             </div>
             
-            <div class="bus-route-time">
-                <i data-lucide="clock" style="width: 12px; height: 12px; color: #a5b4fc;"></i>
-                <span>08:30 AM ➔ 04:30 PM</span>
+            <div class="bus-route-time" style="font-size: 0.95rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.4rem; margin-top: 0.65rem;">
+                <i data-lucide="clock" style="width: 14px; height: 14px; color: #94a3b8;"></i>
+                <span>08:30 AM <span style="color:#94a3b8; font-weight:500;">➔</span> 04:30 PM</span>
             </div>
             
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 0.5rem;">
-                <span style="font-size: 8px; font-weight: 700; color: #64748b;">
-                    Placa: <strong style="color: #cbd5e1;">${bus.plate}</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; border-top: 1px solid #f1f5f9; padding-top: 0.65rem;">
+                <span style="font-size: 0.72rem; font-weight: 600; color: #64748b;">
+                    Placa: <strong style="color: #334155; font-weight: 700;">${bus.plate}</strong>
                 </span>
-                <span style="font-size: 9px; font-weight: 800; color: ${freeSeats > 5 ? '#10b981' : '#f59e0b'};">
+                <span style="font-size: 0.72rem; font-weight: 700; color: ${freeSeats > 5 ? '#059669' : '#d97706'}; background: ${freeSeats > 5 ? '#d1fae5' : '#fef3c7'}; padding: 2px 8px; border-radius: 20px;">
                     ${freeSeats} Asientos Libres
                 </span>
             </div>
             
-            <div class="bus-route-price">
+            <div class="bus-route-price" style="font-size: 1.15rem; font-weight: 900; color: #7c3aed; position: absolute; right: 1.25rem; top: 1.1rem;">
                 S/ ${parseFloat(bus.price).toFixed(2)}
             </div>
             
-            <div class="bus-features-row" style="margin-top: 0.5rem;">
-                <span class="bus-feature-badge"><i data-lucide="wifi" style="width: 7px; height: 7px;"></i> WiFi</span>
-                <span class="bus-feature-badge"><i data-lucide="zap" style="width: 7px; height: 7px;"></i> USB</span>
-                <span class="bus-feature-badge"><i data-lucide="wind" style="width: 7px; height: 7px;"></i> Aire A.</span>
+            <div class="bus-features-row" style="margin-top: 0.65rem; display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                <span class="bus-feature-badge" style="background: #f8f9fc; border: 1px solid #e2e8f0; color: #64748b; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="wifi" style="width: 9px; height: 9px; color:#7c3aed;"></i> WiFi</span>
+                <span class="bus-feature-badge" style="background: #f8f9fc; border: 1px solid #e2e8f0; color: #64748b; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="battery-charging" style="width: 9px; height: 9px; color:#0891b2;"></i> USB</span>
+                <span class="bus-feature-badge" style="background: #f8f9fc; border: 1px solid #e2e8f0; color: #64748b; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="wind" style="width: 9px; height: 9px; color:#059669;"></i> Aire A.</span>
             </div>
         `;
         
@@ -847,24 +854,28 @@ function showMobileNotification(message, type = "success") {
     toast.className = `mobile-floating-toast toast-${type}`;
     
     let icon = "check-circle";
-    let color = "#10b981";
-    if (type === "warning") { icon = "alert-triangle"; color = "#f59e0b"; }
-    if (type === "error") { icon = "x-circle"; color = "#ef4444"; }
-    if (type === "info") { icon = "info"; color = "#6366f1"; }
+    let color = "#059669";
+    let bg = "#d1fae5";
+    let border = "#a7f3d0";
+    if (type === "warning") { icon = "alert-triangle"; color = "#d97706"; bg = "#fef3c7"; border = "#fde68a"; }
+    if (type === "error") { icon = "x-circle"; color = "#dc2626"; bg = "#fee2e2"; border = "#fca5a5"; }
+    if (type === "info") { icon = "info"; color = "#7c3aed"; bg = "#ede9fe"; border = "#c4b5fd"; }
     
     toast.innerHTML = `
-        <div style="background: #0f172a; border: 1px solid rgba(255,255,255,0.06); box-shadow: 0 10px 25px rgba(0,0,0,0.5); padding: 0.75rem 1rem; border-radius: 16px; display: flex; align-items: center; gap: 0.5rem; max-width: 320px; animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
-            <i data-lucide="${icon}" style="width: 16px; height: 16px; color: ${color}; flex-shrink: 0;"></i>
-            <span style="font-size: 10px; font-weight: 700; color: #ffffff; line-height: 1.3;">${message}</span>
+        <div style="background: #ffffff; border: 1.5px solid ${border}; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 0.75rem 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 0.6rem; max-width: 340px; animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+            <div style="width: 24px; height: 24px; border-radius: 50%; background: ${bg}; color: ${color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                <i data-lucide="${icon}" style="width: 14px; height: 14px;"></i>
+            </div>
+            <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b; line-height: 1.3;">${message}</span>
         </div>
     `;
     
-    // Estilos fijos para la notificación dentro del marco del celular
-    toast.style.position = "absolute";
+    // Estilos fijos para la notificación dentro del contenedor responsivo
+    toast.style.position = "fixed";
     toast.style.bottom = "80px";
     toast.style.left = "50%";
     toast.style.transform = "translateX(-50%)";
-    toast.style.zIndex = "1000";
+    toast.style.zIndex = "2000";
     toast.style.pointerEvents = "none";
     
     const wrapper = document.querySelector(".b2c-app-container");
@@ -898,13 +909,13 @@ function updateHistoryTabBadge() {
         badge.style.position = "absolute";
         badge.style.top = "4px";
         badge.style.right = "24%";
-        badge.style.background = "var(--brand-primary)";
+        badge.style.background = "#7c3aed";
         badge.style.color = "#ffffff";
         badge.style.fontSize = "8px";
         badge.style.fontWeight = "900";
         badge.style.padding = "1px 5px";
         badge.style.borderRadius = "10px";
-        badge.style.border = "1.5px solid #090d16";
+        badge.style.border = "1.5px solid #ffffff";
         tabHistory.appendChild(badge);
     }
 }
@@ -930,7 +941,7 @@ function showHistoryModal() {
     overlay.style.left = "0";
     overlay.style.width = "100%";
     overlay.style.height = "100%";
-    overlay.style.background = "rgba(4, 6, 12, 0.85)";
+    overlay.style.background = "rgba(15, 23, 42, 0.4)";
     overlay.style.backdropFilter = "blur(8px)";
     overlay.style.zIndex = "900";
     overlay.style.display = "flex";
@@ -940,10 +951,12 @@ function showHistoryModal() {
     let ticketsListHtml = "";
     if (state.myTickets.length === 0) {
         ticketsListHtml = `
-            <div style="text-align: center; padding: 2rem 0; color: #64748b;">
-                <i data-lucide="ticket" style="width: 32px; height: 32px; margin: 0 auto 0.5rem auto; opacity: 0.3;"></i>
-                <div style="font-size: 11px; font-weight: 800; color: #94a3b8;">No tienes pasajes emitidos</div>
-                <div style="font-size: 8px; color: #475569; margin-top: 0.2rem;">Los boletos que compres en esta sesión aparecerán aquí.</div>
+            <div style="text-align: center; padding: 3rem 0; color: #64748b;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: #f1f5f9; color: #94a3b8; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
+                    <i data-lucide="ticket" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div style="font-size: 0.95rem; font-weight: 800; color: #475569;">No tienes pasajes emitidos</div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">Tus boletos comprados en esta sesión aparecerán listados aquí.</div>
             </div>
         `;
     } else {
@@ -957,25 +970,25 @@ function showHistoryModal() {
             if (parts.length === 3) displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
             
             ticketsListHtml += `
-                <div class="mobile-card-glass" style="margin-bottom: 0.75rem; padding: 0.75rem; border-color: rgba(99,102,241,0.15); relative">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                        <span style="font-size: 9px; font-weight: 900; color: #a5b4fc;"><i data-lucide="bus" style="width: 9px; height: 9px; display: inline; margin-right: 3px;"></i> ${company.name}</span>
-                        <span style="font-size: 8px; font-weight: 800; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #10b981; padding: 1px 6px; border-radius: 10px;">Válido</span>
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 2px 8px rgba(0,0,0,0.02); position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="font-size: 0.72rem; font-weight: 800; color: #7c3aed;"><i data-lucide="bus" style="width: 11px; height: 11px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i> ${company.name}</span>
+                        <span style="font-size: 0.65rem; font-weight: 800; background: #d1fae5; color: #059669; padding: 2px 8px; border-radius: 20px;">Válido</span>
                     </div>
                     
-                    <div style="font-size: 11px; font-weight: 800; color: #ffffff;">
+                    <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b;">
                         ${ticket.routeFrom || state.selectedOrigin} ➔ ${ticket.routeTo || state.selectedDestination}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.4rem; font-size: 8px; color: #94a3b8; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 0.4rem;">
-                        <div>Fecha: <strong style="color:#fff;">${displayDate}</strong></div>
-                        <div>Asiento: <strong style="color:var(--brand-primary);">N° ${ticket.seatNum} (Piso ${ticket.floor})</strong></div>
-                        <div>Pasajero: <strong style="color:#fff;">${ticket.passengerName}</strong></div>
-                        <div>DNI: <strong style="color:#fff;">${ticket.passengerDni}</strong></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.72rem; color: #64748b; border-top: 1px solid #f1f5f9; padding-top: 0.5rem;">
+                        <div>Fecha: <strong style="color:#1e293b;">${displayDate}</strong></div>
+                        <div>Asiento: <strong style="color:#7c3aed;">N° ${ticket.seatNum} (Piso ${ticket.floor})</strong></div>
+                        <div>Pasajero: <strong style="color:#1e293b;">${ticket.passengerName}</strong></div>
+                        <div>DNI: <strong style="color:#1e293b;">${ticket.passengerDni}</strong></div>
                     </div>
                     
-                    <button type="button" class="mobile-btn-secondary btn-view-ticket-qr" data-id="${ticket.id}" style="margin-top: 0.6rem; padding: 4px; font-size: 8px; font-weight: 800; border-radius: 8px; gap: 0.2rem; height: auto;">
-                        <i data-lucide="qr-code" style="width: 10px; height: 10px;"></i> Ver Boleto QR
+                    <button type="button" class="b2c-btn-back btn-view-ticket-qr" data-id="${ticket.id}" style="margin-top: 0.75rem; width: 100%; justify-content: center; border-color: #ede9fe; color: #7c3aed; background: #faf5ff;">
+                        <i data-lucide="qr-code" style="width: 12px; height: 12px;"></i> Ver Boleto QR
                     </button>
                 </div>
             `;
@@ -983,11 +996,11 @@ function showHistoryModal() {
     }
     
     overlay.innerHTML = `
-        <div style="background: #090d16; border-radius: 24px 24px 0 0; width: 100%; max-height: 80%; padding: 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); border-top: 1px solid rgba(255,255,255,0.08); animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 80%; padding: 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); border-top: 1px solid #eef2f7; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="font-size: 14px; font-weight: 900; color: #ffffff;"><i data-lucide="ticket" style="width: 14px; height: 14px; display: inline-block; margin-right: 4px; color: var(--brand-primary);"></i> Mis Boletos Digitales</h3>
-                <button type="button" class="btn-close-mobile-modal" style="background: rgba(255,255,255,0.05); width: 24px; height: 24px; border-radius: 50%; border: none; color: #cbd5e1; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                    <i data-lucide="x" style="width: 12px; height: 12px;"></i>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
+                <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
+                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                 </button>
             </div>
             
@@ -1043,7 +1056,7 @@ function showHelpModal() {
     overlay.style.left = "0";
     overlay.style.width = "100%";
     overlay.style.height = "100%";
-    overlay.style.background = "rgba(4, 6, 12, 0.85)";
+    overlay.style.background = "rgba(15, 23, 42, 0.4)";
     overlay.style.backdropFilter = "blur(8px)";
     overlay.style.zIndex = "900";
     overlay.style.display = "flex";
@@ -1051,37 +1064,37 @@ function showHelpModal() {
     overlay.style.animation = "fadeInOverlay 0.25s ease";
     
     overlay.innerHTML = `
-        <div style="background: #090d16; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; box-sizing: border-box; box-shadow: 0 -10px 30px rgba(0,0,0,0.6); border-top: 1px solid rgba(255,255,255,0.08); animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; box-sizing: border-box; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); border-top: 1px solid #eef2f7; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="font-size: 14px; font-weight: 900; color: #ffffff;"><i data-lucide="help-circle" style="width: 14px; height: 14px; display: inline-block; margin-right: 4px; color: var(--brand-primary);"></i> Canal de Soporte</h3>
-                <button type="button" class="btn-close-mobile-modal" style="background: rgba(255,255,255,0.05); width: 24px; height: 24px; border-radius: 50%; border: none; color: #cbd5e1; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                    <i data-lucide="x" style="width: 12px; height: 12px;"></i>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
+                <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #64748b; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
+                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                 </button>
             </div>
             
-            <div style="text-align: center; padding: 1rem 0;">
-                <div style="background: rgba(99, 102, 241, 0.08); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; border: 1px solid rgba(99, 102, 241, 0.15);">
-                    <i data-lucide="message-square" style="width: 20px; height: 20px; color: var(--brand-primary);"></i>
+            <div style="text-align: center; padding: 0.5rem 0;">
+                <div style="background: #fce7f3; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; color: #db2777;">
+                    <i data-lucide="message-square" style="width: 22px; height: 22px;"></i>
                 </div>
-                <h4 style="font-size: 12px; font-weight: 800; color: #ffffff;">¿Necesitas ayuda con tu pasaje?</h4>
-                <p style="font-size: 9px; color: #64748b; margin-top: 0.25rem; line-height: 1.4;">Contáctanos por canales directos 24/7 para cambios, reprogramaciones, anulaciones o consultas sobre tu viaje.</p>
+                <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">¿Necesitas ayuda con tu pasaje?</h4>
+                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; line-height: 1.5;">Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.</p>
                 
-                <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 16px; padding: 1rem; margin-top: 1.25rem; text-align: left;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                        <i data-lucide="phone" style="width: 12px; height: 12px; color: #10b981;"></i>
-                        <span style="font-size: 10px; font-weight: 700; color: #e2e8f0;">Soporte WhatsApp: +51 987 654 321</span>
+                <div style="background: #f8f9fc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #059669; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: +51 987 654 321</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                        <i data-lucide="mail" style="width: 12px; height: 12px; color: #a5b4fc;"></i>
-                        <span style="font-size: 10px; font-weight: 700; color: #e2e8f0;">Correo: soporte@bus.click</span>
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #ede9fe; color: #7c3aed; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: soporte@bus.click</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <i data-lucide="shield-check" style="width: 12px; height: 12px; color: #f59e0b;"></i>
-                        <span style="font-size: 10px; font-weight: 700; color: #e2e8f0;">Bus.click Seguridad Garantizada</span>
+                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #fef3c7; color: #d97706; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Bus.click Seguridad de Compra</span>
                     </div>
                 </div>
                 
-                <button type="button" class="mobile-btn-primary btn-close-mobile-modal" style="margin-top: 1.5rem;">
+                <button type="button" class="b2c-btn-primary btn-close-mobile-modal" style="margin-top: 1.5rem;">
                     Entendido
                 </button>
             </div>
