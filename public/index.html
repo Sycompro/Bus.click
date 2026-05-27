@@ -55,37 +55,39 @@
         </div>
 
         <!-- CONTENEDOR PRINCIPAL DERECHO -->
-        <div class="main-layout-wrapper">
-        <!-- HEADER TERMINAL DE VENTAS -->
-        <header class="main-header glass">
-            <div class="header-left">
-                <div class="header-title-block">
-                    <h2 class="header-main-title">Punto de Venta</h2>
-                    <span class="header-subtitle">Emisión y Reserva de Pasajes en Vivo</span>
-                </div>
-            </div>
-
-            <div class="header-center">
-                <div class="company-selector-container">
-                    <i data-lucide="building-2" class="icon-subtle"></i>
-                    <select id="header-company-select" class="select-premium"></select>
-                </div>
-                <div class="sede-selector-container">
-                    <i data-lucide="map-pin" class="icon-subtle"></i>
-                    <select id="header-sede-select" class="select-premium"></select>
-                </div>
-            </div>
-
-            <div class="header-right">
-                <div class="firebase-status-pill glass">
-                    <span class="status-dot ping-active"></span>
-                    <span class="status-text" id="user-display">Vendedor Online</span>
+        <div class="main-content-column">
+            <!-- HEADER TERMINAL DE VENTAS -->
+            <header class="main-header glass">
+                <div class="header-left">
+                    <div class="header-title-block">
+                        <h2 class="header-main-title">Punto de Venta</h2>
+                        <span class="header-subtitle">Emisión y Reserva de Pasajes en Vivo</span>
+                    </div>
                 </div>
 
-            </div>
-        </header>
+                <div class="header-center">
+                    <div class="company-selector-container">
+                        <i data-lucide="building-2" class="icon-subtle"></i>
+                        <select id="header-company-select" class="select-premium"></select>
+                    </div>
+                    <div class="sede-selector-container">
+                        <i data-lucide="map-pin" class="icon-subtle"></i>
+                        <select id="header-sede-select" class="select-premium"></select>
+                    </div>
+                </div>
 
-        <div class="app-layout">
+                <div class="header-right">
+                    <div class="firebase-status-pill glass">
+                        <span class="status-dot ping-active"></span>
+                        <span class="status-text" id="user-display">Vendedor Online</span>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- TARJETA CONTENEDOR DE INFORMACIÓN DE APARTADOS -->
+            <div class="main-layout-wrapper">
+                <div class="app-layout">
             <main class="main-content">
                 <section id="panel-establecimiento" class="panel-section">
                     <div class="panel-header-block-establecimiento">
@@ -205,6 +207,7 @@
             </main>
         </div>
         </div> <!-- Cierre de main-layout-wrapper -->
+        </div> <!-- Cierre de main-content-column -->
 
         <!-- MODAL VENTA -->
         <div id="modal-sale-register" class="modal-overlay hidden">
