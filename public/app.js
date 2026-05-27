@@ -563,11 +563,29 @@ function renderCompaniesList() {
             `;
         }
         
+        // Generar enlace B2C exclusivo de marca blanca para la empresa
+        const slug = company.name.toLowerCase().replace(/\s+/g, '-').trim();
+        const b2cLink = `${window.location.origin}/compra?empresa=${slug}`;
+        
+        const linkHtml = `
+            <div style="margin-top: 0.35rem; display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                <div class="credential-badge-premium user-badge" style="background: rgba(124, 58, 237, 0.08); border-color: rgba(124, 58, 237, 0.2); color: #7c3aed; padding: 2px 8px; font-size: 9px; cursor: pointer; max-width: max-content; display: inline-flex;" onclick="copyTextToClipboard('${b2cLink}', this)" title="Copiar enlace de venta B2C de la empresa">
+                    <i data-lucide="link" style="width: 10px; height: 10px;"></i>
+                    <span style="font-weight: 700; margin-left: 2px;">Link Ventas B2C</span>
+                    <span class="btn-copy-cred" style="margin-left: 4px;"><i data-lucide="copy" style="width: 8px; height: 8px;"></i></span>
+                </div>
+                <a href="${b2cLink}" target="_blank" class="btn-generate-cred-inline" style="padding: 2.5px 6px; font-size: 8px; height: auto; width: auto; background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2); color: #059669; text-decoration: none; border-radius: 6px; display: inline-flex; align-items: center; gap: 2px; margin: 0;" title="Abrir portal de venta B2C">
+                    <i data-lucide="external-link" style="width: 9px; height: 9px;"></i> Abrir
+                </a>
+            </div>
+        `;
+        
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="font-bold">
                 <div style="font-size: var(--text-sm); font-weight: 700; color: #0f172a;">${company.name}</div>
                 ${credsHtml}
+                ${linkHtml}
             </td>
             <td>${company.ruc}</td>
             <td>
@@ -580,7 +598,6 @@ function renderCompaniesList() {
                 <button class="btn-delete-row" data-delete-type="company" data-delete-id="${company.id}">
                     <i data-lucide="trash-2"></i>
                 </button>
-            </td>
         `;
         tbody.appendChild(tr);
     });
