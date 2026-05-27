@@ -1695,62 +1695,13 @@ function initGenericModal(modalId, btnOpenId, btnCloseId, formId) {
  */
 function initSidebarBehavior() {
     const sidebar = document.getElementById('sidebar-container-wrapper') || document.getElementById('sidebar-menu');
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
-    const toggleIcon = document.getElementById('toggle-icon');
     const btnSidebarLogout = document.getElementById('btn-sidebar-logout');
 
     if (!sidebar) return;
 
-    // Restaurar estado desde localStorage
-    const savedState = localStorage.getItem('bus-click-sidebar-state');
-    if (savedState === 'expanded') {
-        sidebar.classList.add('expanded');
-        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-left');
-    } else {
-        sidebar.classList.remove('expanded');
-        if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-right');
-    }
-    lucide.createIcons();
-
-    // Botón de toggle
-    if (btnToggle) {
-        btnToggle.addEventListener('click', () => {
-            const isExpanded = sidebar.classList.toggle('expanded');
-            localStorage.setItem('bus-click-sidebar-state', isExpanded ? 'expanded' : 'collapsed');
-
-            // Animar icono de flecha
-            if (toggleIcon) {
-                toggleIcon.setAttribute('data-lucide', isExpanded ? 'chevron-left' : 'chevron-right');
-                lucide.createIcons();
-            }
-        });
-    }
-
-    // Expandir al pasar el cursor (hover), solo en desktop
-    sidebar.addEventListener('mouseenter', () => {
-        if (window.innerWidth > 900 && !sidebar.classList.contains('expanded')) {
-            sidebar.classList.add('expanded', 'hover-expand');
-            if (toggleIcon) {
-                toggleIcon.setAttribute('data-lucide', 'chevron-left');
-                lucide.createIcons();
-            }
-        }
-    });
-
-    sidebar.addEventListener('mouseleave', () => {
-        if (sidebar.classList.contains('hover-expand')) {
-            sidebar.classList.remove('expanded', 'hover-expand');
-            // Restaurar al estado guardado
-            const saved = localStorage.getItem('bus-click-sidebar-state');
-            if (saved === 'expanded') {
-                sidebar.classList.add('expanded');
-                if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-left');
-            } else {
-                if (toggleIcon) toggleIcon.setAttribute('data-lucide', 'chevron-right');
-            }
-            lucide.createIcons();
-        }
-    });
+    // Forzar estado expandido siempre
+    sidebar.classList.add('expanded');
+    localStorage.setItem('bus-click-sidebar-state', 'expanded');
 
     // Vincular botón de cerrar sesión del sidebar
     if (btnSidebarLogout) {
