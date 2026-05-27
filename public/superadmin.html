@@ -240,12 +240,21 @@
 
                     <!-- APARTADO DE PAGOS MENSUALES SAAS -->
                     <section id="apartado-pagos" class="panel-section hidden">
-                        <div class="panel-header-block">
+                        <div class="panel-header-block" style="display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
                             <div>
                                 <h2><i data-lucide="credit-card"></i> Control Financiero y Pagos Mensuales</h2>
                                 <p class="section-desc">Historial de facturación de suscripciones SaaS, vencimientos y estados de mora.</p>
                             </div>
-                            <div class="header-actions">
+                            <div class="header-actions" style="display: flex; align-items: center; gap: 0.75rem;">
+                                <!-- 🎛️ SUB-PESTAÑAS COMPACTAS AL COSTADO DEL BOTÓN -->
+                                <div style="display: flex; align-items: center; gap: 0.25rem; padding: 4px; background: rgba(241, 245, 249, 0.6); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+                                    <button type="button" class="tab-btn-compact active" data-subtab="subtab-vencimientos">
+                                        <i data-lucide="clock" style="width: 11px; height: 11px;"></i> Vencimientos
+                                    </button>
+                                    <button type="button" class="tab-btn-compact" data-subtab="subtab-facturacion">
+                                        <i data-lucide="receipt" style="width: 11px; height: 11px;"></i> Facturación
+                                    </button>
+                                </div>
                                 <button id="btn-open-create-payment-modal" class="btn btn-primary btn-sparkle animate-pulse">
                                     <i data-lucide="plus-circle"></i> Registrar Cobro
                                 </button>
@@ -271,49 +280,55 @@
                             </div>
                         </div>
 
-                        <!-- TABLA DE SUSCRIPCIONES ACTIVAS Y VENCIMIENTO DE SERVICIOS -->
-                        <div class="list-container-card glass mt-6" style="width: 100%;">
-                            <h3 class="card-title"><i data-lucide="clock"></i> Estado de Servicios y Vencimientos SaaS</h3>
-                            <p class="section-desc mb-3">Monitorea en tiempo real el vencimiento de los planes y módulos contratados por cada cliente.</p>
-                            <div class="table-scroll-container">
-                                <table class="table-premium">
-                                    <thead>
-                                        <tr>
-                                            <th>Empresa</th>
-                                            <th>Plan Contratado</th>
-                                            <th>Frecuencia</th>
-                                            <th>Servicios / Módulos</th>
-                                            <th>Fecha de Registro</th>
-                                            <th>Próximo Vencimiento</th>
-                                            <th>Estado</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="table-vencimientos-body">
-                                        <!-- Rellenado dinámicamente -->
-                                    </tbody>
-                                </table>
+                        <!-- SUBAPARTADO 1: VENCIMIENTOS SAAS -->
+                        <div id="subtab-vencimientos" class="subtab-content">
+                            <!-- TABLA DE SUSCRIPCIONES ACTIVAS Y VENCIMIENTO DE SERVICIOS -->
+                            <div class="list-container-card glass" style="width: 100%; margin-top: 1rem;">
+                                <h3 class="card-title"><i data-lucide="clock"></i> Estado de Servicios y Vencimientos SaaS</h3>
+                                <p class="section-desc mb-3">Monitorea en tiempo real el vencimiento de los planes y módulos contratados por cada cliente.</p>
+                                <div class="table-scroll-container">
+                                    <table class="table-premium">
+                                        <thead>
+                                            <tr>
+                                                <th>Empresa</th>
+                                                <th>Plan Contratado</th>
+                                                <th>Frecuencia</th>
+                                                <th>Servicios / Módulos</th>
+                                                <th>Fecha de Registro</th>
+                                                <th>Próximo Vencimiento</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-vencimientos-body">
+                                            <!-- Rellenado dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="list-container-card glass mt-6" style="width: 100%;">
-                            <h3 class="card-title"><i data-lucide="receipt"></i> Historial de Facturación Mensual</h3>
-                            <div class="table-scroll-container">
-                                <table class="table-premium">
-                                    <thead>
-                                        <tr>
-                                            <th>Empresa</th>
-                                            <th>Periodo de Cobro</th>
-                                            <th>Monto Mensual</th>
-                                            <th>Fecha Vencimiento</th>
-                                            <th>Fecha Pago</th>
-                                            <th>Estado</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="table-payments-body">
-                                        <!-- Se rellenará dinámicamente -->
-                                    </tbody>
-                                </table>
+                        <!-- SUBAPARTADO 2: HISTORIAL DE FACTURACIÓN -->
+                        <div id="subtab-facturacion" class="subtab-content hidden">
+                            <div class="list-container-card glass" style="width: 100%; margin-top: 1rem;">
+                                <h3 class="card-title"><i data-lucide="receipt"></i> Historial de Facturación Mensual</h3>
+                                <div class="table-scroll-container">
+                                    <table class="table-premium">
+                                        <thead>
+                                            <tr>
+                                                <th>Empresa</th>
+                                                <th>Periodo de Cobro</th>
+                                                <th>Monto Mensual</th>
+                                                <th>Fecha Vencimiento</th>
+                                                <th>Fecha Pago</th>
+                                                <th>Estado</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="table-payments-body">
+                                            <!-- Se rellenará dinámicamente -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </section>

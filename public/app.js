@@ -3261,6 +3261,26 @@ function initSuperAdminSaasBehavior() {
         });
     });
 
+    // === CONTROLADOR DE SUB-PESTAÑAS DE COBROS Y PAGOS ===
+    const subtabsPagosButtons = document.querySelectorAll('#apartado-pagos .tab-btn-compact');
+    const subtabPagosContents = document.querySelectorAll('#apartado-pagos .subtab-content');
+
+    subtabsPagosButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            subtabsPagosButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            subtabPagosContents.forEach(content => content.classList.add('hidden'));
+
+            const targetSubtab = btn.getAttribute('data-subtab');
+            const targetContent = document.getElementById(targetSubtab);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        });
+    });
+
     const formEditServices = document.getElementById('form-edit-services');
     const formCreatePayment = document.getElementById('form-create-payment');
 
