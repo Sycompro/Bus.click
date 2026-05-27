@@ -173,6 +173,11 @@ async function reloadAllApiData() {
         updateEstabUI();
         applyCompanyBrandTheme();
         
+        // Dibujar tablas del portal de empresa (Administrador / Vendedor)
+        renderSedesList();
+        renderTrabajadoresList();
+        renderMovilidadesList();
+        
         // Reactividad de catálogos globales SaaS
         renderCatalogoPlanes();
         renderCatalogoServicios();
