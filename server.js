@@ -120,7 +120,9 @@ async function initializePostgresTables() {
             ADD COLUMN IF NOT EXISTS billing_cycle VARCHAR(50) DEFAULT 'Mensual',
             ADD COLUMN IF NOT EXISTS support_phone VARCHAR(50) DEFAULT '+51 987 654 321',
             ADD COLUMN IF NOT EXISTS support_email VARCHAR(100) DEFAULT 'soporte@empresa.com',
-            ADD COLUMN IF NOT EXISTS support_message VARCHAR(300) DEFAULT 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
+            ADD COLUMN IF NOT EXISTS support_message VARCHAR(300) DEFAULT 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.',
+            ADD COLUMN IF NOT EXISTS whatsapp_url TEXT DEFAULT 'https://qr-api-wps-production.up.railway.app/api/external/send-message',
+            ADD COLUMN IF NOT EXISTS whatsapp_api_key TEXT DEFAULT 'busclick_master_key';
         `);
         
         // Auto-reparar credenciales de empresas nulas si existen
@@ -329,6 +331,8 @@ app.get('/api/companies', async (req, res) => {
                 supportPhone: r.support_phone || '+51 987 654 321',
                 supportEmail: r.support_email || 'soporte@empresa.com',
                 supportMessage: r.support_message || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.',
+                whatsappUrl: r.whatsapp_url || 'https://qr-api-wps-production.up.railway.app/api/external/send-message',
+                whatsappApiKey: r.whatsapp_api_key || 'busclick_master_key',
                 createdAt: r.created_at,
                 paymentMethods: (r.payment_methods !== null && r.payment_methods !== undefined) ? (r.payment_methods === '' ? [] : r.payment_methods.split(',')) : ['Efectivo', 'Yape/Plin']
             })));
@@ -347,6 +351,8 @@ app.get('/api/companies', async (req, res) => {
             c.planName = c.planName || 'Plan Profesional';
             c.services = c.services || 'Boletería,Flota';
             c.billingCycle = c.billingCycle || 'Mensual';
+            c.whatsappUrl = c.whatsappUrl || 'https://qr-api-wps-production.up.railway.app/api/external/send-message';
+            c.whatsappApiKey = c.whatsappApiKey || 'busclick_master_key';
             c.createdAt = c.createdAt || new Date().toISOString();
         });
         saveLocalDb();
@@ -355,6 +361,8 @@ app.get('/api/companies', async (req, res) => {
             planName: c.planName || 'Plan Profesional',
             services: c.services || 'Boletería,Flota',
             billingCycle: c.billingCycle || 'Mensual',
+            whatsappUrl: c.whatsappUrl || 'https://qr-api-wps-production.up.railway.app/api/external/send-message',
+            whatsappApiKey: c.whatsappApiKey || 'busclick_master_key',
             createdAt: c.createdAt || new Date().toISOString(),
             paymentMethods: c.paymentMethods || ['Efectivo', 'Yape/Plin']
         })));
@@ -464,6 +472,33 @@ app.put('/api/companies/:id/support', async (req, res) => {
             company.supportPhone = supportPhone || "";
             company.supportEmail = supportEmail || "";
             company.supportMessage = supportMessage || "";
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: "Company not found" });
+        }
+    }
+});
+
+app.put('/api/companies/:id/whatsapp', async (req, res) => {
+    const { id } = req.params;
+    const { whatsappUrl, whatsappApiKey } = req.body;
+
+    if (usePostgres) {
+        try {
+            await pool.query(
+                'UPDATE companies SET whatsapp_url = $1, whatsapp_api_key = $2 WHERE id = $3',
+                [whatsappUrl || "", whatsappApiKey || "", id]
+            );
+            res.json({ success: true });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const company = localDb.companies.find(c => c.id === id);
+        if (company) {
+            company.whatsappUrl = whatsappUrl || "";
+            company.whatsappApiKey = whatsappApiKey || "";
             saveLocalDb();
             res.json({ success: true });
         } else {
@@ -1197,12 +1232,17 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
         let routeTo = "Destino";
         let travelDate = new Date().toLocaleDateString('es-PE');
         
+        let whatsappUrl = 'https://qr-api-wps-production.up.railway.app/api/external/send-message';
+        let whatsappApiKey = 'busclick_master_key';
+        
         // Cargar información de la Empresa
         if (usePostgres) {
-            const compRes = await pool.query('SELECT name, support_phone FROM companies WHERE id = $1', [companyId]);
+            const compRes = await pool.query('SELECT name, support_phone, whatsapp_url, whatsapp_api_key FROM companies WHERE id = $1', [companyId]);
             if (compRes.rows.length > 0) {
                 companyName = compRes.rows[0].name;
                 yapePhone = compRes.rows[0].support_phone || yapePhone;
+                whatsappUrl = compRes.rows[0].whatsapp_url || whatsappUrl;
+                whatsappApiKey = compRes.rows[0].whatsapp_api_key || whatsappApiKey;
             }
             
             // Cargar información de la Movilidad/Ruta
@@ -1217,6 +1257,8 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
             if (compObj) {
                 companyName = compObj.name;
                 yapePhone = compObj.supportPhone || compObj.support_phone || yapePhone;
+                whatsappUrl = compObj.whatsappUrl || compObj.whatsapp_url || whatsappUrl;
+                whatsappApiKey = compObj.whatsappApiKey || compObj.whatsapp_api_key || whatsappApiKey;
             }
             
             const movObj = localDb.movilidades.find(m => m.id === movilidadId);
@@ -1257,12 +1299,16 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
 
         console.log(`📱 [WhatsApp API] Despachando notificación automática asíncrona a ${cleanPhone}...`);
         
-        const apiKey = process.env.WHATSAPP_API_KEY || 'busclick_master_key';
+        // Resolver llave final usando configuraciones dinámicas u overrides de variables de entorno
+        const finalUrl = whatsappUrl || process.env.WHATSAPP_API_URL || 'https://qr-api-wps-production.up.railway.app/api/external/send-message';
+        const finalApiKey = (whatsappApiKey && whatsappApiKey !== 'busclick_master_key') ? whatsappApiKey : (process.env.WHATSAPP_API_KEY || 'busclick_master_key');
         
-        const response = await fetch('https://qr-api-wps-production.up.railway.app/api/external/send-message', {
+        console.log(`📱 [WhatsApp API] Usando URL: ${finalUrl}`);
+        
+        const response = await fetch(finalUrl, {
             method: 'POST',
             headers: {
-                'x-api-key': apiKey,
+                'x-api-key': finalApiKey,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({

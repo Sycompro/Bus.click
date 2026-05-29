@@ -2857,6 +2857,13 @@ function initAdminSettingsTab() {
     if (phoneInput) phoneInput.value = activeCompanyObj.supportPhone || '+51 987 654 321';
     if (emailInput) emailInput.value = activeCompanyObj.supportEmail || 'soporte@empresa.com';
     if (msgInput) msgInput.value = activeCompanyObj.supportMessage || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
+
+    // Cargar datos de la integración de WhatsApp
+    const wsUrlInput = document.getElementById('admin-whatsapp-url');
+    const wsKeyInput = document.getElementById('admin-whatsapp-key');
+    
+    if (wsUrlInput) wsUrlInput.value = activeCompanyObj.whatsappUrl || 'https://qr-api-wps-production.up.railway.app/api/external/send-message';
+    if (wsKeyInput) wsKeyInput.value = activeCompanyObj.whatsappApiKey || 'busclick_master_key';
     
     // Cargar métodos actuales
     adminSettingsPaymentMethods = [...(activeCompanyObj.paymentMethods || ['Efectivo', 'Yape/Plin'])];
@@ -3018,6 +3025,58 @@ function setupAdminSettingsEvents() {
             } finally {
                 if (btnSupportSave) btnSupportSave.disabled = false;
             }
+        });
+    }
+
+    // Configuración del Formulario de Integración de WhatsApp
+    const formWhatsapp = document.getElementById('form-admin-whatsapp-settings');
+    if (formWhatsapp) {
+        formWhatsapp.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const wsUrlVal = document.getElementById('admin-whatsapp-url').value.trim();
+            const wsKeyVal = document.getElementById('admin-whatsapp-key').value.trim();
+            
+            const btnWhatsappSave = document.getElementById('btn-save-whatsapp-settings');
+            if (btnWhatsappSave) btnWhatsappSave.disabled = true;
+            
+            try {
+                const res = await fetch(`/api/companies/${state.activeCompanyId}/whatsapp`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        whatsappUrl: wsUrlVal,
+                        whatsappApiKey: wsKeyVal
+                    })
+                });
+                
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast("Configuración de la API de WhatsApp guardada con éxito.", "success");
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al guardar los ajustes de WhatsApp.", "error");
+                }
+            } catch (err) {
+                console.error("Error al guardar WhatsApp:", err);
+                showToast("Fallo al conectar con el servidor de base de datos.", "error");
+            } finally {
+                if (btnWhatsappSave) btnWhatsappSave.disabled = false;
+            }
+        });
+    }
+
+    // Toggle de visibilidad de la API Key de WhatsApp (botón ojo)
+    const btnToggleWsKey = document.getElementById('btn-toggle-whatsapp-key');
+    const wsKeyInputVal = document.getElementById('admin-whatsapp-key');
+    if (btnToggleWsKey && wsKeyInputVal) {
+        btnToggleWsKey.addEventListener('click', () => {
+            const isPassword = wsKeyInputVal.type === 'password';
+            wsKeyInputVal.type = isPassword ? 'text' : 'password';
+            btnToggleWsKey.innerHTML = isPassword 
+                ? '<i data-lucide="eye-off" style="width: 14px; height: 14px;"></i>' 
+                : '<i data-lucide="eye" style="width: 14px; height: 14px;"></i>';
+            lucide.createIcons();
         });
     }
 }
