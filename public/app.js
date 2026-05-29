@@ -1324,7 +1324,10 @@ function showTicket(ticketId, ticketData) {
     document.getElementById('ticket-dni').textContent = ticketData.passengerDni;
     document.getElementById('ticket-seat').textContent = ticketData.seatNum + (vehicleIsTwoFloors() ? ` (Piso ${ticketData.floor})` : '');
     document.getElementById('ticket-status').textContent = ticketData.status === 'Ocupado' ? 'PAGADO' : 'SEPARADO';
-    document.getElementById('ticket-route').textContent = `${ticketData.routeFrom} ➔ ${ticketData.routeTo}`;
+    const mobility = state.movilidades.find(m => m.id === ticketData.movilidadId);
+    const routeFrom = mobility ? mobility.routeFrom : (ticketData.routeFrom || ticketData.route_from || "Origen");
+    const routeTo = mobility ? mobility.routeTo : (ticketData.routeTo || ticketData.route_to || "Destino");
+    document.getElementById('ticket-route').textContent = `${routeFrom} ➔ ${routeTo}`;
     document.getElementById('ticket-payment').textContent = ticketData.paymentMethod;
     document.getElementById('ticket-date').textContent = ticketData.date;
     document.getElementById('ticket-price').textContent = `S/. ${ticketData.price.toFixed(2)}`;

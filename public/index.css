@@ -1991,17 +1991,172 @@ body {
 
 /* Print */
 @media print {
-    .no-print { display: none !important; }
-    body { background: white; color: black; }
-    .ticket-card {
-        border: none; box-shadow: none;
-        background: white; color: black;
-        width: 100%; margin: 0; padding: 0;
+    /* Ocultar elementos innecesarios y controles interactivos */
+    .no-print,
+    button,
+    .btn,
+    .login-overlay-premium,
+    #sede-login-overlay,
+    #sidebar-navigation,
+    .app-header,
+    .main-content-column {
+        display: none !important;
     }
-    .ticket-card .value { color: black; }
+
+    /* Limpiar body y configurar márgenes para ticketera térmica */
+    html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+        font-size: 10px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Neutralizar el overlay de pantalla del modal para que no desplace el boleto */
+    #modal-ticket-view.modal-overlay {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        display: block !important;
+        z-index: auto !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Ajustar el ticket-card para aprovechar el 100% del ancho del papel térmico */
+    .ticket-card {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 8px 12px !important;
+        box-sizing: border-box !important;
+        position: relative !important;
+        left: 0 !important;
+        animation: none !important;
+    }
+
+    /* Ocultar las ondas y scallops decorativos que causan círculos negros y desfases */
+    .ticket-scallop-top,
+    .ticket-scallop-bottom,
+    .ticket-scallop-top::before, 
+    .ticket-scallop-top::after,
+    .ticket-scallop-bottom::before, 
+    .ticket-scallop-bottom::after {
+        display: none !important;
+    }
+
+    /* Forzar textos e iconos en color negro puro de alto contraste */
+    .ticket-logo {
+        font-size: 1.3rem !important;
+        font-weight: 800 !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        margin-bottom: 2px !important;
+        justify-content: center !important;
+    }
+    
+    .ticket-logo i {
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+    }
+
+    .ticket-ruc-label {
+        font-size: 0.7rem !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+        text-align: center !important;
+    }
+
+    .ticket-title {
+        font-size: 0.8rem !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+
+    .ticket-serial {
+        font-size: 0.75rem !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+
+    .ticket-info-grid {
+        gap: 0.5rem !important;
+        margin-top: 0.75rem !important;
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        width: 100% !important;
+    }
+
+    .ticket-info-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+
+    .ticket-info-item.span-full {
+        grid-column: span 2 !important;
+    }
+
+    .ticket-info-item .label {
+        font-size: 0.65rem !important;
+        color: #555555 !important;
+        font-weight: 700 !important;
+    }
+
+    .ticket-info-item .value {
+        font-size: 0.8rem !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+
+    /* Simplificar distintivo de estado de pago */
+    .ticket-status-badge {
+        background: transparent !important;
+        border: 1px solid #000000 !important;
+        color: #000000 !important;
+        padding: 2px 6px !important;
+        font-size: 0.7rem !important;
+        font-weight: bold !important;
+        border-radius: 2px !important;
+    }
+
     .ticket-price-box .price {
-        color: black;
-        -webkit-text-fill-color: black;
+        font-size: 1.3rem !important;
+        color: #000000 !important;
+        -webkit-text-fill-color: #000000 !important;
+        font-weight: 800 !important;
+    }
+
+    .ticket-divider-line {
+        border-top: 1px dashed #000000 !important;
+        margin: 0.6rem 0 !important;
+        width: 100% !important;
+    }
+
+    /* Asegurar legibilidad extrema en códigos bidimensionales y barras */
+    #seller-qr-render canvas, #seller-qr-render img {
+        width: 70px !important;
+        height: 70px !important;
+        filter: grayscale(100%) contrast(200%) !important;
+    }
+
+    #seller-barcode-render {
+        max-width: 100% !important;
+        height: 35px !important;
+        filter: grayscale(100%) contrast(200%) !important;
     }
 }
 
