@@ -971,6 +971,41 @@ function populateVirtualTicket(ticket) {
     
     const floorSuffix = state.selectedBus.modelType === "bus2p" ? ` (Piso ${ticket.floor})` : "";
     document.getElementById("ticket-seat").textContent = `N° ${ticket.seatNum}${floorSuffix}`;
+
+    // --- GENERAR CÓDIGO QR Y CÓDIGO DE BARRAS DINÁMICOS ---
+    const qrContainer = document.getElementById("b2c-qr-render");
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        try {
+            new QRCode(qrContainer, {
+                text: `https://bus.click/verify/${ticket.id}`,
+                width: 96,
+                height: 96,
+                colorDark: "#1e1b4b",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        } catch (e) {
+            console.error("Error al generar código QR para pasajero:", e);
+        }
+    }
+
+    const barcodeSvg = document.getElementById("b2c-barcode-render");
+    if (barcodeSvg) {
+        try {
+            JsBarcode("#b2c-barcode-render", ticket.id.toUpperCase(), {
+                format: "CODE128",
+                lineColor: "#1e1b4b",
+                height: 35,
+                width: 1.5,
+                displayValue: true,
+                fontSize: 10,
+                background: "transparent"
+            });
+        } catch (e) {
+            console.error("Error al generar código de barras para pasajero:", e);
+        }
+    }
 }
 
 // --- RESETEAR EL ESTADO DE COMPRA PARA UN NUEVO VIAJE ---

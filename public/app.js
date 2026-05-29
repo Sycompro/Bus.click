@@ -1319,7 +1319,7 @@ function showTicket(ticketId, ticketData) {
     document.getElementById('ticket-company-name').textContent = activeCompany ? activeCompany.name : "Expreso Bus.click";
     document.getElementById('ticket-company-ruc').textContent = activeCompany ? `RUC: ${activeCompany.ruc}` : "RUC: 20123456789";
     
-    document.getElementById('ticket-id').textContent = `SERIE BC02-00${ticketId.slice(-6).toUpperCase()}`;
+    document.getElementById('ticket-id').textContent = `SERIE BC02-00${String(ticketId).slice(-6).toUpperCase()}`;
     document.getElementById('ticket-passenger').textContent = ticketData.passengerName;
     document.getElementById('ticket-dni').textContent = ticketData.passengerDni;
     document.getElementById('ticket-seat').textContent = ticketData.seatNum + (vehicleIsTwoFloors() ? ` (Piso ${ticketData.floor})` : '');
@@ -1328,6 +1328,41 @@ function showTicket(ticketId, ticketData) {
     document.getElementById('ticket-payment').textContent = ticketData.paymentMethod;
     document.getElementById('ticket-date').textContent = ticketData.date;
     document.getElementById('ticket-price').textContent = `S/. ${ticketData.price.toFixed(2)}`;
+
+    // --- GENERAR CÓDIGO QR Y CÓDIGO DE BARRAS DINÁMICOS EN TAQUILLA ---
+    const qrContainer = document.getElementById("seller-qr-render");
+    if (qrContainer) {
+        qrContainer.innerHTML = "";
+        try {
+            new QRCode(qrContainer, {
+                text: `https://bus.click/verify/${ticketId}`,
+                width: 80,
+                height: 80,
+                colorDark: "#1e1b4b",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        } catch (e) {
+            console.error("Error al generar código QR para taquilla:", e);
+        }
+    }
+
+    const barcodeSvg = document.getElementById("seller-barcode-render");
+    if (barcodeSvg) {
+        try {
+            JsBarcode("#seller-barcode-render", String(ticketId).toUpperCase(), {
+                format: "CODE128",
+                lineColor: "#1e1b4b",
+                height: 35,
+                width: 1.5,
+                displayValue: true,
+                fontSize: 10,
+                background: "transparent"
+            });
+        } catch (e) {
+            console.error("Error al generar código de barras para taquilla:", e);
+        }
+    }
     
     document.getElementById('modal-ticket-view').classList.remove('hidden');
 }

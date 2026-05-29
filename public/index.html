@@ -266,14 +266,83 @@
         <!-- TICKET VIEW -->
         <div id="modal-ticket-view" class="modal-overlay hidden">
              <div class="ticket-card glass" id="ticket-render-area">
-                <h3 id="ticket-company-name">Bus.click</h3>
-                <p id="ticket-id">---</p>
-                <p>Pasajero: <span id="ticket-passenger">---</span></p>
-                <p>Asiento: <span id="ticket-seat">---</span></p>
-                <p>Precio: <span id="ticket-price">---</span></p>
-                <button class="btn btn-primary btn-full" id="btn-close-ticket">Cerrar</button>
+                 <!-- Scallop cutouts -->
+                 <div class="ticket-scallop-top"></div>
+                 <div class="ticket-scallop-bottom"></div>
+
+                 <div class="ticket-header-content">
+                     <div class="ticket-logo" style="justify-content: center; font-size: 1.5rem;">
+                         <i data-lucide="bus"></i>
+                         <span id="ticket-company-name">Bus.click</span>
+                     </div>
+                     <div class="ticket-ruc-label" id="ticket-company-ruc">RUC: 20123456789</div>
+                 </div>
+
+                 <div class="ticket-divider-line"></div>
+
+                 <div class="ticket-body">
+                     <div class="ticket-title">BOLETO ELECTRÓNICO</div>
+                     <div class="ticket-serial" id="ticket-id">SERIE BC02-00000000</div>
+
+                     <div class="ticket-info-grid">
+                         <div class="ticket-info-item span-full">
+                             <span class="label">Pasajero</span>
+                             <span class="value" id="ticket-passenger">---</span>
+                         </div>
+                         <div class="ticket-info-item">
+                             <span class="label">DNI</span>
+                             <span class="value" id="ticket-dni">---</span>
+                         </div>
+                         <div class="ticket-info-item">
+                             <span class="label">Asiento</span>
+                             <span class="value" id="ticket-seat">---</span>
+                         </div>
+                         <div class="ticket-info-item span-full">
+                             <span class="label">Ruta</span>
+                             <span class="value" id="ticket-route">---</span>
+                         </div>
+                         <div class="ticket-info-item">
+                             <span class="label">Fecha</span>
+                             <span class="value" id="ticket-date">---</span>
+                         </div>
+                         <div class="ticket-info-item">
+                             <span class="label">Método de Pago</span>
+                             <span class="value" id="ticket-payment">---</span>
+                         </div>
+                         <div class="ticket-info-item span-full">
+                             <span class="label">Estado de Pago</span>
+                             <span class="value ticket-status-badge" id="ticket-status">---</span>
+                         </div>
+                     </div>
+
+                     <div class="ticket-divider-line" style="width: 100%;"></div>
+
+                     <div class="ticket-footer-grid">
+                         <div class="ticket-price-box">
+                             <span class="label">Total Pagado</span>
+                             <span class="price" id="ticket-price">S/. 0.00</span>
+                         </div>
+                         
+                         <!-- Contenedor para QR dinámico -->
+                         <div id="seller-qr-render" style="padding: 4px; background: white; border-radius: var(--radius-sm); border: 1px solid var(--border-soft);"></div>
+                     </div>
+                     
+                     <!-- Código de barras abajo -->
+                     <div style="margin-top: 1.25rem; width: 100%; display: flex; justify-content: center;">
+                         <svg id="seller-barcode-render" style="max-width: 100%;"></svg>
+                     </div>
+                 </div>
+
+                 <div class="ticket-actions no-print" style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+                     <button class="btn btn-secondary" onclick="window.print()" style="flex: 1;">
+                         <i data-lucide="printer"></i> Imprimir
+                     </button>
+                     <button class="btn btn-primary" id="btn-close-ticket" style="flex: 1;">
+                         Cerrar
+                     </button>
+                 </div>
              </div>
-    </div>
+        </div>
 
     <!-- OVERLAY DE LOGIN DE SEDE -->
     <div id="sede-login-overlay" class="login-overlay-premium">
@@ -302,6 +371,9 @@
         </div>
     </div>
 
+    <!-- QR Code & Barcode client-side generators -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="app.js"></script>
     <script>
         state.currentRole = 'establecimiento';

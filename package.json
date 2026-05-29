@@ -19,6 +19,8 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "express": "^4.19.2",
-    "pg": "^8.11.3"
+    "jsbarcode": "^3.12.3",
+    "pg": "^8.11.3",
+    "qrcode": "^1.5.4"
   }
 }

@@ -291,17 +291,10 @@
 
                     <div class="b2c-ticket-qr">
                         <div class="b2c-qr-box">
-                            <div class="b2c-qr-mock">
-                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#7c3aed;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
-                                <div style="width:30%;height:30%;background:#1e1b4b;border-radius:3px;"></div>
-                            </div>
+                            <div id="b2c-qr-render"></div>
+                        </div>
+                        <div style="margin-top: 1rem; display: flex; justify-content: center; width: 100%;">
+                            <svg id="b2c-barcode-render" style="max-width: 100%;"></svg>
                         </div>
                         <p class="b2c-qr-text">Código de embarque único — Muestre al conductor</p>
                     </div>
@@ -328,6 +321,9 @@
         </button>
     </footer>
 
+    <!-- QR Code & Barcode client-side generators -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="client_app.js"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
