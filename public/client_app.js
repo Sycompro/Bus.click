@@ -954,9 +954,25 @@ async function processPaymentAndBooking() {
 function populateVirtualTicket(ticket) {
     const company = state.companies.find(c => c.id === ticket.companyId) || { name: "Herrera Trans" };
     
+    // --- LÓGICA DE RECUPERACIÓN SEGURA DE RUTA Y DIRECCIÓN DE LLEGADA ---
+    const mobility = state.movilidades.find(m => m.id === ticket.movilidadId);
+    const origin = mobility ? mobility.routeFrom : (ticket.routeFrom || state.selectedOrigin || "Origen");
+    const destination = mobility ? mobility.routeTo : (ticket.routeTo || state.selectedDestination || "Destino");
+    
+    // Buscar sede de llegada (destino) de la empresa para indicar la dirección exacta
+    const companySedes = state.sedes.filter(s => s.companyId === ticket.companyId);
+    const destSede = companySedes.find(s => s.city.toLowerCase() === destination.toLowerCase());
+    const destinationAddress = destSede ? `${destSede.name} - ${destSede.address}` : `Terminal Terrestre de ${destination}`;
+
     document.getElementById("ticket-company-name").textContent = company.name;
-    document.getElementById("ticket-origin").textContent = state.selectedOrigin;
-    document.getElementById("ticket-destination").textContent = state.selectedDestination;
+    document.getElementById("ticket-origin").textContent = origin;
+    document.getElementById("ticket-destination").textContent = destination;
+    
+    // Inyectar dirección de destino exacta
+    const addressContainer = document.getElementById("ticket-destination-address");
+    if (addressContainer) {
+        addressContainer.textContent = destinationAddress;
+    }
     
     // Fecha
     const dateParts = ticket.date.split('-');
@@ -1005,6 +1021,11 @@ function populateVirtualTicket(ticket) {
         } catch (e) {
             console.error("Error al generar código de barras para pasajero:", e);
         }
+    }
+    
+    // Renderizar iconos de Lucide dinámicos
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
     }
 }
 

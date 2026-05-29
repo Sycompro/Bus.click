@@ -1328,6 +1328,17 @@ function showTicket(ticketId, ticketData) {
     const routeFrom = mobility ? mobility.routeFrom : (ticketData.routeFrom || ticketData.route_from || "Origen");
     const routeTo = mobility ? mobility.routeTo : (ticketData.routeTo || ticketData.route_to || "Destino");
     document.getElementById('ticket-route').textContent = `${routeFrom} ➔ ${routeTo}`;
+
+    // Buscar sede de llegada (destino) de la empresa para indicar la dirección exacta
+    const companySedes = state.sedes.filter(s => s.companyId === state.activeCompanyId);
+    const destSede = companySedes.find(s => s.city.toLowerCase() === routeTo.toLowerCase());
+    const destinationAddress = destSede ? `${destSede.name} - ${destSede.address}` : `Terminal Terrestre de ${routeTo}`;
+    
+    const addressContainer = document.getElementById('ticket-destination-address');
+    if (addressContainer) {
+        addressContainer.textContent = destinationAddress;
+    }
+
     document.getElementById('ticket-payment').textContent = ticketData.paymentMethod;
     document.getElementById('ticket-date').textContent = ticketData.date;
     document.getElementById('ticket-price').textContent = `S/. ${ticketData.price.toFixed(2)}`;
@@ -1365,6 +1376,10 @@ function showTicket(ticketId, ticketData) {
         } catch (e) {
             console.error("Error al generar código de barras para taquilla:", e);
         }
+    }
+    
+    if (typeof lucide !== 'undefined' && lucide.createIcons) {
+        lucide.createIcons();
     }
     
     document.getElementById('modal-ticket-view').classList.remove('hidden');
