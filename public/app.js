@@ -1510,7 +1510,7 @@ function openManageTicketModal(ticket) {
     } else {
         formattedDate = new Date().toISOString().split('T')[0];
     }
-    document.getElementById('manage-date').value = formattedDate;
+    setPremiumDatepickerValue('manage-date', formattedDate);
     document.getElementById('manage-seat').value = ticket.seatNum;
     document.getElementById('manage-floor').value = ticket.floor || "1";
     
@@ -2460,11 +2460,11 @@ function updateSalesTurnReport() {
             </td>
             <td class="font-bold text-emerald-400" style="color: #10b981;">S/. ${price.toFixed(2)}</td>
             <td style="display: flex; gap: 0.4rem; align-items: center; justify-content: flex-start; height: 100%;">
-                <button class="btn btn-secondary btn-print-sale-mini" data-ticket-id="${ticket.id}" style="padding: 4px 8px; font-size: 0.75rem; height: 30px;">
-                    <i data-lucide="ticket"></i> Boleto
+                <button class="btn btn-secondary btn-print-sale-mini" data-ticket-id="${ticket.id}" style="padding: 4px 8px; font-size: 0.75rem; height: 30px; display: inline-flex; align-items: center; gap: 4px;">
+                    <i data-lucide="ticket" style="width: 12px; height: 12px; stroke-width: 2.5;"></i> Boleto
                 </button>
-                <button class="btn btn-primary btn-manage-sale-mini" data-ticket-id="${ticket.id}" style="padding: 4px 8px; font-size: 0.75rem; height: 30px; background: var(--brand-gradient);">
-                    <i data-lucide="settings"></i> Gestionar
+                <button class="btn btn-primary btn-manage-sale-mini" data-ticket-id="${ticket.id}" style="padding: 4px 8px; font-size: 0.75rem; height: 30px; background: var(--brand-gradient); display: inline-flex; align-items: center; gap: 4px;">
+                    <i data-lucide="settings" style="width: 12px; height: 12px; stroke-width: 2.5;"></i> Gestionar
                 </button>
             </td>
         `;

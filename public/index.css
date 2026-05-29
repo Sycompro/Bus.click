@@ -4804,6 +4804,221 @@ body {
     }
 }
 
+/* =========================================================================
+   📄 ESTILOS PREMIUM PARA LA EXPORTACIÓN A PDF (pdf-mode-ticket / pdf-mode-a4)
+   ========================================================================= */
+
+/* Formato 1: Voucher / Ticket Térmico en PDF */
+.b2c-ticket.pdf-mode-ticket {
+    width: 80mm !important;
+    max-width: 80mm !important;
+    background: #ffffff !important;
+    border: 2px dashed #7c3aed !important;
+    border-radius: 0px !important;
+    padding: 15px !important;
+    box-sizing: border-box !important;
+    color: #1e1b4b !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+.b2c-ticket.pdf-mode-ticket .b2c-ticket-top {
+    background: #7c3aed !important;
+    padding: 10px !important;
+    border-radius: 8px !important;
+}
+
+.b2c-ticket.pdf-mode-ticket .b2c-ticket-company {
+    color: #ffffff !important;
+}
+
+.b2c-ticket.pdf-mode-ticket .b2c-ticket-brand span {
+    color: #ffffff !important;
+}
+
+.b2c-ticket.pdf-mode-ticket .b2c-ticket-brand i {
+    color: #ffffff !important;
+}
+
+.b2c-ticket.pdf-mode-ticket .b2c-qr-box {
+    width: 100px !important;
+    height: 100px !important;
+    border: 1px solid #7c3aed !important;
+    border-radius: 8px !important;
+    margin: 10px auto !important;
+    background: #ffffff !important;
+    padding: 6px !important;
+}
+
+.b2c-ticket.pdf-mode-ticket #b2c-qr-render canvas,
+.b2c-ticket.pdf-mode-ticket #b2c-qr-render img {
+    width: 88px !important;
+    height: 88px !important;
+}
+
+.b2c-ticket.pdf-mode-ticket #b2c-barcode-render {
+    height: 35px !important;
+    width: 1.5 !important;
+    max-width: 100% !important;
+}
+
+/* Formato 2: Hoja A4 Estándar Premium en PDF */
+.b2c-ticket.pdf-mode-a4 {
+    width: 190mm !important;
+    max-width: 190mm !important;
+    background: #ffffff !important;
+    border: 2px solid #7c3aed !important;
+    border-radius: 20px !important;
+    padding: 40px !important;
+    box-sizing: border-box !important;
+    color: #1e1b4b !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-top {
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%) !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-company {
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    color: #ffffff !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-brand span {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-brand i {
+    width: 24px !important;
+    height: 24px !important;
+    color: #ffffff !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-route {
+    margin: 30px 0 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 0 10px !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-city {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: #1e1b4b !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-arrow i {
+    width: 32px !important;
+    height: 32px !important;
+    color: #a855f7 !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-details {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 25px !important;
+    margin: 30px 0 !important;
+    padding: 0 10px !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-label {
+    font-size: 0.95rem !important;
+    color: #94a3b8 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-val {
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    color: #1e1b4b !important;
+    margin-top: 5px !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-seat {
+    color: #7c3aed !important;
+}
+
+/* Caja de llegada en A4 */
+.b2c-ticket.pdf-mode-a4 div[style*="background: #faf5ff"] {
+    background: #faf5ff !important;
+    border: 1px solid #ede9fe !important;
+    padding: 15px !important;
+    border-radius: 12px !important;
+    margin: 20px 10px !important;
+}
+
+.b2c-ticket.pdf-mode-a4 div[style*="background: #faf5ff"] .b2c-ticket-label {
+    font-size: 0.85rem !important;
+    color: #7c3aed !important;
+}
+
+.b2c-ticket.pdf-mode-a4 div[style*="background: #faf5ff"] .b2c-ticket-val {
+    font-size: 1.1rem !important;
+    color: #1e1b4b !important;
+    margin-top: 4px !important;
+}
+
+/* Área QR y Barcode en A4 */
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-qr {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+    margin-top: 30px !important;
+    padding: 20px !important;
+    border-top: 2px dashed #e2e8f0 !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-qr-box {
+    width: 140px !important;
+    height: 140px !important;
+    padding: 8px !important;
+    border: 1px solid #e8ecf3 !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    margin: 0 !important;
+}
+
+.b2c-ticket.pdf-mode-a4 #b2c-qr-render canvas,
+.b2c-ticket.pdf-mode-a4 #b2c-qr-render img {
+    width: 124px !important;
+    height: 124px !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-ticket-qr div[style*="margin-top: 1rem"] {
+    margin-top: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+}
+
+.b2c-ticket.pdf-mode-a4 #b2c-barcode-render {
+    height: 50px !important;
+    width: 1.8 !important;
+    max-width: 250px !important;
+}
+
+.b2c-ticket.pdf-mode-a4 .b2c-qr-text {
+    font-size: 0.85rem !important;
+    margin-top: 10px !important;
+    color: #94a3b8 !important;
+}
+
+
 
 
 

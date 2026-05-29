@@ -1584,19 +1584,28 @@ document.getElementById("b2c-btn-pdf")?.addEventListener("click", () => {
         margin:       5,
         filename:     filename,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2.5, logging: false, useCORS: true },
+        html2canvas:  { scale: 3.0, logging: false, useCORS: true, letterRendering: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
     
+    // Aplicar la clase de formato PDF dinámicamente antes del renderizado
+    ticketElement.classList.remove("pdf-mode-ticket", "pdf-mode-a4");
     if (format === "ticket") {
+        ticketElement.classList.add("pdf-mode-ticket");
         opt.jsPDF.format = [80, 160]; // 80mm ancho, 160mm alto
-        opt.margin = 3;
+        opt.margin = 2;
+    } else {
+        ticketElement.classList.add("pdf-mode-a4");
+        opt.margin = 10; // Un margen elegante de 10mm para A4
     }
     
     html2pdf().from(ticketElement).set(opt).save().then(() => {
+        // Limpiar clases PDF después de la renderización
+        ticketElement.classList.remove("pdf-mode-ticket", "pdf-mode-a4");
         showMobileNotification("¡Tu boleto PDF ha sido descargado!", "success");
     }).catch(err => {
         console.error("Error al descargar PDF:", err);
+        ticketElement.classList.remove("pdf-mode-ticket", "pdf-mode-a4");
         showMobileNotification("No se pudo descargar el PDF automáticamente.", "error");
     });
 });
@@ -1617,16 +1626,25 @@ document.getElementById("b2c-btn-share")?.addEventListener("click", () => {
         margin:       5,
         filename:     filename,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2.5, logging: false, useCORS: true },
+        html2canvas:  { scale: 3.0, logging: false, useCORS: true, letterRendering: true },
         jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
     
+    // Aplicar la clase de formato PDF dinámicamente antes del renderizado
+    ticketElement.classList.remove("pdf-mode-ticket", "pdf-mode-a4");
     if (format === "ticket") {
+        ticketElement.classList.add("pdf-mode-ticket");
         opt.jsPDF.format = [80, 160];
-        opt.margin = 3;
+        opt.margin = 2;
+    } else {
+        ticketElement.classList.add("pdf-mode-a4");
+        opt.margin = 10;
     }
     
     html2pdf().from(ticketElement).set(opt).outputPdf('blob').then(async (pdfBlob) => {
+        // Limpiar clases PDF inmediatamente después de obtener el blob
+        ticketElement.classList.remove("pdf-mode-ticket", "pdf-mode-a4");
+        
         const file = new File([pdfBlob], filename, { type: "application/pdf" });
         
         // Intentar compartir de forma nativa en móviles (Web Share API)
@@ -1653,6 +1671,7 @@ document.getElementById("b2c-btn-share")?.addEventListener("click", () => {
         }
     }).catch(err => {
         console.error("Error al generar PDF para compartir:", err);
-        showMobileNotification("No se pudo generar el archivo para compartir.", "error");
+        ticketElement.classList.remove("pdf-mode-ticket", "pdf-mode-a4");
+        showMobileNotification("Ocurrió un error al preparar el PDF.", "error");
     });
 });

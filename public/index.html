@@ -377,8 +377,12 @@
                     
                     <div class="form-group-row-2">
                         <div class="form-group">
-                            <label for="manage-date">Fecha de Viaje</label>
-                            <input type="date" id="manage-date" required>
+                            <label for="manage-date-display">Fecha de Viaje</label>
+                            <div class="datepicker-wrapper">
+                                <input type="text" class="datepicker-input" id="manage-date-display" placeholder="Selecciona una fecha" readonly required>
+                                <input type="hidden" id="manage-date" required>
+                                <i data-lucide="calendar" class="datepicker-icon"></i>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="manage-seat">N° de Asiento</label>
