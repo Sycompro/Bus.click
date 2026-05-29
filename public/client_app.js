@@ -62,6 +62,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Cargar el historial de pasajes si existe en el tab
     updateHistoryTabBadge();
+    
+    // Sincronizar en segundo plano de inmediato los pasajes locales con el servidor
+    syncClientTickets();
 });
 
 // --- CARGA DE DATOS INICIALES ---
@@ -1134,6 +1137,29 @@ function updateHistoryTabBadge() {
     }
 }
 
+// --- SINCRONIZAR BOLETOS DEL CLIENTE CON EL SERVIDOR (TIEMPO REAL) ---
+async function syncClientTickets() {
+    if (state.myTickets.length === 0) return;
+    
+    try {
+        const ticketIds = state.myTickets.map(t => t.id);
+        const res = await fetch('/api/tickets/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ticketIds })
+        }).then(r => r.json());
+        
+        if (res.success && Array.isArray(res.tickets)) {
+            // Actualizar el array local manteniendo solo los boletos que siguen existiendo en el servidor
+            state.myTickets = res.tickets;
+            localStorage.setItem('busclick_client_tickets', JSON.stringify(state.myTickets));
+            updateHistoryTabBadge();
+        }
+    } catch (e) {
+        console.error("Error al sincronizar boletos locales con servidor:", e);
+    }
+}
+
 // --- CONTROLADOR DE ACTIVACIÓN DE TABS ---
 function setActiveTab(tabId) {
     document.querySelectorAll(".tab-bar-item").forEach(item => {
@@ -1143,25 +1169,8 @@ function setActiveTab(tabId) {
     if (targetTab) targetTab.classList.add("active");
 }
 
-// --- MOSTRAR MODAL DE HISTORIAL DE COMPRAS (MIS PASAJES) ---
-function showHistoryModal() {
-    // Eliminar modales previos
-    document.querySelectorAll(".mobile-modal-overlay").forEach(m => m.remove());
-    
-    const overlay = document.createElement("div");
-    overlay.className = "mobile-modal-overlay";
-    overlay.style.position = "absolute";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.background = "rgba(15, 23, 42, 0.4)";
-    overlay.style.backdropFilter = "blur(8px)";
-    overlay.style.zIndex = "900";
-    overlay.style.display = "flex";
-    overlay.style.alignItems = "flex-end";
-    overlay.style.animation = "fadeInOverlay 0.25s ease";
-    
+// --- RENDERIZAR HTML DE LISTA DE TICKETS (B2C) ---
+function renderTicketsListHtml() {
     let ticketsListHtml = "";
     if (state.myTickets.length === 0) {
         ticketsListHtml = `
@@ -1208,6 +1217,60 @@ function showHistoryModal() {
             `;
         });
     }
+    return ticketsListHtml;
+}
+
+// --- CONFIGURAR REGISTROS DE EVENTOS DEL HISTORIAL ---
+function setupHistoryModalListeners(overlay) {
+    // Listener cerrar modal
+    overlay.querySelector(".btn-close-mobile-modal")?.addEventListener("click", () => {
+        overlay.remove();
+        setActiveTab("tab-home");
+    });
+    
+    // Listener ver boletos QR específicos
+    overlay.querySelectorAll(".btn-view-ticket-qr").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const ticketId = btn.getAttribute("data-id");
+            const targetTicket = state.myTickets.find(t => t.id === ticketId);
+            if (targetTicket) {
+                // Cargar los datos del bus
+                state.selectedBus = state.movilidades.find(m => m.id === targetTicket.movilidadId) || { modelType: 'bus1p', price: targetTicket.price };
+                state.selectedOrigin = targetTicket.routeFrom || state.selectedOrigin;
+                state.selectedDestination = targetTicket.routeTo || state.selectedDestination;
+                state.selectedDate = targetTicket.date;
+                state.selectedSeat = targetTicket.seatNum;
+                state.selectedFloor = targetTicket.floor;
+                
+                populateVirtualTicket(targetTicket);
+                overlay.remove();
+                setActiveTab("tab-home");
+                goToStep("step-ticket");
+            }
+        });
+    });
+}
+
+// --- MOSTRAR MODAL DE HISTORIAL DE COMPRAS (MIS PASAJES) ---
+function showHistoryModal() {
+    // Eliminar modales previos
+    document.querySelectorAll(".mobile-modal-overlay").forEach(m => m.remove());
+    
+    const overlay = document.createElement("div");
+    overlay.className = "mobile-modal-overlay";
+    overlay.style.position = "absolute";
+    overlay.style.top = "0";
+    overlay.style.left = "0";
+    overlay.style.width = "100%";
+    overlay.style.height = "100%";
+    overlay.style.background = "rgba(15, 23, 42, 0.4)";
+    overlay.style.backdropFilter = "blur(8px)";
+    overlay.style.zIndex = "900";
+    overlay.style.display = "flex";
+    overlay.style.alignItems = "flex-end";
+    overlay.style.animation = "fadeInOverlay 0.25s ease";
+    
+    const ticketsListHtml = renderTicketsListHtml();
     
     overlay.innerHTML = `
         <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 80%; padding: 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); border-top: 1px solid #eef2f7; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
@@ -1229,32 +1292,16 @@ function showHistoryModal() {
         wrapper.appendChild(overlay);
         lucide.createIcons();
         
-        // Listener cerrar modal
-        overlay.querySelector(".btn-close-mobile-modal").addEventListener("click", () => {
-            overlay.remove();
-            setActiveTab("tab-home");
-        });
+        setupHistoryModalListeners(overlay);
         
-        // Listener ver boletos QR específicos
-        overlay.querySelectorAll(".btn-view-ticket-qr").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const ticketId = btn.getAttribute("data-id");
-                const targetTicket = state.myTickets.find(t => t.id === ticketId);
-                if (targetTicket) {
-                    // Cargar los datos del bus
-                    state.selectedBus = state.movilidades.find(m => m.id === targetTicket.movilidadId) || { modelType: 'bus1p', price: targetTicket.price };
-                    state.selectedOrigin = targetTicket.routeFrom || state.selectedOrigin;
-                    state.selectedDestination = targetTicket.routeTo || state.selectedDestination;
-                    state.selectedDate = targetTicket.date;
-                    state.selectedSeat = targetTicket.seatNum;
-                    state.selectedFloor = targetTicket.floor;
-                    
-                    populateVirtualTicket(targetTicket);
-                    overlay.remove();
-                    setActiveTab("tab-home");
-                    goToStep("step-ticket");
-                }
-            });
+        // Sincronizar en segundo plano de inmediato al abrir para asegurar la verdad en Railway
+        syncClientTickets().then(() => {
+            const listArea = document.getElementById("modal-tickets-list-area");
+            if (listArea) {
+                listArea.innerHTML = renderTicketsListHtml();
+                lucide.createIcons();
+                setupHistoryModalListeners(overlay);
+            }
         });
     }
 }

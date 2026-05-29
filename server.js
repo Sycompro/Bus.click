@@ -1240,6 +1240,44 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
     }
 });
 
+app.post('/api/tickets/sync', async (req, res) => {
+    const { ticketIds } = req.body;
+    if (!Array.isArray(ticketIds)) {
+        return res.status(400).json({ error: "Se requiere un array de IDs" });
+    }
+    
+    if (usePostgres) {
+        try {
+            if (ticketIds.length === 0) {
+                return res.json({ success: true, tickets: [] });
+            }
+            const placeholders = ticketIds.map((_, i) => `$${i + 1}`).join(',');
+            const { rows } = await pool.query(`SELECT * FROM tickets WHERE id IN (${placeholders})`, ticketIds);
+            
+            const activeTickets = rows.map(r => ({
+                id: r.id,
+                companyId: r.company_id,
+                sedeId: r.sede_id,
+                movilidadId: r.movilidad_id,
+                seatNum: parseInt(r.seat_num),
+                floor: parseInt(r.floor),
+                passengerName: r.passenger_name,
+                passengerDni: r.passenger_dni,
+                status: r.status,
+                paymentMethod: r.payment_method,
+                price: parseFloat(r.price),
+                date: r.date_str
+            }));
+            res.json({ success: true, tickets: activeTickets });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const activeTickets = localDb.tickets.filter(t => ticketIds.includes(t.id));
+        res.json({ success: true, tickets: activeTickets });
+    }
+});
+
 app.delete('/api/tickets/:id', async (req, res) => {
     const { id } = req.params;
     if (usePostgres) {
