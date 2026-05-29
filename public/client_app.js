@@ -284,6 +284,8 @@ function setupEventListeners() {
                     const resData = await response.json();
                     if (response.ok) {
                         showMobileNotification("Asiento congelado por 10 minutos para completar tu pago.", "info");
+                        // Renderizar de forma ultra-fresca los métodos de pago de la empresa
+                        renderCompanyPaymentMethods();
                         goToStep("step-passenger");
                     } else {
                         showMobileNotification(resData.error || "El asiento ya ha sido tomado por otro canal. Seleccione otro.", "error");
