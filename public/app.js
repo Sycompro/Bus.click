@@ -263,10 +263,11 @@ function populateSedeSelectors() {
     const routeFromSelect = document.getElementById('movilidad-route-from');
     const routeToSelect = document.getElementById('movilidad-route-to');
     
-    if (!headerSedeSelect) return;
+    // Si no hay ningún selector en la página, retornar
+    if (!headerSedeSelect && !workerSedeSelect && !vehicleSedeSelect && !routeFromSelect && !routeToSelect) return;
     
-    const prevHeaderSelected = headerSedeSelect.value || state.activeSedeId;
-    headerSedeSelect.innerHTML = '';
+    const prevHeaderSelected = headerSedeSelect ? (headerSedeSelect.value || state.activeSedeId) : state.activeSedeId;
+    if (headerSedeSelect) headerSedeSelect.innerHTML = '';
     if (workerSedeSelect) workerSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
     if (vehicleSedeSelect) vehicleSedeSelect.innerHTML = '<option value="">Selecciona Sede</option>';
     if (routeFromSelect) routeFromSelect.innerHTML = '<option value="">Selecciona Origen</option>';
@@ -276,16 +277,18 @@ function populateSedeSelectors() {
     const filteredSedes = state.sedes.filter(s => s.companyId === state.activeCompanyId);
     
     if (filteredSedes.length === 0) {
-        headerSedeSelect.innerHTML = '<option value="">Sin sedes</option>';
+        if (headerSedeSelect) headerSedeSelect.innerHTML = '<option value="">Sin sedes</option>';
         return;
     }
     
     filteredSedes.forEach(sede => {
         // En header
-        const opt1 = document.createElement('option');
-        opt1.value = sede.id;
-        opt1.textContent = `${sede.name} (${sede.city})`;
-        headerSedeSelect.appendChild(opt1);
+        if (headerSedeSelect) {
+            const opt1 = document.createElement('option');
+            opt1.value = sede.id;
+            opt1.textContent = `${sede.name} (${sede.city})`;
+            headerSedeSelect.appendChild(opt1);
+        }
         
         // En formulario trabajadores
         if (workerSedeSelect) {
@@ -318,13 +321,15 @@ function populateSedeSelectors() {
         }
     });
     
-    if (filteredSedes.some(s => s.id === prevHeaderSelected)) {
-        headerSedeSelect.value = prevHeaderSelected;
-    } else {
-        headerSedeSelect.value = filteredSedes[0].id;
+    if (headerSedeSelect) {
+        if (filteredSedes.some(s => s.id === prevHeaderSelected)) {
+            headerSedeSelect.value = prevHeaderSelected;
+        } else {
+            headerSedeSelect.value = filteredSedes[0].id;
+        }
+        state.activeSedeId = headerSedeSelect.value;
     }
     
-    state.activeSedeId = headerSedeSelect.value;
     updateEstabUI();
     syncCustomDropdowns();
 }
