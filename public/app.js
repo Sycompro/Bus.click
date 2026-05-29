@@ -730,7 +730,7 @@ function renderMovilidadesList() {
     const filteredMovilidades = state.movilidades.filter(m => m.companyId === state.activeCompanyId);
     
     if (filteredMovilidades.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay vehículos registrados para esta empresa.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center">No hay vehículos registrados para esta empresa.</td></tr>';
         return;
     }
     
@@ -738,11 +738,19 @@ function renderMovilidadesList() {
         const sedeObj = state.sedes.find(s => s.id === m.sedeId);
         const sedeName = sedeObj ? sedeObj.name : 'Sin Sede Base';
         
+        const currentLocId = m.ubicacionActualSedeId || m.sedeId;
+        const currentSedeObj = state.sedes.find(s => s.id === currentLocId);
+        const currentSedeName = currentSedeObj ? currentSedeObj.name : sedeName;
+        
         let modelText = "";
         if (m.modelType === "combi") modelText = "Combi Rural (15a)";
         else if (m.modelType === "minibus") modelText = "Minibus Colectivo (24a)";
         else if (m.modelType === "bus1p") modelText = "Bus 1 Piso (44a)";
         else if (m.modelType === "bus2p") modelText = "Bus 2 Pisos VIP (60a)";
+        
+        const logicaBadge = (m.tipoLogica === 'Flotante' || m.tipo_logica === 'Flotante')
+            ? `<span class="badge-version" style="background: rgba(124, 58, 237, 0.08); color: #7c3aed; border: 1px solid rgba(124, 58, 237, 0.15); font-weight: 700; padding: 2px 6px;">Flotante</span>`
+            : `<span class="badge-version" style="background: rgba(99, 102, 241, 0.08); color: var(--color-indigo); border: 1px solid rgba(99, 102, 241, 0.15); font-weight: 700; padding: 2px 6px;">Fija</span>`;
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -750,6 +758,8 @@ function renderMovilidadesList() {
             <td>${m.brand}</td>
             <td><span class="vehicle-model-pill">${modelText}</span></td>
             <td>${sedeName}</td>
+            <td><span class="font-bold text-emerald-600"><i data-lucide="map-pin" style="width: 10px; height: 10px; display: inline-block; vertical-align: middle; margin-right: 2px;"></i> ${currentSedeName}</span></td>
+            <td>${logicaBadge}</td>
             <td>${m.routeFrom} ➔ ${m.routeTo}</td>
             <td class="font-bold">S/. ${m.price.toFixed(2)}</td>
             <td class="action-buttons-cell">
@@ -825,7 +835,10 @@ function updateEstabUI() {
     
     sedeNameSpan.textContent = activeSede.name;
     
-    const sedeVehicles = state.movilidades.filter(m => m.sedeId === state.activeSedeId && m.companyId === state.activeCompanyId);
+    const sedeVehicles = state.movilidades.filter(m => {
+        const currentLocId = m.ubicacionActualSedeId || m.sedeId || m.ubicacion_actual_sede_id || m.sede_id;
+        return currentLocId === state.activeSedeId && m.companyId === state.activeCompanyId;
+    });
     countVehiclesSpan.textContent = sedeVehicles.length;
     
     const sedeTickets = state.tickets.filter(t => t.sedeId === state.activeSedeId);
@@ -2098,7 +2111,10 @@ function updateSalesTurnReport() {
     }
 
     // Filtrar los tickets de los vehículos de la sede seleccionada y de la empresa seleccionada
-    const sedeVehicles = state.movilidades.filter(m => m.sedeId === state.activeSedeId && m.companyId === state.activeCompanyId);
+    const sedeVehicles = state.movilidades.filter(m => {
+        const currentLocId = m.ubicacionActualSedeId || m.sedeId || m.ubicacion_actual_sede_id || m.sede_id;
+        return currentLocId === state.activeSedeId && m.companyId === state.activeCompanyId;
+    });
     const vehicleIds = sedeVehicles.map(v => v.id);
 
     const activeTickets = state.tickets.filter(t => t.sedeId === state.activeSedeId && vehicleIds.includes(t.movilidadId));
