@@ -4661,6 +4661,149 @@ body {
     }
 }
 
+/* =========================================================================
+   🖨️ ESTILOS DE IMPRESIÓN PARA EL BOLETO DE CLIENTES (B2C)
+   ========================================================================= */
+@media print {
+    /* Aplicar solo si estamos en la interfaz B2C de clientes */
+    body:has(.b2c-container) {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+    
+    body:has(.b2c-container) .no-print,
+    body:has(.b2c-container) .b2c-success-header,
+    body:has(.b2c-container) .b2c-mobile-tabbar,
+    body:has(.b2c-container) footer,
+    body:has(.b2c-container) header,
+    body:has(.b2c-container) .b2c-print-share-panel,
+    body:has(.b2c-container) .btn-new-booking {
+        display: none !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket {
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 📊 FORMATO 1: VOUCHER / TICKET TÉRMICO (Compacto y Ajustado) */
+    body:has(.b2c-container) .b2c-ticket.print-format-ticket {
+        max-width: 80mm !important;
+        font-size: 9px !important;
+        padding: 6px !important;
+        border: 1px dashed #000000 !important;
+        margin-top: 5px !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-ticket .b2c-ticket-city {
+        font-size: 1.1rem !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-ticket .b2c-ticket-val {
+        font-size: 0.75rem !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-ticket .b2c-qr-box {
+        width: 90px !important;
+        height: 90px !important;
+        padding: 4px !important;
+        border: 1px solid #000000 !important;
+    }
+    
+    body:has(.b2c-container) .b2c-ticket.print-format-ticket #b2c-qr-render canvas,
+    body:has(.b2c-container) .b2c-ticket.print-format-ticket #b2c-qr-render img {
+        width: 80px !important;
+        height: 80px !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-ticket #b2c-barcode-render {
+        height: 32px !important;
+        max-width: 100% !important;
+    }
+
+    /* 📄 FORMATO 2: HOJA A4 ESTÁNDAR (Expandido, Centrado y Premium) */
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 {
+        max-width: 175mm !important;
+        border: 2px solid #000000 !important;
+        border-radius: 16px !important;
+        padding: 2.5rem !important;
+        margin: 25mm auto 0 auto !important;
+        font-size: 13px !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-ticket-top {
+        padding-bottom: 1.5rem !important;
+        border-bottom: 2px dashed #000000 !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-ticket-company {
+        font-size: 1.5rem !important;
+        font-weight: 800 !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-ticket-route {
+        margin: 2rem 0 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-ticket-city {
+        font-size: 2.2rem !important;
+        font-weight: 800 !important;
+        color: #000000 !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-ticket-details {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.5rem !important;
+        margin: 2rem 0 !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-ticket-val {
+        font-size: 1.25rem !important;
+        font-weight: bold !important;
+        margin-top: 4px !important;
+        color: #000000 !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-ticket-label {
+        font-size: 0.9rem !important;
+        color: #555555 !important;
+        font-weight: 700 !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 .b2c-qr-box {
+        width: 150px !important;
+        height: 150px !important;
+        padding: 8px !important;
+        border: 2px solid #000000 !important;
+        border-radius: 8px !important;
+        margin: 1.5rem auto !important;
+    }
+    
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 #b2c-qr-render canvas,
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 #b2c-qr-render img {
+        width: 134px !important;
+        height: 134px !important;
+    }
+
+    body:has(.b2c-container) .b2c-ticket.print-format-a4 #b2c-barcode-render {
+        height: 48px !important;
+        max-width: 80% !important;
+        margin: 0 auto !important;
+    }
+}
+
 
 
 

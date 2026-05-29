@@ -1542,3 +1542,117 @@ function closeAllPremiumDatepickers() {
     document.querySelectorAll('.datepicker-calendar-popover').forEach(pop => pop.remove());
     document.querySelectorAll('.datepicker-input').forEach(input => input.classList.remove('active'));
 }
+
+// =========================================================================
+// 🖨️ DETECTAR EVENTOS DE IMPRESIÓN, DESCARGA Y COMPARTIDO DE BOLETO B2C
+// =========================================================================
+
+// Evento Imprimir (permite elegir formatos: ticket o a4 en el CSS de impresión)
+document.getElementById("b2c-btn-print")?.addEventListener("click", () => {
+    const format = document.getElementById("b2c-print-format").value;
+    const ticketElement = document.querySelector(".b2c-ticket");
+    
+    if (ticketElement) {
+        // Limpiar clases de formato anteriores
+        ticketElement.classList.remove("print-format-ticket", "print-format-a4");
+        
+        // Aplicar clase correspondiente para impresión
+        if (format === "a4") {
+            ticketElement.classList.add("print-format-a4");
+        } else {
+            ticketElement.classList.add("print-format-ticket");
+        }
+    }
+    
+    window.print();
+});
+
+// Evento Descargar PDF (utilizando la librería html2pdf.js en el cliente)
+document.getElementById("b2c-btn-pdf")?.addEventListener("click", () => {
+    const ticketElement = document.querySelector(".b2c-ticket");
+    if (!ticketElement) return;
+
+    const passengerName = document.getElementById("ticket-passenger")?.textContent.trim() || "pasajero";
+    const cleanName = passengerName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const filename = `boleto_busclick_${cleanName}.pdf`;
+    
+    showMobileNotification("Generando tu PDF de descarga...", "info");
+    
+    // Configuración para el tamaño PDF
+    const format = document.getElementById("b2c-print-format").value;
+    const opt = {
+        margin:       5,
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2.5, logging: false, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    if (format === "ticket") {
+        opt.jsPDF.format = [80, 160]; // 80mm ancho, 160mm alto
+        opt.margin = 3;
+    }
+    
+    html2pdf().from(ticketElement).set(opt).save().then(() => {
+        showMobileNotification("¡Tu boleto PDF ha sido descargado!", "success");
+    }).catch(err => {
+        console.error("Error al descargar PDF:", err);
+        showMobileNotification("No se pudo descargar el PDF automáticamente.", "error");
+    });
+});
+
+// Evento Compartir PDF (utilizando Web Share API si está disponible en dispositivos móviles)
+document.getElementById("b2c-btn-share")?.addEventListener("click", () => {
+    const ticketElement = document.querySelector(".b2c-ticket");
+    if (!ticketElement) return;
+
+    const passengerName = document.getElementById("ticket-passenger")?.textContent.trim() || "pasajero";
+    const cleanName = passengerName.toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const filename = `boleto_busclick_${cleanName}.pdf`;
+    
+    showMobileNotification("Preparando el archivo para compartir...", "info");
+    
+    const format = document.getElementById("b2c-print-format").value;
+    const opt = {
+        margin:       5,
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2.5, logging: false, useCORS: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    
+    if (format === "ticket") {
+        opt.jsPDF.format = [80, 160];
+        opt.margin = 3;
+    }
+    
+    html2pdf().from(ticketElement).set(opt).outputPdf('blob').then(async (pdfBlob) => {
+        const file = new File([pdfBlob], filename, { type: "application/pdf" });
+        
+        // Intentar compartir de forma nativa en móviles (Web Share API)
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: 'Boleto Digital Bus.click',
+                    text: `Hola, te comparto el pasaje de ${passengerName} emitido por Bus.click.`
+                });
+                showMobileNotification("¡Boleto compartido correctamente!", "success");
+            } catch (err) {
+                console.log("Compartido cancelado o fallido:", err);
+            }
+        } else {
+            // Fallback para navegadores de escritorio que no soportan Web Share
+            const fileUrl = URL.createObjectURL(pdfBlob);
+            const shareWindow = window.open(fileUrl, '_blank');
+            if (shareWindow) {
+                showMobileNotification("Boleto PDF abierto en nueva pestaña para compartir.", "success");
+            } else {
+                showMobileNotification("Por favor, permite ventanas emergentes.", "error");
+            }
+        }
+    }).catch(err => {
+        console.error("Error al generar PDF para compartir:", err);
+        showMobileNotification("No se pudo generar el archivo para compartir.", "error");
+    });
+});
