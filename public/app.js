@@ -1607,30 +1607,34 @@ async function handleLiberarAsiento() {
     const id = document.getElementById('manage-ticket-id').value;
     if (!id) return;
     
-    if (!confirm("¿Estás completamente seguro de liberar este asiento? Esta acción eliminará el pasaje de forma permanente y el asiento quedará disponible.")) {
-        return;
-    }
-    
-    try {
-        showToast("Liberando asiento...", "info");
-        const res = await fetch(`/api/tickets/${id}`, {
-            method: 'DELETE'
-        }).then(r => r.json());
-        
-        if (res.success) {
-            showToast("Asiento liberado y pasaje eliminado correctamente.", "success");
-            closeManageTicketModal();
-            await reloadAllApiData();
-            if (state.activeVehicleId) {
-                renderSeatingMaqueta(state.activeVehicleId);
+    showConfirmModal({
+        title: "Liberar Asiento",
+        message: "¿Estás completamente seguro de liberar este asiento? Esta acción eliminará el pasaje de forma permanente y el asiento quedará disponible.",
+        icon: "trash-2",
+        confirmColor: "#ef4444",
+        onConfirm: async () => {
+            try {
+                showToast("Liberando asiento...", "info");
+                const res = await fetch(`/api/tickets/${id}`, {
+                    method: 'DELETE'
+                }).then(r => r.json());
+                
+                if (res.success) {
+                    showToast("Asiento liberado y pasaje eliminado correctamente.", "success");
+                    closeManageTicketModal();
+                    await reloadAllApiData();
+                    if (state.activeVehicleId) {
+                        renderSeatingMaqueta(state.activeVehicleId);
+                    }
+                } else {
+                    showToast(res.error || "Error al liberar el asiento.", "error");
+                }
+            } catch (e) {
+                console.error("Error al liberar asiento:", e);
+                showToast("Ocurrió un error al liberar el asiento.", "error");
             }
-        } else {
-            showToast(res.error || "Error al liberar el asiento.", "error");
         }
-    } catch (e) {
-        console.error("Error al liberar asiento:", e);
-        showToast("Ocurrió un error al conectar con el servidor.", "error");
-    }
+    });
 }
 
 // ==========================================
@@ -3356,44 +3360,54 @@ window.openEditServiceModal = function(id, name, description) {
     lucide.createIcons();
 };
 
-window.deletePlanSaas = async function(id, name) {
-    if (!confirm(`¿Está seguro de que desea eliminar permanentemente el plan "${name}" del catálogo?\n\nLas empresas activas que tengan asignado este plan lo conservarán, pero no se podrá asignar a nuevas empresas.`)) {
-        return;
-    }
-    try {
-        const res = await fetch(`/api/saas/plans/${id}`, { method: 'DELETE' }).then(r => r.json());
-        if (res.success) {
-            showToast(`Plan "${name}" eliminado correctamente.`, "success");
-            await reloadAllApiData();
-        } else {
-            showToast("Error al eliminar plan: " + res.error, "error");
+window.deletePlanSaas = function(id, name) {
+    showConfirmModal({
+        title: "Eliminar Plan SaaS",
+        message: `¿Está seguro de que desea eliminar permanentemente el plan "${name}" del catálogo?\n\nLas empresas activas que tengan asignado este plan lo conservarán, pero no se podrá asignar a nuevas empresas.`,
+        icon: "trash-2",
+        confirmColor: "#ef4444",
+        onConfirm: async () => {
+            try {
+                const res = await fetch(`/api/saas/plans/${id}`, { method: 'DELETE' }).then(r => r.json());
+                if (res.success) {
+                    showToast(`Plan "${name}" eliminado correctamente.`, "success");
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al eliminar plan: " + res.error, "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error al conectar con el servidor.", "error");
+            }
         }
-    } catch (err) {
-        console.error(err);
-        showToast("Error al conectar con el servidor.", "error");
-    }
+    });
 };
 
-window.deleteServiceSaas = async function(id, name) {
+window.deleteServiceSaas = function(id, name) {
     if (name === 'Boletería') {
         showToast("No se puede eliminar el servicio núcleo 'Boletería'.", "error");
         return;
     }
-    if (!confirm(`¿Está seguro de que desea eliminar permanentemente el servicio "${name}" del catálogo?\n\nLas empresas activas que tengan habilitado este servicio lo conservarán, pero no se podrá activar para nuevas empresas.`)) {
-        return;
-    }
-    try {
-        const res = await fetch(`/api/saas/services/${id}`, { method: 'DELETE' }).then(r => r.json());
-        if (res.success) {
-            showToast(`Servicio "${name}" eliminado correctamente.`, "success");
-            await reloadAllApiData();
-        } else {
-            showToast("Error al eliminar servicio: " + res.error, "error");
+    showConfirmModal({
+        title: "Eliminar Módulo / Servicio",
+        message: `¿Está seguro de que desea eliminar permanentemente el servicio "${name}" del catálogo?\n\nLas empresas activas que tengan habilitado este servicio lo conservarán, pero no se podrá activar para nuevas empresas.`,
+        icon: "trash-2",
+        confirmColor: "#ef4444",
+        onConfirm: async () => {
+            try {
+                const res = await fetch(`/api/saas/services/${id}`, { method: 'DELETE' }).then(r => r.json());
+                if (res.success) {
+                    showToast(`Servicio "${name}" eliminado correctamente.`, "success");
+                    await reloadAllApiData();
+                } else {
+                    showToast("Error al eliminar servicio: " + res.error, "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Error al conectar con el servidor.", "error");
+            }
         }
-    } catch (err) {
-        console.error(err);
-        showToast("Error al conectar con el servidor.", "error");
-    }
+    });
 };
 
 function populatePlanSelectors() {
@@ -4163,4 +4177,58 @@ window.setPremiumDatepickerValue = function(id, yyyymmdd) {
         display.value = '';
     }
 };
+
+/* ══════════════════════════════════════════════════════════
+   MODAL DE CONFIRMACIÓN PREMIUM PERSONALIZADO (NO-CONFIRM NATIVO)
+   ══════════════════════════════════════════════════════════ */
+window.showConfirmModal = function({ title, message, icon = 'alert-triangle', confirmColor = '#ef4444', onConfirm, onCancel }) {
+    const modal = document.getElementById('modal-confirm-premium');
+    if (!modal) return;
+
+    // Configurar textos dinámicos
+    document.getElementById('confirm-modal-title').textContent = title || "¿Confirmar Acción?";
+    document.getElementById('confirm-modal-message').textContent = message || "";
+    
+    // Configurar icono dinámico y su caja
+    const iconBox = document.getElementById('confirm-modal-icon-box');
+    if (iconBox) {
+        iconBox.style.color = confirmColor;
+        // Si es rojo peligro, color lila suave de advertencia, sino indigo/azul para otras confirmaciones
+        iconBox.style.background = confirmColor === '#ef4444' ? '#fee2e2' : '#e0e7ff';
+        iconBox.innerHTML = `<i data-lucide="${icon}" style="width: 28px; height: 28px;"></i>`;
+    }
+    
+    // Configurar el color de fondo y hover del botón de confirmar
+    const btnAccept = document.getElementById('btn-confirm-accept');
+    if (btnAccept) {
+        btnAccept.style.background = confirmColor;
+    }
+
+    const handleCancel = () => {
+        modal.classList.add('hidden');
+        if (onCancel) onCancel();
+        cleanup();
+    };
+
+    const handleAccept = () => {
+        modal.classList.add('hidden');
+        if (onConfirm) onConfirm();
+        cleanup();
+    };
+
+    function cleanup() {
+        document.getElementById('btn-confirm-cancel')?.removeEventListener('click', handleCancel);
+        document.getElementById('btn-confirm-accept')?.removeEventListener('click', handleAccept);
+    }
+
+    // Registrar listeners limpios
+    cleanup();
+    document.getElementById('btn-confirm-cancel')?.addEventListener('click', handleCancel);
+    document.getElementById('btn-confirm-accept')?.addEventListener('click', handleAccept);
+
+    // Mostrar el modal con la animación y renderizar el nuevo icono Lucide
+    modal.classList.remove('hidden');
+    lucide.createIcons();
+};
+
 
