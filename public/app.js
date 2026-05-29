@@ -419,11 +419,11 @@ async function createTrabajador(companyId, sedeId, name, lastname, dni, role) {
     await reloadAllApiData();
 }
 
-async function createMovilidad(companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price) {
+async function createMovilidad(companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price, tipoLogica) {
     const res = await fetch('/api/movilidades', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price })
+        body: JSON.stringify({ companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price, tipoLogica })
     });
     if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
@@ -1152,6 +1152,34 @@ function renderSeatsGrid(vehicle) {
                             }
                         }
                     });
+                } else if (ticket.status === 'Reservado_Temporal') {
+                    cellEl.classList.add('reserved');
+                    cellEl.style.opacity = '0.85';
+                    resCount++;
+                    
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'seat-tooltip';
+                    tooltip.innerHTML = `
+                        <div class="font-bold text-amber-300">Bloqueo Temporal</div>
+                        <div class="tooltip-line"><strong>Origen:</strong> Compra Web/Taquilla</div>
+                        <div class="tooltip-line text-xs italic mt-2">Se liberará automáticamente si no se concreta el pago en 10 minutos.</div>
+                    `;
+                    cellEl.appendChild(tooltip);
+                    
+                    // Permitir al administrador liberar un bloqueo temporal si lo desea
+                    cellEl.addEventListener('click', async () => {
+                        const confirmed = await showConfirmModal('Liberar Bloqueo Temporal', `Este asiento se encuentra bloqueado temporalmente por un cliente.<br><br>¿Deseas forzar su liberación?`);
+                        if (confirmed) {
+                            try {
+                                await fetch(`/api/tickets/${ticket.id}`, { method: 'DELETE' });
+                                await reloadAllApiData();
+                                showToast('Bloqueo temporal liberado.', 'success');
+                            } catch (e) {
+                                console.error(e);
+                                showToast('Error al intentar liberar el bloqueo.', 'error');
+                            }
+                        }
+                    });
                 }
             } else {
                 cellEl.classList.add('available');
@@ -1636,6 +1664,7 @@ function setupUIEventListeners() {
             const plate = document.getElementById('movilidad-plate').value.trim();
             const brand = document.getElementById('movilidad-brand').value.trim();
             const modelType = document.getElementById('movilidad-model').value;
+            const tipoLogica = document.getElementById('movilidad-tipo-logica').value;
             const sedeId = document.getElementById('movilidad-sede').value;
             const routeFrom = document.getElementById('movilidad-route-from').value.trim();
             const routeTo = document.getElementById('movilidad-route-to').value.trim();
@@ -1646,7 +1675,7 @@ function setupUIEventListeners() {
                 return;
             }
             
-            await createMovilidad(state.activeCompanyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price);
+            await createMovilidad(state.activeCompanyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price, tipoLogica);
             formMovilidad.reset();
             
             const modalMov = document.getElementById('modal-create-movilidad');

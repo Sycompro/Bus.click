@@ -186,6 +186,14 @@ async function initializePostgresTables() {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
+
+        // Expandir tabla movilidades para soporte de Flota Adaptable (Fija vs Flotante)
+        await client.query(`
+            ALTER TABLE movilidades 
+            ADD COLUMN IF NOT EXISTS tipo_logica VARCHAR(20) DEFAULT 'Fija',
+            ADD COLUMN IF NOT EXISTS ubicacion_actual_sede_id VARCHAR(50) REFERENCES sedes(id),
+            ADD COLUMN IF NOT EXISTS estado_operativo VARCHAR(20) DEFAULT 'Disponible';
+        `);
         
         // Tabla Tickets (Venta de Pasajes)
         await client.query(`
@@ -945,31 +953,66 @@ app.get('/api/movilidades', async (req, res) => {
     if (usePostgres) {
         try {
             const { rows } = await pool.query('SELECT * FROM movilidades ORDER BY created_at ASC');
-            res.json(rows.map(r => ({ id: r.id, companyId: r.company_id, sedeId: r.sede_id, plate: r.plate, brand: r.brand, modelType: r.model_type, routeFrom: r.route_from, routeTo: r.route_to, price: parseFloat(r.price) })));
+            res.json(rows.map(r => ({ 
+                id: r.id, 
+                companyId: r.company_id, 
+                sedeId: r.sede_id, 
+                plate: r.plate, 
+                brand: r.brand, 
+                modelType: r.model_type, 
+                routeFrom: r.route_from, 
+                routeTo: r.route_to, 
+                price: parseFloat(r.price),
+                tipoLogica: r.tipo_logica || 'Fija',
+                ubicacionActualSedeId: r.ubicacion_actual_sede_id || r.sede_id,
+                estadoOperativo: r.estado_operativo || 'Disponible'
+            })));
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
     } else {
-        res.json(localDb.movilidades);
+        // En localDb asegurar que las propiedades existan en el mapeo
+        res.json((localDb.movilidades || []).map(m => ({
+            ...m,
+            tipoLogica: m.tipoLogica || 'Fija',
+            ubicacionActualSedeId: m.ubicacionActualSedeId || m.sedeId,
+            estadoOperativo: m.estadoOperativo || 'Disponible'
+        })));
     }
 });
 
 app.post('/api/movilidades', async (req, res) => {
-    const { companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price } = req.body;
+    const { companyId, sedeId, plate, brand, modelType, routeFrom, routeTo, price, tipoLogica } = req.body;
     const id = generateId();
+    const finalTipoLogica = tipoLogica || 'Fija';
+    const finalEstadoOperativo = 'Disponible';
     
     if (usePostgres) {
         try {
             await pool.query(
-                'INSERT INTO movilidades (id, company_id, sede_id, plate, brand, model_type, route_from, route_to, price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-                [id, companyId, sedeId, plate.toUpperCase(), brand, modelType, routeFrom, routeTo, parseFloat(price)]
+                'INSERT INTO movilidades (id, company_id, sede_id, plate, brand, model_type, route_from, route_to, price, tipo_logica, ubicacion_actual_sede_id, estado_operativo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
+                [id, companyId, sedeId, plate.toUpperCase(), brand, modelType, routeFrom, routeTo, parseFloat(price), finalTipoLogica, sedeId, finalEstadoOperativo]
             );
             res.json({ id });
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
     } else {
-        const movilidad = { id, companyId, sedeId, plate: plate.toUpperCase(), brand, modelType, routeFrom, routeTo, price: parseFloat(price) };
+        const movilidad = { 
+            id, 
+            companyId, 
+            sedeId, 
+            plate: plate.toUpperCase(), 
+            brand, 
+            modelType, 
+            routeFrom, 
+            routeTo, 
+            price: parseFloat(price),
+            tipoLogica: finalTipoLogica,
+            ubicacionActualSedeId: sedeId,
+            estadoOperativo: finalEstadoOperativo
+        };
+        localDb.movilidades = localDb.movilidades || [];
         localDb.movilidades.push(movilidad);
         saveLocalDb();
         res.json(movilidad);
@@ -1017,15 +1060,183 @@ app.post('/api/tickets', async (req, res) => {
                 'INSERT INTO tickets (id, company_id, sede_id, movilidad_id, seat_num, floor, passenger_name, passenger_dni, status, payment_method, price, date_str) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
                 [id, companyId, sedeId, movilidadId, seatNum, floor, passengerName, passengerDni, status, paymentMethod, parseFloat(price), date]
             );
+            
+            // Lógica de Flota Flotante Adaptable: Viaje Exitoso
+            if (status === 'Ocupado' || status === 'Reservado') {
+                const movRes = await pool.query('SELECT tipo_logica, route_to, company_id FROM movilidades WHERE id = $1', [movilidadId]);
+                if (movRes.rows.length > 0) {
+                    const movObj = movRes.rows[0];
+                    if (movObj.tipo_logica === 'Flotante') {
+                        // Buscar sede correspondiente a la ciudad destino
+                        const destSedeRes = await pool.query(
+                            'SELECT id FROM sedes WHERE company_id = $1 AND LOWER(city) = LOWER($2) LIMIT 1',
+                            [companyId, movObj.route_to]
+                        );
+                        if (destSedeRes.rows.length > 0) {
+                            const destSedeId = destSedeRes.rows[0].id;
+                            await pool.query(
+                                'UPDATE movilidades SET ubicacion_actual_sede_id = $1 WHERE id = $2',
+                                [destSedeId, movilidadId]
+                            );
+                            console.log(`🚚 Flota Adaptable: Vehículo ${movilidadId} (Flotante) despachado. Nueva ubicación física: Sede ID ${destSedeId} (${movObj.route_to}).`);
+                        }
+                    }
+                }
+            }
             res.json({ id });
         } catch (e) {
             res.status(500).json({ error: e.message });
         }
     } else {
-        const ticket = { id, companyId, sedeId, movilidadId, seatNum, floor, passengerName, passengerDni, status, paymentMethod, price: parseFloat(price), date };
+        const ticket = { 
+            id, 
+            companyId, 
+            sedeId, 
+            movilidadId, 
+            seatNum, 
+            floor, 
+            passengerName, 
+            passengerDni, 
+            status, 
+            paymentMethod, 
+            price: parseFloat(price), 
+            date,
+            createdAt: new Date().toISOString()
+        };
+        localDb.tickets = localDb.tickets || [];
+        localDb.tickets.push(ticket);
+        
+        // Lógica de Flota Flotante Adaptable (Local JSON Fallback)
+        if (status === 'Ocupado' || status === 'Reservado') {
+            const movObj = localDb.movilidades.find(m => m.id === movilidadId);
+            if (movObj && (movObj.tipoLogica === 'Flotante' || movObj.tipo_logica === 'Flotante')) {
+                const destSede = localDb.sedes.find(s => s.companyId === companyId && s.city.toLowerCase() === movObj.routeTo.toLowerCase());
+                if (destSede) {
+                    movObj.ubicacionActualSedeId = destSede.id;
+                    console.log(`🚚 Flota Adaptable (JSON): Vehículo ${movilidadId} (Flotante) despachado. Nueva ubicación: Sede ID ${destSede.id}.`);
+                }
+            }
+        }
+        
+        saveLocalDb();
+        res.json(ticket);
+    }
+});
+
+// --- RESERVA TEMPORAL OMNICANAL ---
+app.post('/api/tickets/reserve-temporary', async (req, res) => {
+    const { companyId, sedeId, movilidadId, seatNum, floor, passengerName, passengerDni, paymentMethod, price, date } = req.body;
+    const id = generateId();
+    const status = 'Reservado_Temporal';
+    
+    if (usePostgres) {
+        try {
+            // Verificar si el asiento ya está ocupado, reservado o reservado temporalmente
+            const check = await pool.query(
+                'SELECT id FROM tickets WHERE movilidad_id = $1 AND seat_num = $2 AND floor = $3 AND status IN (\'Ocupado\', \'Reservado\', \'Reservado_Temporal\')',
+                [movilidadId, seatNum, floor]
+            );
+            if (check.rows.length > 0) {
+                return res.status(400).json({ error: 'Asiento no disponible. Ya se encuentra vendido o reservado.' });
+            }
+            
+            await pool.query(
+                'INSERT INTO tickets (id, company_id, sede_id, movilidad_id, seat_num, floor, passenger_name, passenger_dni, status, payment_method, price, date_str) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
+                [id, companyId, sedeId, movilidadId, seatNum, floor, passengerName || 'Reserva Temporal B2C', passengerDni || '00000000', status, paymentMethod || 'Yape/Plin', parseFloat(price || 0), date]
+            );
+            res.json({ id });
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const exists = (localDb.tickets || []).some(t => t.movilidadId === movilidadId && t.seatNum === seatNum && t.floor === floor && ['Ocupado', 'Reservado', 'Reservado_Temporal'].includes(t.status));
+        if (exists) {
+            return res.status(400).json({ error: 'Asiento no disponible. Ya se encuentra vendido o reservado.' });
+        }
+        
+        const ticket = {
+            id,
+            companyId,
+            sedeId,
+            movilidadId,
+            seatNum,
+            floor,
+            passengerName: passengerName || 'Reserva Temporal B2C',
+            passengerDni: passengerDni || '00000000',
+            status,
+            paymentMethod: paymentMethod || 'Yape/Plin',
+            price: parseFloat(price || 0),
+            date,
+            createdAt: new Date().toISOString()
+        };
+        localDb.tickets = localDb.tickets || [];
         localDb.tickets.push(ticket);
         saveLocalDb();
         res.json(ticket);
+    }
+});
+
+// --- CONFIRMAR RESERVA TEMPORAL OMNICANAL A VENTA DIRECTA ---
+app.put('/api/tickets/confirm-temporary', async (req, res) => {
+    const { movilidadId, seatNum, floor, passengerName, passengerDni, paymentMethod, price } = req.body;
+    if (usePostgres) {
+        try {
+            const result = await pool.query(
+                'UPDATE tickets SET status = \'Ocupado\', passenger_name = $1, passenger_dni = $2, payment_method = $3, price = $4, created_at = CURRENT_TIMESTAMP WHERE movilidad_id = $5 AND seat_num = $6 AND floor = $7 AND status = \'Reservado_Temporal\' RETURNING id, company_id',
+                [passengerName, passengerDni, paymentMethod, parseFloat(price), movilidadId, seatNum, floor]
+            );
+            if (result.rows.length > 0) {
+                const compId = result.rows[0].company_id;
+                // Lógica de Flota Flotante Adaptable: Viaje Exitoso
+                const movRes = await pool.query('SELECT tipo_logica, route_to, company_id FROM movilidades WHERE id = $1', [movilidadId]);
+                if (movRes.rows.length > 0) {
+                    const movObj = movRes.rows[0];
+                    if (movObj.tipo_logica === 'Flotante') {
+                        const destSedeRes = await pool.query(
+                            'SELECT id FROM sedes WHERE company_id = $1 AND LOWER(city) = LOWER($2) LIMIT 1',
+                            [compId, movObj.route_to]
+                        );
+                        if (destSedeRes.rows.length > 0) {
+                            const destSedeId = destSedeRes.rows[0].id;
+                            await pool.query(
+                                'UPDATE movilidades SET ubicacion_actual_sede_id = $1 WHERE id = $2',
+                                [destSedeId, movilidadId]
+                            );
+                            console.log(`🚚 Flota Adaptable (Confirm): Vehículo ${movilidadId} (Flotante) despachado. Nueva ubicación física: Sede ID ${destSedeId}.`);
+                        }
+                    }
+                }
+                res.json({ success: true, id: result.rows[0].id });
+            } else {
+                res.status(404).json({ error: 'Reserva temporal no encontrada o ya expiró.' });
+            }
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+    } else {
+        const ticket = (localDb.tickets || []).find(t => t.movilidadId === movilidadId && t.seatNum === seatNum && t.floor === floor && t.status === 'Reservado_Temporal');
+        if (ticket) {
+            ticket.status = 'Ocupado';
+            ticket.passengerName = passengerName;
+            ticket.passengerDni = passengerDni;
+            ticket.paymentMethod = paymentMethod;
+            ticket.price = parseFloat(price);
+            ticket.createdAt = new Date().toISOString();
+            
+            // Lógica de Flota Flotante Adaptable
+            const movObj = localDb.movilidades.find(m => m.id === movilidadId);
+            if (movObj && (movObj.tipoLogica === 'Flotante' || movObj.tipo_logica === 'Flotante')) {
+                const destSede = localDb.sedes.find(s => s.companyId === ticket.companyId && s.city.toLowerCase() === movObj.routeTo.toLowerCase());
+                if (destSede) {
+                    movObj.ubicacionActualSedeId = destSede.id;
+                    console.log(`🚚 Flota Adaptable (Confirm JSON): Vehículo ${movilidadId} (Flotante) despachado. Nueva ubicación: Sede ID ${destSede.id}.`);
+                }
+            }
+            saveLocalDb();
+            res.json({ success: true, id: ticket.id });
+        } else {
+            res.status(404).json({ error: 'Reserva temporal no encontrada o ya expiró.' });
+        }
     }
 });
 
@@ -1393,6 +1604,36 @@ app.get('/compra', (req, res) => {
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
+// ==========================================
+// CRONJOB / SETINTERVAL DE LIMPIEZA DE RESERVAS TEMPORALES OMNICANAL
+// ==========================================
+setInterval(async () => {
+    console.log("⏰ Ejecutando limpieza automática de reservas temporales vencidas...");
+    if (usePostgres) {
+        try {
+            const res = await pool.query("DELETE FROM tickets WHERE status = 'Reservado_Temporal' AND created_at < NOW() - INTERVAL '10 minutes'");
+            if (res.rowCount > 0) {
+                console.log(`✔ Se eliminaron ${res.rowCount} reservas temporales vencidas en PostgreSQL.`);
+            }
+        } catch (e) {
+            console.error("⚠ Error en la limpieza de reservas temporales (Postgres):", e);
+        }
+    } else {
+        const now = new Date();
+        const beforeCount = (localDb.tickets || []).length;
+        localDb.tickets = (localDb.tickets || []).filter(t => {
+            if (t.status !== 'Reservado_Temporal') return true;
+            const createdTime = new Date(t.createdAt || t.created_at || now);
+            const diffMinutes = (now - createdTime) / 1000 / 60;
+            return diffMinutes <= 10;
+        });
+        if (localDb.tickets.length < beforeCount) {
+            saveLocalDb();
+            console.log(`✔ Se eliminaron ${beforeCount - localDb.tickets.length} reservas temporales vencidas en JSON local.`);
+        }
+    }
+}, 60000); // Se ejecuta cada 1 minuto (60,000 ms)
 
 // ==========================================
 // 3. INICIO DEL SERVIDOR

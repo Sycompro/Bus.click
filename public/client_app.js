@@ -177,8 +177,26 @@ function setupEventListeners() {
         });
     });
     
+    // Función auxiliar para liberar reserva temporal
+    async function releaseTemporaryReservation() {
+        if (state.selectedBus && state.selectedSeat) {
+            try {
+                const ticketsRes = await fetch('/api/tickets');
+                const allTickets = await ticketsRes.json();
+                const tempTicket = allTickets.find(t => t.movilidadId === state.selectedBus.id && t.seatNum === state.selectedSeat && t.floor === state.selectedFloor && t.status === 'Reservado_Temporal');
+                if (tempTicket) {
+                    await fetch(`/api/tickets/${tempTicket.id}`, { method: 'DELETE' });
+                    console.log(`❄ Reserva temporal ${tempTicket.id} liberada al volver atrás.`);
+                }
+            } catch (e) {
+                console.error("Error al liberar reserva temporal al volver atrás:", e);
+            }
+        }
+    }
+
     document.querySelectorAll(".btn-back-to-seats").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
+            await releaseTemporaryReservation();
             goToStep("step-seats");
         });
     });
@@ -186,9 +204,47 @@ function setupEventListeners() {
     // Botón Confirmar Asiento (Paso 3 -> Paso 4)
     const btnConfirmSeat = document.getElementById("btn-confirm-seat");
     if (btnConfirmSeat) {
-        btnConfirmSeat.addEventListener("click", () => {
+        btnConfirmSeat.addEventListener("click", async () => {
             if (state.selectedSeat) {
-                goToStep("step-passenger");
+                // Bloquear el asiento temporalmente para evitar sobrecupos omnicanal
+                btnConfirmSeat.disabled = true;
+                const origText = btnConfirmSeat.innerHTML;
+                btnConfirmSeat.innerHTML = `<div class="mobile-loading-spinner" style="width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px;"></div> Reservando...`;
+                
+                try {
+                    const bus = state.selectedBus;
+                    const response = await fetch('/api/tickets/reserve-temporary', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            companyId: bus.companyId,
+                            sedeId: bus.sedeId,
+                            movilidadId: bus.id,
+                            seatNum: state.selectedSeat,
+                            floor: state.selectedFloor,
+                            date: state.selectedDate,
+                            price: bus.price
+                        })
+                    });
+                    
+                    const resData = await response.json();
+                    if (response.ok) {
+                        showMobileNotification("Asiento congelado por 10 minutos para completar tu pago.", "info");
+                        goToStep("step-passenger");
+                    } else {
+                        showMobileNotification(resData.error || "El asiento ya ha sido tomado por otro canal. Seleccione otro.", "error");
+                        // Recargar asientos frescos
+                        const tickRes = await fetch('/api/tickets');
+                        state.tickets = await tickRes.json();
+                        renderSeatsGridMobile();
+                    }
+                } catch (err) {
+                    console.error("Error al bloquear asiento temporalmente:", err);
+                    showMobileNotification("Error de red. Intente confirmar nuevamente.", "error");
+                } finally {
+                    btnConfirmSeat.disabled = false;
+                    btnConfirmSeat.innerHTML = origText;
+                }
             }
         });
     }
@@ -526,7 +582,7 @@ function renderSeatsGridMobile() {
     const busTickets = state.tickets.filter(t => 
         t.movilidadId === bus.id && 
         t.date === state.selectedDate &&
-        (t.status === "Ocupado" || t.status === "Reservado")
+        (t.status === "Ocupado" || t.status === "Reservado" || t.status === "Reservado_Temporal")
     );
     
     let rows = 0;
@@ -778,32 +834,38 @@ async function processPaymentAndBooking() {
     
     try {
         const payload = {
-            companyId: bus.companyId,
-            sedeId: bus.sedeId,
             movilidadId: bus.id,
             seatNum: state.selectedSeat,
             floor: state.selectedFloor,
             passengerName: name,
             passengerDni: dni,
-            status: "Ocupado", // Compra exitosa directa
             paymentMethod: paymentMethod,
-            price: bus.price,
-            date: state.selectedDate
+            price: bus.price
         };
         
-        const response = await fetch('/api/tickets', {
-            method: 'POST',
+        const response = await fetch('/api/tickets/confirm-temporary', {
+            method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
         
         const result = await response.json();
         
-        if (result.id) {
+        if (response.ok && result.success) {
             // ¡Ticket inyectado en Postgres de forma exitosa!
             const finalTicket = {
                 id: result.id,
-                ...payload
+                companyId: bus.companyId,
+                sedeId: bus.sedeId,
+                movilidadId: bus.id,
+                seatNum: state.selectedSeat,
+                floor: state.selectedFloor,
+                passengerName: name,
+                passengerDni: dni,
+                status: "Ocupado",
+                paymentMethod: paymentMethod,
+                price: bus.price,
+                date: state.selectedDate
             };
             
             // Guardar pasaje localmente en el historial
