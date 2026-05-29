@@ -788,6 +788,8 @@ body {
 .form-premium input[type="number"],
 .form-premium input[type="password"],
 .form-premium input[type="email"],
+.form-premium input[type="url"],
+.form-premium input[type="tel"],
 .form-premium select {
     width: 100%;
     padding: 0.6rem 0.875rem;
