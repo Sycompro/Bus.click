@@ -350,6 +350,62 @@
              </div>
         </div>
 
+        <!-- MODAL GESTIONAR TICKET (MODIFICAR, CAMBIAR VIAJE, LIBERAR ASIENTO) -->
+        <div id="modal-manage-ticket" class="modal-overlay hidden">
+            <div class="modal-card glass" style="max-width: 440px;">
+                <div class="modal-header">
+                    <h3><i data-lucide="settings"></i> Gestionar Pasaje</h3>
+                    <button type="button" class="btn-close-modal" id="btn-close-manage-ticket-modal">&times;</button>
+                </div>
+                <form id="form-manage-ticket" class="form-premium">
+                    <input type="hidden" id="manage-ticket-id">
+                    
+                    <div class="form-group">
+                        <label for="manage-dni">DNI Pasajero</label>
+                        <div class="input-group-premium">
+                            <input type="text" id="manage-dni" required placeholder="DNI Pasajero" maxlength="8">
+                            <button type="button" id="btn-buscar-manage-dni" class="btn btn-secondary btn-sparkle" style="height: 38px;">
+                                <i data-lucide="search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="manage-passenger-name">Nombre Completo</label>
+                        <input type="text" id="manage-passenger-name" required placeholder="Nombre completo del pasajero">
+                    </div>
+                    
+                    <div class="form-group-row-2">
+                        <div class="form-group">
+                            <label for="manage-date">Fecha de Viaje</label>
+                            <input type="date" id="manage-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="manage-seat">N° de Asiento</label>
+                            <input type="number" id="manage-seat" required min="1" max="100">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="manage-floor">Piso (para buses)</label>
+                        <select id="manage-floor" class="select-premium">
+                            <option value="1">Piso 1</option>
+                            <option value="2">Piso 2</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group-row-2" style="margin-top: 1.5rem; gap: 0.75rem;">
+                        <button type="button" id="btn-liberar-asiento" class="btn btn-danger" style="background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; flex: 1;">
+                            <i data-lucide="trash-2"></i> Liberar Asiento
+                        </button>
+                        <button type="submit" class="btn btn-primary" style="flex: 1;">
+                            <i data-lucide="save"></i> Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     <!-- OVERLAY DE LOGIN DE SEDE -->
     <div id="sede-login-overlay" class="login-overlay-premium">
         <div class="login-card-premium">

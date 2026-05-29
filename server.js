@@ -1256,6 +1256,67 @@ app.delete('/api/tickets/:id', async (req, res) => {
     }
 });
 
+app.put('/api/tickets/:id', async (req, res) => {
+    const { id } = req.params;
+    const { passengerName, passengerDni, seatNum, floor, date } = req.body;
+    
+    if (usePostgres) {
+        try {
+            // Validar si el asiento ya está ocupado por otro pasaje para el mismo bus y la misma fecha
+            if (seatNum || date) {
+                const ticketRes = await pool.query('SELECT movilidad_id, seat_num, date_str FROM tickets WHERE id = $1', [id]);
+                if (ticketRes.rows.length > 0) {
+                    const ticket = ticketRes.rows[0];
+                    const finalMovilidadId = ticket.movilidad_id;
+                    const finalSeatNum = seatNum !== undefined ? parseInt(seatNum) : parseInt(ticket.seat_num);
+                    const finalDate = date !== undefined ? date : ticket.date_str;
+                    
+                    const checkRes = await pool.query(
+                        'SELECT id FROM tickets WHERE id != $1 AND movilidad_id = $2 AND seat_num = $3 AND date_str = $4 AND status = \'Ocupado\'',
+                        [id, finalMovilidadId, finalSeatNum, finalDate]
+                    );
+                    if (checkRes.rows.length > 0) {
+                        return res.status(400).json({ success: false, error: 'El asiento seleccionado ya está ocupado en esa fecha.' });
+                    }
+                }
+            }
+
+            await pool.query(
+                'UPDATE tickets SET passenger_name = COALESCE($1, passenger_name), passenger_dni = COALESCE($2, passenger_dni), seat_num = COALESCE($3, seat_num), floor = COALESCE($4, floor), date_str = COALESCE($5, date_str) WHERE id = $6',
+                [passengerName, passengerDni, seatNum ? parseInt(seatNum) : null, floor ? parseInt(floor) : null, date, id]
+            );
+            res.json({ success: true });
+        } catch (e) {
+            console.error("Error al actualizar ticket en Postgres:", e);
+            res.status(500).json({ success: false, error: e.message });
+        }
+    } else {
+        const ticketIndex = localDb.tickets.findIndex(t => t.id === id);
+        if (ticketIndex !== -1) {
+            const ticket = localDb.tickets[ticketIndex];
+            const finalMovilidadId = ticket.movilidadId;
+            const finalSeatNum = seatNum !== undefined ? parseInt(seatNum) : parseInt(ticket.seatNum);
+            const finalDate = date !== undefined ? date : ticket.date;
+
+            const collision = localDb.tickets.some(t => t.id !== id && t.movilidadId === finalMovilidadId && parseInt(t.seatNum) === finalSeatNum && t.date === finalDate && t.status === 'Ocupado');
+            if (collision) {
+                return res.status(400).json({ success: false, error: 'El asiento seleccionado ya está ocupado en esa fecha.' });
+            }
+
+            if (passengerName !== undefined) ticket.passengerName = passengerName;
+            if (passengerDni !== undefined) ticket.passengerDni = passengerDni;
+            if (seatNum !== undefined) ticket.seatNum = parseInt(seatNum);
+            if (floor !== undefined) ticket.floor = parseInt(floor);
+            if (date !== undefined) ticket.date = date;
+
+            saveLocalDb();
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ error: 'Ticket no encontrado.' });
+        }
+    }
+});
+
 // --- PROXY SEGURO DE CONSULTAS DNI Y RUC (APIPERU.DEV) ---
 const APIPERU_TOKEN = process.env.APIPERU_TOKEN || "76ca7246c8a8c464fd551b6555e780791a69ff89acb8887558d65b23f05ab81b";
 

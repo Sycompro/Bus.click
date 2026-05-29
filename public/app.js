@@ -1488,6 +1488,151 @@ async function handleSearchTrabajadorDni() {
     }
 }
 
+// --- MODAL GESTIONAR TICKET (MODIFICAR, CAMBIAR VIAJE, LIBERAR ASIENTO) ---
+function openManageTicketModal(ticket) {
+    document.getElementById('manage-ticket-id').value = ticket.id;
+    document.getElementById('manage-dni').value = ticket.passengerDni;
+    document.getElementById('manage-passenger-name').value = ticket.passengerName;
+    
+    // Formatear fecha para el input tipo date (YYYY-MM-DD)
+    let formattedDate = "";
+    if (ticket.date) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(ticket.date)) {
+            formattedDate = ticket.date;
+        } else {
+            const parts = ticket.date.split('/');
+            if (parts.length === 3) {
+                formattedDate = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            } else {
+                formattedDate = new Date().toISOString().split('T')[0];
+            }
+        }
+    } else {
+        formattedDate = new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('manage-date').value = formattedDate;
+    document.getElementById('manage-seat').value = ticket.seatNum;
+    document.getElementById('manage-floor').value = ticket.floor || "1";
+    
+    document.getElementById('modal-manage-ticket').classList.remove('hidden');
+    lucide.createIcons();
+}
+
+function closeManageTicketModal() {
+    document.getElementById('modal-manage-ticket').classList.add('hidden');
+}
+
+// Búsqueda RENIEC en Gestionar Ticket
+async function handleSearchManageDni() {
+    const dniInput = document.getElementById('manage-dni');
+    const dni = dniInput ? dniInput.value.trim() : '';
+    if (dni.length !== 8 || isNaN(dni)) {
+        showToast("Por favor, ingresa un número de DNI válido de 8 dígitos numéricos.", "error");
+        return;
+    }
+    
+    const searchBtn = document.getElementById('btn-buscar-manage-dni');
+    if (!searchBtn) return;
+    
+    searchBtn.disabled = true;
+    const originalHtml = searchBtn.innerHTML;
+    searchBtn.innerHTML = `...`;
+    
+    try {
+        showToast("Consultando DNI en RENIEC...", "info");
+        const res = await fetch('/api/consultar-dni', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dni })
+        }).then(r => r.json());
+        
+        if (res.success && res.data) {
+            const person = res.data;
+            document.getElementById('manage-passenger-name').value = person.nombre_completo;
+            searchBtn.innerHTML = '<i data-lucide="check"></i>';
+            showToast(`DNI Encontrado: ${person.nombre_completo}`, "success");
+        } else {
+            showToast(res.error || "No se encontraron datos en RENIEC.", "error");
+            searchBtn.innerHTML = '<i data-lucide="alert-circle"></i>';
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error al conectarse con el servicio de DNI.", "error");
+        searchBtn.innerHTML = '<i data-lucide="alert-circle"></i>';
+    } finally {
+        setTimeout(() => {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = originalHtml;
+            lucide.createIcons();
+        }, 1500);
+    }
+}
+
+// Guardar cambios en el Ticket
+async function handleManageTicketSubmit(e) {
+    e.preventDefault();
+    const id = document.getElementById('manage-ticket-id').value;
+    const passengerName = document.getElementById('manage-passenger-name').value.trim();
+    const passengerDni = document.getElementById('manage-dni').value.trim();
+    const date = document.getElementById('manage-date').value;
+    const seatNum = parseInt(document.getElementById('manage-seat').value);
+    const floor = parseInt(document.getElementById('manage-floor').value);
+
+    try {
+        showToast("Guardando cambios en el pasaje...", "info");
+        const res = await fetch(`/api/tickets/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ passengerName, passengerDni, seatNum, floor, date })
+        }).then(r => r.json());
+
+        if (res.success) {
+            showToast("Boleto modificado con éxito.", "success");
+            closeManageTicketModal();
+            await reloadAllApiData();
+            if (state.activeVehicleId) {
+                renderSeatingMaqueta(state.activeVehicleId);
+            }
+        } else {
+            showToast(res.error || "Error al modificar el boleto.", "error");
+        }
+    } catch (e) {
+        console.error("Error al actualizar pasaje:", e);
+        showToast("Ocurrió un error al actualizar el pasaje.", "error");
+    }
+}
+
+// Liberar asiento (Eliminar pasaje)
+async function handleLiberarAsiento() {
+    const id = document.getElementById('manage-ticket-id').value;
+    if (!id) return;
+    
+    if (!confirm("¿Estás completamente seguro de liberar este asiento? Esta acción eliminará el pasaje de forma permanente y el asiento quedará disponible.")) {
+        return;
+    }
+    
+    try {
+        showToast("Liberando asiento...", "info");
+        const res = await fetch(`/api/tickets/${id}`, {
+            method: 'DELETE'
+        }).then(r => r.json());
+        
+        if (res.success) {
+            showToast("Asiento liberado y pasaje eliminado correctamente.", "success");
+            closeManageTicketModal();
+            await reloadAllApiData();
+            if (state.activeVehicleId) {
+                renderSeatingMaqueta(state.activeVehicleId);
+            }
+        } else {
+            showToast(res.error || "Error al liberar el asiento.", "error");
+        }
+    } catch (e) {
+        console.error("Error al liberar asiento:", e);
+        showToast("Ocurrió un error al conectar con el servidor.", "error");
+    }
+}
+
 // ==========================================
 // 10. SISTEMA MULTI-ROL Y SWITCHER FLOTANTE
 // ==========================================
@@ -1854,6 +1999,18 @@ function setupUIEventListeners() {
             handleSearchTrabajadorDni();
         }
     });
+    
+    // Gestionar ticket (Modificar, Cambiar viaje, Liberar)
+    document.getElementById('btn-close-manage-ticket-modal')?.addEventListener('click', closeManageTicketModal);
+    document.getElementById('btn-buscar-manage-dni')?.addEventListener('click', handleSearchManageDni);
+    document.getElementById('manage-dni')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearchManageDni();
+        }
+    });
+    document.getElementById('form-manage-ticket')?.addEventListener('submit', handleManageTicketSubmit);
+    document.getElementById('btn-liberar-asiento')?.addEventListener('click', handleLiberarAsiento);
     
     document.getElementById('btn-close-ticket')?.addEventListener('click', closeTicketModal);
     document.getElementById('btn-print-ticket')?.addEventListener('click', () => {
@@ -2282,6 +2439,8 @@ function updateSalesTurnReport() {
 
         const ticketCode = ticket.id.substring(0, 8).toUpperCase();
 
+        const routeTo = vehicle ? vehicle.routeTo : (ticket.routeTo || ticket.route_to || 'Destino');
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="font-bold text-indigo-400">#${ticketCode}</td>
@@ -2290,7 +2449,7 @@ function updateSalesTurnReport() {
                 <div class="text-xs text-subtle" style="font-size: 0.65rem; color: #64748b;">DNI: ${ticket.passengerDni}</div>
             </td>
             <td>
-                <div class="font-bold">${ticket.routeTo}</div>
+                <div class="font-bold">${routeTo}</div>
                 <div class="text-xs text-subtle" style="font-size: 0.65rem; color: #64748b;">Placa: ${vehiclePlate}</div>
             </td>
             <td>
@@ -2300,9 +2459,12 @@ function updateSalesTurnReport() {
                 <span class="badge-payment-pill ${paymentBadgeClass}">${ticket.paymentMethod || 'Efectivo'}</span>
             </td>
             <td class="font-bold text-emerald-400" style="color: #10b981;">S/. ${price.toFixed(2)}</td>
-            <td>
-                <button class="btn btn-secondary btn-print-sale-mini" data-ticket-id="${ticket.id}">
+            <td style="display: flex; gap: 0.4rem; align-items: center; justify-content: flex-start; height: 100%;">
+                <button class="btn btn-secondary btn-print-sale-mini" data-ticket-id="${ticket.id}" style="padding: 4px 8px; font-size: 0.75rem; height: 30px;">
                     <i data-lucide="ticket"></i> Boleto
+                </button>
+                <button class="btn btn-primary btn-manage-sale-mini" data-ticket-id="${ticket.id}" style="padding: 4px 8px; font-size: 0.75rem; height: 30px; background: var(--brand-gradient);">
+                    <i data-lucide="settings"></i> Gestionar
                 </button>
             </td>
         `;
@@ -2313,6 +2475,10 @@ function updateSalesTurnReport() {
                 date: ticket.date || new Date().toLocaleDateString('es-PE')
             };
             showTicket(ticket.id, ticketData);
+        });
+
+        tr.querySelector('.btn-manage-sale-mini').addEventListener('click', () => {
+            openManageTicketModal(ticket);
         });
 
         tbody.appendChild(tr);
