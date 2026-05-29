@@ -214,6 +214,10 @@ async function initializePostgresTables() {
             )
         `);
         
+        await client.query(`
+            ALTER TABLE tickets ADD COLUMN IF NOT EXISTS passenger_whatsapp VARCHAR(50);
+        `);
+        
         // Tabla Pagos de Suscripción Mensual de Empresas
         await client.query(`
             CREATE TABLE IF NOT EXISTS company_payments (
@@ -1176,17 +1180,122 @@ app.post('/api/tickets/reserve-temporary', async (req, res) => {
     }
 });
 
+/* 📲 INTEGRACIÓN PREMIUM DE NOTIFICACIONES DE WHATSAPP ASÍNCRONAS */
+async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerName, companyId, movilidadId, seatNum, floor, price, paymentMethod) {
+    if (!passengerWhatsapp) return;
+
+    // Limpiar y sanitizar el número (sólo dígitos, y anteponer el prefijo 51 si es celular peruano de 9 dígitos)
+    let cleanPhone = passengerWhatsapp.replace(/\D/g, '');
+    if (cleanPhone.length === 9 && cleanPhone.startsWith('9')) {
+        cleanPhone = '51' + cleanPhone;
+    }
+    
+    try {
+        let companyName = "Bus.click";
+        let yapePhone = "987 654 321"; // fallback / yape por defecto
+        let routeFrom = "Origen";
+        let routeTo = "Destino";
+        let travelDate = new Date().toLocaleDateString('es-PE');
+        
+        // Cargar información de la Empresa
+        if (usePostgres) {
+            const compRes = await pool.query('SELECT name, support_phone FROM companies WHERE id = $1', [companyId]);
+            if (compRes.rows.length > 0) {
+                companyName = compRes.rows[0].name;
+                yapePhone = compRes.rows[0].support_phone || yapePhone;
+            }
+            
+            // Cargar información de la Movilidad/Ruta
+            const movRes = await pool.query('SELECT route_from, route_to, date_str FROM movilidades WHERE id = $1', [movilidadId]);
+            if (movRes.rows.length > 0) {
+                routeFrom = movRes.rows[0].route_from;
+                routeTo = movRes.rows[0].route_to;
+                travelDate = movRes.rows[0].date_str;
+            }
+        } else {
+            const compObj = localDb.companies.find(c => c.id === companyId);
+            if (compObj) {
+                companyName = compObj.name;
+                yapePhone = compObj.supportPhone || compObj.support_phone || yapePhone;
+            }
+            
+            const movObj = localDb.movilidades.find(m => m.id === movilidadId);
+            if (movObj) {
+                routeFrom = movObj.routeFrom || movObj.route_from || routeFrom;
+                routeTo = movObj.routeTo || movObj.route_to || routeTo;
+                travelDate = movObj.dateStr || movObj.date_str || travelDate;
+            }
+        }
+
+        // Formatear fecha para el mensaje en formato DD/MM/YYYY
+        let displayDate = travelDate;
+        const parts = travelDate.split('-');
+        if (parts.length === 3) displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+        // Construir el cuerpo del mensaje de forma profesional y estructurada
+        let message = `🎫 *¡Orden de Pago y Reserva en Bus.click!*\n\n`;
+        message += `Hola *${passengerName}*, tu pasaje con ID *${ticketId.toUpperCase()}* ha sido reservado con éxito.\n\n`;
+        message += `📋 *Detalle de tu Viaje:*\n`;
+        message += `• *Empresa:* ${companyName}\n`;
+        message += `• *Origen:* ${routeFrom}\n`;
+        message += `• *Destino:* ${routeTo}\n`;
+        message += `• *Fecha:* ${displayDate}\n`;
+        message += `• *Asiento:* N° ${seatNum} (Piso ${floor})\n`;
+        message += `• *Total a Pagar:* S/. ${parseFloat(price).toFixed(2)}\n\n`;
+        
+        if (paymentMethod === 'Yape/Plin') {
+            message += `📲 *Instrucciones para completar tu Pago (Yape/Plin):*\n`;
+            message += `1. Realiza el yapeo de *S/. ${parseFloat(price).toFixed(2)}* al número:\n`;
+            message += `   👉 *${yapePhone}*\n`;
+            message += `   *(Titular: ${companyName})*\n`;
+            message += `2. Envía la captura del comprobante respondiendo a este mensaje de WhatsApp.\n\n`;
+            message += `*¡Tu pasaje se validará automáticamente al recibir el comprobante!* 🚚✨`;
+        } else {
+            message += `💳 *Método de Pago:* ${paymentMethod}\n`;
+            message += `Tu boleto está activo y confirmado. ¡Buen viaje! 🚚✨`;
+        }
+
+        console.log(`📱 [WhatsApp API] Despachando notificación automática asíncrona a ${cleanPhone}...`);
+        
+        const apiKey = process.env.WHATSAPP_API_KEY || 'busclick_master_key';
+        
+        const response = await fetch('https://qr-api-wps-production.up.railway.app/api/external/send-message', {
+            method: 'POST',
+            headers: {
+                'x-api-key': apiKey,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                phone: cleanPhone,
+                message: message,
+                source: 'busclick-saas'
+            })
+        });
+
+        const resData = await response.json();
+        if (response.ok && resData.success) {
+            console.log(`✅ [WhatsApp API] Notificación enviada correctamente a ${cleanPhone}. ID Mensaje:`, resData.data?.status || 'sent');
+        } else {
+            console.error(`❌ [WhatsApp API Error] La API externa devolvió error:`, resData.error || 'unknown');
+        }
+    } catch (err) {
+        console.error(`❌ [WhatsApp API Exception] Error al conectarse a la API externa de WhatsApp:`, err);
+    }
+}
+
 // --- CONFIRMAR RESERVA TEMPORAL OMNICANAL A VENTA DIRECTA ---
 app.put('/api/tickets/confirm-temporary', async (req, res) => {
-    const { movilidadId, seatNum, floor, passengerName, passengerDni, paymentMethod, price } = req.body;
+    const { movilidadId, seatNum, floor, passengerName, passengerDni, passengerWhatsapp, paymentMethod, price } = req.body;
     if (usePostgres) {
         try {
             const result = await pool.query(
-                'UPDATE tickets SET status = \'Ocupado\', passenger_name = $1, passenger_dni = $2, payment_method = $3, price = $4, created_at = CURRENT_TIMESTAMP WHERE movilidad_id = $5 AND seat_num = $6 AND floor = $7 AND status = \'Reservado_Temporal\' RETURNING id, company_id',
-                [passengerName, passengerDni, paymentMethod, parseFloat(price), movilidadId, seatNum, floor]
+                'UPDATE tickets SET status = \'Ocupado\', passenger_name = $1, passenger_dni = $2, payment_method = $3, price = $4, passenger_whatsapp = $5, created_at = CURRENT_TIMESTAMP WHERE movilidad_id = $6 AND seat_num = $7 AND floor = $8 AND status = \'Reservado_Temporal\' RETURNING id, company_id',
+                [passengerName, passengerDni, paymentMethod, parseFloat(price), passengerWhatsapp || '', movilidadId, seatNum, floor]
             );
             if (result.rows.length > 0) {
                 const compId = result.rows[0].company_id;
+                const ticketId = result.rows[0].id;
+                
                 // Lógica de Flota Flotante Adaptable: Viaje Exitoso
                 const movRes = await pool.query('SELECT tipo_logica, route_to, company_id FROM movilidades WHERE id = $1', [movilidadId]);
                 if (movRes.rows.length > 0) {
@@ -1206,7 +1315,11 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
                         }
                     }
                 }
-                res.json({ success: true, id: result.rows[0].id });
+
+                // Disparar envío asíncrono de WhatsApp sin retrasar la respuesta REST
+                sendWhatsappNotification(ticketId, passengerWhatsapp, passengerName, compId, movilidadId, seatNum, floor, price, paymentMethod);
+
+                res.json({ success: true, id: ticketId });
             } else {
                 res.status(404).json({ error: 'Reserva temporal no encontrada o ya expiró.' });
             }
@@ -1219,6 +1332,7 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
             ticket.status = 'Ocupado';
             ticket.passengerName = passengerName;
             ticket.passengerDni = passengerDni;
+            ticket.passengerWhatsapp = passengerWhatsapp || '';
             ticket.paymentMethod = paymentMethod;
             ticket.price = parseFloat(price);
             ticket.createdAt = new Date().toISOString();
@@ -1233,6 +1347,10 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
                 }
             }
             saveLocalDb();
+
+            // Disparar envío asíncrono de WhatsApp sin retrasar la respuesta REST
+            sendWhatsappNotification(ticket.id, passengerWhatsapp, passengerName, ticket.companyId, movilidadId, seatNum, floor, price, paymentMethod);
+
             res.json({ success: true, id: ticket.id });
         } else {
             res.status(404).json({ error: 'Reserva temporal no encontrada o ya expiró.' });

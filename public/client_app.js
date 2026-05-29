@@ -870,11 +870,17 @@ async function consultDniRENIEC() {
 async function processPaymentAndBooking() {
     const dni = document.getElementById("passenger-dni").value.trim();
     const name = document.getElementById("passenger-name").value.trim();
+    const whatsapp = document.getElementById("passenger-whatsapp") ? document.getElementById("passenger-whatsapp").value.trim() : "";
     const paymentRadio = document.querySelector('input[name="mobile-payment"]:checked');
     const paymentMethod = paymentRadio ? paymentRadio.value : "Yape/Plin";
     
-    if (!dni || !name) {
-        showMobileNotification("Complete todos los datos del pasajero.", "warning");
+    if (!dni || !name || !whatsapp) {
+        showMobileNotification("Complete todos los datos, incluyendo tu WhatsApp.", "warning");
+        return;
+    }
+    
+    if (whatsapp.length !== 9 || !whatsapp.startsWith('9') || isNaN(whatsapp)) {
+        showMobileNotification("Por favor, ingresa un número de WhatsApp celular válido de 9 dígitos.", "warning");
         return;
     }
     
@@ -898,6 +904,7 @@ async function processPaymentAndBooking() {
             floor: state.selectedFloor,
             passengerName: name,
             passengerDni: dni,
+            passengerWhatsapp: whatsapp,
             paymentMethod: paymentMethod,
             price: bus.price
         };
@@ -921,6 +928,7 @@ async function processPaymentAndBooking() {
                 floor: state.selectedFloor,
                 passengerName: name,
                 passengerDni: dni,
+                passengerWhatsapp: whatsapp,
                 status: "Ocupado",
                 paymentMethod: paymentMethod,
                 price: bus.price,
@@ -1023,6 +1031,101 @@ function populateVirtualTicket(ticket) {
             });
         } catch (e) {
             console.error("Error al generar código de barras para pasajero:", e);
+        }
+    }
+    
+    // --- MANEJO DEL BANNER INTERACTIVO YAPE/PLIN EN PANTALLA ---
+    const yapeBanner = document.getElementById("yape-payment-instructions");
+    const statusHeader = document.getElementById("b2c-status-header");
+    const statusIconBox = document.getElementById("b2c-status-icon-box");
+    const statusTitle = document.getElementById("b2c-status-title");
+    const statusSubtitle = document.getElementById("b2c-status-subtitle");
+
+    if (ticket.paymentMethod === "Yape/Plin") {
+        // Obtener datos de soporte de la empresa (celular y nombre de la empresa como titular)
+        let yapePhone = company.supportPhone || company.support_phone || "987654321";
+        // Limpiar formato para wa.me (dejar solo dígitos)
+        let cleanPhone = yapePhone.replace(/\D/g, '');
+        if (cleanPhone.length === 9 && cleanPhone.startsWith('9')) {
+            cleanPhone = '51' + cleanPhone;
+        }
+
+        // Configurar los campos del banner
+        const displayPhone = document.getElementById("yape-display-phone");
+        if (displayPhone) displayPhone.textContent = yapePhone;
+        
+        const displayTitular = document.getElementById("yape-display-titular");
+        if (displayTitular) displayTitular.textContent = `Titular: ${company.name}`;
+        
+        const displayMonto = document.getElementById("yape-display-monto");
+        if (displayMonto) displayMonto.textContent = `S/. ${parseFloat(ticket.price).toFixed(2)}`;
+
+        // Generar QR dinámico para WhatsApp de Yape
+        const yapeQrBox = document.getElementById("yape-qr-box");
+        if (yapeQrBox) {
+            yapeQrBox.innerHTML = "";
+            try {
+                new QRCode(yapeQrBox, {
+                    text: `https://wa.me/${cleanPhone}?text=Hola,%20adjunto%20comprobante%20de%20pago%20de%20mi%20pasaje%20${ticket.id}`,
+                    width: 76,
+                    height: 76,
+                    colorDark: "#7c3aed",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } catch (e) {
+                console.error("Error al generar QR de Yape:", e);
+            }
+        }
+
+        // Configurar enlace del botón de WhatsApp pre-redactado
+        const sendWaBtn = document.getElementById("yape-send-whatsapp-btn");
+        if (sendWaBtn) {
+            const displayDate = dateParts.length === 3 ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : ticket.date;
+            const messageText = `¡Hola! Acabo de realizar mi reserva en Bus.click para viajar con la empresa *${company.name}*.\n\n` +
+                                `📋 *Detalle de mi Reserva:*\n` +
+                                `• *Código:* ${ticket.id.toUpperCase()}\n` +
+                                `• *Ruta:* ${origin} ➔ ${destination}\n` +
+                                `• *Fecha:* ${displayDate}\n` +
+                                `• *Asiento:* N° ${ticket.seatNum}\n` +
+                                `• *Total a Pagar:* S/. ${parseFloat(ticket.price).toFixed(2)}\n\n` +
+                                `Aquí adjunto la captura de pantalla de mi comprobante de pago de Yape/Plin para su validación rápida y activación.`;
+            sendWaBtn.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(messageText)}`;
+        }
+
+        // Cambiar estilos de cabecera a "Pendiente de Pago" (Naranja/Morado de Yape)
+        if (statusHeader) statusHeader.style.background = "#fffbeb";
+        if (statusIconBox) {
+            statusIconBox.style.background = "#fef3c7";
+            statusIconBox.style.color = "#d97706";
+            statusIconBox.innerHTML = `<i data-lucide="clock" style="width: 26px; height: 26px;"></i>`;
+        }
+        if (statusTitle) {
+            statusTitle.textContent = "¡Reserva Registrada!";
+            statusTitle.style.color = "#d97706";
+        }
+        if (statusSubtitle) {
+            statusSubtitle.textContent = "Boleto pendiente de activación. Completa tu pago por Yape para activarlo.";
+        }
+
+        // Mostrar el banner
+        if (yapeBanner) yapeBanner.classList.remove("hidden");
+    } else {
+        // Si no es Yape (es Tarjeta, etc.), ocultamos el banner y restablecemos la cabecera verde de éxito
+        if (yapeBanner) yapeBanner.classList.add("hidden");
+        
+        if (statusHeader) statusHeader.style.background = "#e6f4ea";
+        if (statusIconBox) {
+            statusIconBox.style.background = "#e6f4ea";
+            statusIconBox.style.color = "#137333";
+            statusIconBox.innerHTML = `<i data-lucide="check" style="width: 26px; height: 26px;"></i>`;
+        }
+        if (statusTitle) {
+            statusTitle.textContent = "¡Compra Confirmada!";
+            statusTitle.style.color = "#059669";
+        }
+        if (statusSubtitle) {
+            statusSubtitle.textContent = "Tu boleto digital está listo. Muéstralo al abordar.";
         }
     }
     
