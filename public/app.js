@@ -1440,6 +1440,54 @@ async function handleSearchDni() {
     }
 }
 
+// Consulta de DNI para registro de Personal
+async function handleSearchTrabajadorDni() {
+    const dniInput = document.getElementById('trabajador-dni');
+    const dni = dniInput ? dniInput.value.trim() : '';
+    if (dni.length !== 8 || isNaN(dni)) {
+        showToast("Por favor, ingresa un número de DNI válido de 8 dígitos numéricos.", "error");
+        return;
+    }
+    
+    const searchBtn = document.getElementById('btn-buscar-trabajador-dni');
+    if (!searchBtn) return;
+    
+    searchBtn.disabled = true;
+    const originalHtml = searchBtn.innerHTML;
+    searchBtn.innerHTML = `...`;
+    
+    try {
+        showToast("Consultando DNI de personal en RENIEC...", "info");
+        const res = await fetch('/api/consultar-dni', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dni })
+        }).then(r => r.json());
+        
+        if (res.success && res.data) {
+            const person = res.data;
+            document.getElementById('trabajador-name').value = person.nombres || person.nombre_completo || "";
+            const apellido = [person.apellido_paterno, person.apellido_materno].filter(Boolean).join(" ");
+            document.getElementById('trabajador-lastname').value = apellido || "";
+            searchBtn.innerHTML = '<i data-lucide="check"></i>';
+            showToast(`DNI Encontrado: ${person.nombre_completo}`, "success");
+        } else {
+            showToast(res.error || "No se encontraron datos en RENIEC. Puedes ingresar los nombres manualmente.", "error");
+            searchBtn.innerHTML = '<i data-lucide="alert-circle"></i>';
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Error al conectarse con el servicio de consulta de DNI.", "error");
+        searchBtn.innerHTML = '<i data-lucide="alert-circle"></i>';
+    } finally {
+        setTimeout(() => {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = originalHtml;
+            lucide.createIcons();
+        }, 1500);
+    }
+}
+
 // ==========================================
 // 10. SISTEMA MULTI-ROL Y SWITCHER FLOTANTE
 // ==========================================
@@ -1797,6 +1845,15 @@ function setupUIEventListeners() {
         }
     });
     document.getElementById('form-register-sale')?.addEventListener('submit', handleRegisterSale);
+    
+    // Buscar DNI de personal en RENIEC
+    document.getElementById('btn-buscar-trabajador-dni')?.addEventListener('click', handleSearchTrabajadorDni);
+    document.getElementById('trabajador-dni')?.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearchTrabajadorDni();
+        }
+    });
     
     document.getElementById('btn-close-ticket')?.addEventListener('click', closeTicketModal);
     document.getElementById('btn-print-ticket')?.addEventListener('click', () => {
