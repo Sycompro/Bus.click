@@ -107,10 +107,64 @@ async function loadInitialData() {
         
         // Poblar selectores de ciudades
         populateOriginDestinationSelects();
+        
+        // Renderizar dinámicamente los métodos de pago activos de la empresa
+        renderCompanyPaymentMethods();
     } catch (e) {
         console.error("Error al cargar datos catálogos:", e);
         showMobileNotification("Error de conexión al cargar los destinos de viaje.", "error");
     }
+}
+
+// --- RENDERIZAR DINÁMICAMENTE LOS MÉTODOS DE PAGO DE LA EMPRESA ---
+function renderCompanyPaymentMethods() {
+    const container = document.querySelector('.b2c-payment-options');
+    if (!container) return;
+    
+    const company = state.activeCompany;
+    if (!company) return;
+    
+    // Obtener los métodos de pago configurados (fallback a Efectivo y Yape/Plin si no hay ninguno)
+    const methods = company.paymentMethods || ['Efectivo', 'Yape/Plin'];
+    
+    container.innerHTML = '';
+    
+    methods.forEach((method, index) => {
+        const label = document.createElement('label');
+        label.className = `b2c-payment-opt ${index === 0 ? 'selected' : ''}`;
+        
+        let iconName = 'credit-card';
+        let bgStyle = 'background: #fce7f3; color: #db2777;'; // Tarjeta por defecto
+        
+        const normMethod = method.toLowerCase();
+        if (normMethod.includes('efectivo')) {
+            iconName = 'banknote';
+            bgStyle = 'background: #d1fae5; color: #059669;'; // Verde Efectivo
+        } else if (normMethod.includes('yape') || normMethod.includes('plin') || normMethod.includes('billetera') || normMethod.includes('billeteras')) {
+            iconName = 'smartphone';
+            bgStyle = 'background: #ede9fe; color: #7c3aed;'; // Morado Yape
+        } else if (normMethod.includes('transferencia') || normMethod.includes('banco') || normMethod.includes('bancaria')) {
+            iconName = 'landmark';
+            bgStyle = 'background: #e0f2fe; color: #0284c7;'; // Celeste Banco
+        }
+        
+        label.innerHTML = `
+            <input type="radio" name="mobile-payment" value="${method}" ${index === 0 ? 'checked' : ''}>
+            <div class="b2c-payment-icon" style="${bgStyle}"><i data-lucide="${iconName}"></i></div>
+            <span>${method}</span>
+        `;
+        
+        // Agregar listener para alternar la clase selected visualmente al cambiar de opción
+        label.querySelector('input[type="radio"]').addEventListener('change', () => {
+            container.querySelectorAll('.b2c-payment-opt').forEach(opt => opt.classList.remove('selected'));
+            label.classList.add('selected');
+        });
+        
+        container.appendChild(label);
+    });
+    
+    // Instanciar iconos Lucide frescos inyectados
+    lucide.createIcons();
 }
 
 // --- POBLAR SELECTORES DE ORIGEN Y DESTINO ---
