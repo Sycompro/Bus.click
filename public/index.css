@@ -5554,3 +5554,8 @@ body {
     50% { transform: scale(1.04); box-shadow: 0 12px 35px rgba(139, 92, 246, 0.22); }
     100% { transform: scale(1); box-shadow: 0 10px 30px rgba(139, 92, 246, 0.12); }
 }
+
+/* Fullscreen mode background restoration to prevent black system status bars */
+:fullscreen, :-webkit-full-screen, :fullscreen * {
+    background-color: #ffffff !important;
+}
