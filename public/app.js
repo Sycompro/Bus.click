@@ -126,6 +126,7 @@ async function initApp() {
     setupUIEventListeners();
     initSidebarBehavior();
     initSuperAdminSaasBehavior();
+    initB2bSubtabs();
     
     // Sincronizar dropdowns personalizados
     syncCustomDropdowns();
@@ -4289,5 +4290,25 @@ window.showConfirmModal = function({ title, message, icon = 'alert-triangle', co
     modal.classList.remove('hidden');
     lucide.createIcons();
 };
+
+function initB2bSubtabs() {
+    const b2bSubtabsButtons = document.querySelectorAll('#panel-establecimiento .tab-btn-compact');
+    const b2bSubtabContents = document.querySelectorAll('#panel-establecimiento .subtab-content-b2b');
+    b2bSubtabsButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            b2bSubtabsButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            b2bSubtabContents.forEach(content => content.classList.add('hidden'));
+
+            const targetSubtab = btn.getAttribute('data-subtab');
+            const targetContent = document.getElementById(targetSubtab);
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+            lucide.createIcons();
+        });
+    });
+}
 
 

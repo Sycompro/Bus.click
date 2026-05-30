@@ -84,117 +84,129 @@
                 <div class="app-layout">
             <main class="main-content">
                 <section id="panel-establecimiento" class="panel-section">
-                    <div class="panel-header-block-establecimiento">
+                    <!-- Sub-pestañas de Ventas B2B -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 0.75rem; flex-wrap: wrap; gap: 1rem;">
                         <div class="estab-welcome">
-                            <h2><i data-lucide="map-pin"></i> Sede: <span id="txt-estab-sede-name">Cargando...</span></h2>
-                            <p class="section-desc">Selecciona un vehículo para gestionar los asientos y emitir boletos.</p>
-                        </div>
-                        <div class="estab-overview-stats glass">
-                            <div class="estab-stat">
-                                <span class="label">En Terminal</span>
-                                <span class="value" id="txt-estab-count-vehicles">0</span>
-                            </div>
-                            <div class="estab-stat-divider"></div>
-                            <div class="estab-stat">
-                                <span class="label">Ventas Hoy</span>
-                                <span class="value" id="txt-estab-count-sold">0</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="establecimiento-layout-split">
-                        <div class="estab-flota-section">
-                            <h3 class="subtitle-premium"><i data-lucide="navigation"></i> Salidas Programadas</h3>
-                            <div id="estab-vehicles-grid" class="estab-vehicles-grid"></div>
-                        </div>
-
-                        <div class="estab-maqueta-section glass">
-                            <div id="maqueta-empty-state" class="maqueta-empty-state">
-                                <div class="glow-icon"><i data-lucide="monitor"></i></div>
-                                <h4>Selecciona una Movilidad</h4>
-                                <p>Haz clic en un vehículo de la izquierda para ver el mapa de asientos.</p>
-                            </div>
-
-                            <div id="maqueta-active-container" class="maqueta-active-container hidden">
-                                <div class="maqueta-vehicle-header">
-                                    <div class="vehicle-icon-large"><i data-lucide="bus" id="maqueta-icon-model"></i></div>
-                                    <div class="vehicle-details">
-                                        <h4 id="maqueta-txt-plate">---</h4>
-                                        <p id="maqueta-txt-route">---</p>
-                                    </div>
-                                    <div class="occupancy-pill" id="maqueta-txt-occupancy">Asientos: 0 / 0</div>
-                                </div>
-
-                                <div id="maqueta-floor-selector" class="maqueta-floor-selector glass hidden">
-                                    <button class="floor-btn active" data-floor="1">1° Piso</button>
-                                    <button class="floor-btn" data-floor="2">2° Piso</button>
-                                </div>
-
-                                <div class="bus-chassis-wrapper">
-                                    <div class="bus-chassis" id="bus-chassis-body">
-                                        <div class="bus-cabin-front">
-                                            <div class="steering-wheel"><i data-lucide="circle-dot"></i></div>
-                                        </div>
-                                        <div class="bus-seating-grid" id="bus-seats-grid-render"></div>
-                                    </div>
-                                </div>
-
-                                <div class="maqueta-footer-stats-grid">
-                                    <div class="stat-card stat-card-avail">
-                                        <div class="stat-card-header"><i data-lucide="circle-dot"></i> <span>Libres</span></div>
-                                        <span class="stat-card-value" id="stat-seats-avail">0</span>
-                                    </div>
-                                    <div class="stat-card stat-card-occ">
-                                        <div class="stat-card-header"><i data-lucide="user-x"></i> <span>Ocupados</span></div>
-                                        <span class="stat-card-value" id="stat-seats-occ">0</span>
-                                    </div>
-                                    <div class="stat-card stat-card-res">
-                                        <div class="stat-card-header"><i data-lucide="clock"></i> <span>Reservas</span></div>
-                                        <span class="stat-card-value" id="stat-seats-res">0</span>
-                                    </div>
-                                    <div class="stat-card stat-card-cash">
-                                        <div class="stat-card-header"><i data-lucide="wallet"></i> <span>Total Ventas</span></div>
-                                        <span class="stat-card-value" id="stat-seats-cash">0.00</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 📊 REPORTE DE VENTAS Y ARQUEO DE CAJA DEL TURNO (DEBAJO DEL SPLIT LAYOUT) -->
-                    <div class="estab-report-section glass mt-6">
-                        <div class="report-header">
-                            <div class="report-header-left">
-                                <h3 class="subtitle-premium"><i data-lucide="bar-chart-3"></i> Arqueo de Caja y Control de Ventas del Turno</h3>
-                                <p class="section-desc">Monitorea y cuadra tus ingresos por cada uno de los métodos de pago habilitados en tiempo real.</p>
-                            </div>
-                            <div class="payment-stats-badges" id="dynamic-payment-badges-container">
-                                <!-- Se poblará dinámicamente con balances en tiempo real -->
-                            </div>
-                            <!-- Soporte oculto para retrocompatibilidad de scripts legados -->
-                            <div style="display: none;">
-                                <strong id="cash-payment-total">S/. 0.00</strong>
-                                <strong id="digital-payment-total">S/. 0.00</strong>
-                            </div>
+                            <h2><i data-lucide="map-pin" style="color: var(--brand-primary); width: 20px; height: 20px;"></i> Sede: <span id="txt-estab-sede-name">Cargando...</span></h2>
+                            <p class="section-desc">Punto de venta y control administrativo en tiempo real.</p>
                         </div>
                         
-                        <div class="table-scroll-container mt-4">
-                            <table class="table-premium">
-                                <thead>
-                                    <tr>
-                                        <th>Código Ticket</th>
-                                        <th>Pasajero</th>
-                                        <th>Destino / Ruta</th>
-                                        <th>Ubicación</th>
-                                        <th>Método Pago</th>
-                                        <th>Monto Cobrado</th>
-                                        <th>Acción</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-sales-today-body">
-                                    <tr><td colspan="7" class="text-center">No hay ventas registradas hoy en este terminal.</td></tr>
-                                </tbody>
-                            </table>
+                        <!-- 🎛️ SUB-PESTAÑAS COMPACTAS -->
+                        <div style="display: flex; align-items: center; gap: 0.25rem; padding: 4px; background: rgba(241, 245, 249, 0.6); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 12px; flex-shrink: 0; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+                            <button type="button" class="tab-btn-compact active" data-subtab="subtab-taquilla">
+                                <i data-lucide="bus" style="width: 11px; height: 11px;"></i> Taquilla de Ventas
+                            </button>
+                            <button type="button" class="tab-btn-compact" data-subtab="subtab-arqueo">
+                                <i data-lucide="bar-chart-3" style="width: 11px; height: 11px;"></i> Arqueo y Control de Turno
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- SUBTAB 1: TAQUILLA DE VENTAS -->
+                    <div id="subtab-taquilla" class="subtab-content-b2b">
+                        <div class="establecimiento-layout-split">
+                            <div class="estab-flota-section">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+                                    <h3 class="subtitle-premium" style="margin: 0;"><i data-lucide="navigation"></i> Salidas Programadas</h3>
+                                    <div class="estab-overview-stats glass" style="margin: 0; padding: 0.25rem 0.75rem; display: flex; gap: 0.75rem; border-radius: 8px;">
+                                        <div class="estab-stat" style="font-size: var(--text-xs); font-weight: 700;">Vehículos: <span id="txt-estab-count-vehicles">0</span></div>
+                                        <div class="estab-stat" style="font-size: var(--text-xs); font-weight: 700;">Ventas: <span id="txt-estab-count-sold">0</span></div>
+                                    </div>
+                                </div>
+                                <div id="estab-vehicles-grid" class="estab-vehicles-grid"></div>
+                            </div>
+
+                            <div class="estab-maqueta-section glass">
+                                <div id="maqueta-empty-state" class="maqueta-empty-state">
+                                    <div class="glow-icon"><i data-lucide="monitor"></i></div>
+                                    <h4>Selecciona una Movilidad</h4>
+                                    <p>Haz clic en un vehículo de la izquierda para ver el mapa de asientos.</p>
+                                </div>
+
+                                <div id="maqueta-active-container" class="maqueta-active-container hidden">
+                                    <div class="maqueta-vehicle-header">
+                                        <div class="vehicle-icon-large"><i data-lucide="bus" id="maqueta-icon-model"></i></div>
+                                        <div class="vehicle-details">
+                                            <h4 id="maqueta-txt-plate">---</h4>
+                                            <p id="maqueta-txt-route">---</p>
+                                        </div>
+                                        <div class="occupancy-pill" id="maqueta-txt-occupancy">Asientos: 0 / 0</div>
+                                    </div>
+
+                                    <div id="maqueta-floor-selector" class="maqueta-floor-selector glass hidden">
+                                        <button class="floor-btn active" data-floor="1">1° Piso</button>
+                                        <button class="floor-btn" data-floor="2">2° Piso</button>
+                                    </div>
+
+                                    <div class="bus-chassis-wrapper">
+                                        <div class="bus-chassis" id="bus-chassis-body">
+                                            <div class="bus-cabin-front">
+                                                <div class="steering-wheel"><i data-lucide="circle-dot"></i></div>
+                                            </div>
+                                            <div class="bus-seating-grid" id="bus-seats-grid-render"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="maqueta-footer-stats-grid">
+                                        <div class="stat-card stat-card-avail">
+                                            <div class="stat-card-header"><i data-lucide="circle-dot"></i> <span>Libres</span></div>
+                                            <span class="stat-card-value" id="stat-seats-avail">0</span>
+                                        </div>
+                                        <div class="stat-card stat-card-occ">
+                                            <div class="stat-card-header"><i data-lucide="user-x"></i> <span>Ocupados</span></div>
+                                            <span class="stat-card-value" id="stat-seats-occ">0</span>
+                                        </div>
+                                        <div class="stat-card stat-card-res">
+                                            <div class="stat-card-header"><i data-lucide="clock"></i> <span>Reservas</span></div>
+                                            <span class="stat-card-value" id="stat-seats-res">0</span>
+                                        </div>
+                                        <div class="stat-card stat-card-cash">
+                                            <div class="stat-card-header"><i data-lucide="wallet"></i> <span>Total Ventas</span></div>
+                                            <span class="stat-card-value" id="stat-seats-cash">0.00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUBTAB 2: ARQUEO Y CONTROL DE TURNO -->
+                    <div id="subtab-arqueo" class="subtab-content-b2b hidden">
+                        <!-- 📊 REPORTE DE VENTAS Y ARQUEO DE CAJA DEL TURNO -->
+                        <div class="estab-report-section glass">
+                            <div class="report-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                <div class="report-header-left">
+                                    <h3 class="subtitle-premium" style="margin: 0;"><i data-lucide="bar-chart-3"></i> Arqueo de Caja y Control de Ventas del Turno</h3>
+                                    <p class="section-desc">Monitorea y cuadra tus ingresos por cada uno de los métodos de pago habilitados en tiempo real.</p>
+                                </div>
+                                <div class="payment-stats-badges" id="dynamic-payment-badges-container" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <!-- Se poblará dinámicamente con balances en tiempo real -->
+                                </div>
+                                <!-- Soporte oculto para retrocompatibilidad de scripts legados -->
+                                <div style="display: none;">
+                                    <strong id="cash-payment-total">S/. 0.00</strong>
+                                    <strong id="digital-payment-total">S/. 0.00</strong>
+                                </div>
+                            </div>
+                            
+                            <div class="table-scroll-container mt-4">
+                                <table class="table-premium">
+                                    <thead>
+                                        <tr>
+                                            <th>Código Ticket</th>
+                                            <th>Pasajero</th>
+                                            <th>Destino / Ruta</th>
+                                            <th>Ubicación</th>
+                                            <th>Método Pago</th>
+                                            <th>Monto Cobrado</th>
+                                            <th>Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-sales-today-body">
+                                        <tr><td colspan="7" class="text-center">No hay ventas registradas hoy en este terminal.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </section>
