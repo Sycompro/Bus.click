@@ -445,21 +445,14 @@
             });
         });
 
+        // Configurar el botón del Splash Screen para desvanecerse (Sin Fullscreen para barra blanca activa)
         const sScreen = document.getElementById("b2c-splash-screen");
         const bEnter = document.getElementById("btn-enter-fullscreen");
         if (sScreen && bEnter) {
             bEnter.addEventListener("click", () => {
-                const de = document.documentElement;
-                try {
-                    if (de.requestFullscreen) de.requestFullscreen();
-                    else if (de.webkitRequestFullscreen) de.webkitRequestFullscreen();
-                    else if (de.mozRequestFullScreen) de.mozRequestFullScreen();
-                    else if (de.msRequestFullscreen) de.msRequestFullscreen();
-                } catch (e) { console.warn(e); }
                 sScreen.classList.add("hidden");
             });
         }
     </script>
 </body>
 </html>
-
