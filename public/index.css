@@ -5,8 +5,8 @@
 
 /* ─── VARIABLES GLOBALES ─── */
 :root {
-    --font-primary: 'Plus Jakarta Sans', sans-serif;
-    --font-heading: 'Outfit', sans-serif;
+    --font-primary: 'Inter', sans-serif;
+    --font-heading: 'Inter', sans-serif;
 
     /* 🎨 Paleta Principal - Pasteles Vibrantes */
     --bg-base: #ffffff;
@@ -3926,7 +3926,7 @@ body {
 .b2c-body {
     margin: 0;
     padding: 0;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Inter', sans-serif;
     background: #f8f9fc;
     color: #1e293b;
     -webkit-font-smoothing: antialiased;

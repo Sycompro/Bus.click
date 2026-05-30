@@ -48,7 +48,7 @@
                 <!-- Formulario de búsqueda -->
                 <form id="form-mobile-search" class="b2c-search-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: var(--pastel-amber-accent);"></i> Origen</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: var(--pastel-green-text);"></i> Origen</label>
                         <select id="search-origin" class="b2c-select" required>
                             <option value="" disabled selected>¿Desde dónde sales?</option>
                         </select>
@@ -63,14 +63,14 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: var(--pastel-rose-accent);"></i> Destino</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: var(--pastel-rose-text);"></i> Destino</label>
                         <select id="search-destination" class="b2c-select" required>
                             <option value="" disabled selected>¿A dónde vas?</option>
                         </select>
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: var(--pastel-teal-accent);"></i> Fecha del viaje</label>
+                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: var(--pastel-sky-text);"></i> Fecha del viaje</label>
                         <div class="datepicker-wrapper">
                             <input type="text" class="datepicker-input b2c-input" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
                             <input type="hidden" id="search-date" required>
@@ -86,7 +86,7 @@
                 <!-- Beneficios -->
                 <div class="b2c-benefits">
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: var(--pastel-amber); color: var(--pastel-amber-accent);">
+                        <div class="b2c-benefit-icon" style="background: var(--pastel-violet); color: var(--pastel-violet-text);">
                             <i data-lucide="shield-check"></i>
                         </div>
                         <div>
@@ -95,7 +95,7 @@
                         </div>
                     </div>
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: var(--pastel-amber); color: var(--pastel-amber-accent);">
+                        <div class="b2c-benefit-icon" style="background: var(--pastel-sky); color: var(--pastel-sky-text);">
                             <i data-lucide="ticket"></i>
                         </div>
                         <div>
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: var(--pastel-amber); color: var(--pastel-amber-accent);">
+                        <div class="b2c-benefit-icon" style="background: var(--pastel-teal); color: var(--pastel-teal-text);">
                             <i data-lucide="zap"></i>
                         </div>
                         <div>
@@ -201,7 +201,7 @@
 
                 <form id="form-mobile-passenger" class="b2c-passenger-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: var(--pastel-amber-accent);"></i> DNI del Pasajero</label>
+                        <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: var(--pastel-violet-text);"></i> DNI del Pasajero</label>
                         <div class="b2c-dni-row">
                             <input type="text" id="passenger-dni" class="b2c-input" required placeholder="Ej: 12345678" maxlength="8">
                             <button type="button" id="btn-mobile-reniec" class="b2c-btn-reniec">
@@ -211,26 +211,26 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #14b8a6;"></i> Nombre Completo</label>
+                        <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: var(--pastel-sky-text);"></i> Nombre Completo</label>
                         <input type="text" id="passenger-name" class="b2c-input" required placeholder="Nombres y apellidos">
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: var(--pastel-green-accent);"></i> WhatsApp del Pasajero (para recibir tu boleto)</label>
+                        <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: var(--pastel-green-text);"></i> WhatsApp del Pasajero (para recibir tu boleto)</label>
                         <input type="tel" id="passenger-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}">
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="wallet" class="b2c-label-icon" style="color: var(--pastel-green-accent);"></i> Método de Pago</label>
+                        <label class="b2c-label"><i data-lucide="wallet" class="b2c-label-icon" style="color: var(--pastel-amber-text);"></i> Método de Pago</label>
                         <div class="b2c-payment-options">
                             <label class="b2c-payment-opt selected">
                                 <input type="radio" name="mobile-payment" value="Yape/Plin" checked>
-                                <div class="b2c-payment-icon" style="background: var(--pastel-amber); color: var(--pastel-amber-accent);"><i data-lucide="smartphone"></i></div>
+                                <div class="b2c-payment-icon" style="background: var(--pastel-violet); color: var(--pastel-violet-text);"><i data-lucide="smartphone"></i></div>
                                 <span>Yape / Plin</span>
                             </label>
                             <label class="b2c-payment-opt">
                                 <input type="radio" name="mobile-payment" value="Tarjeta">
-                                <div class="b2c-payment-icon" style="background: var(--pastel-amber); color: var(--pastel-amber-accent);"><i data-lucide="credit-card"></i></div>
+                                <div class="b2c-payment-icon" style="background: var(--pastel-sky); color: var(--pastel-sky-text);"><i data-lucide="credit-card"></i></div>
                                 <span>Tarjeta</span>
                             </label>
                         </div>
@@ -255,7 +255,7 @@
                     <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px dashed var(--border-soft); padding-bottom: 0.75rem;">
                         <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--pastel-amber-accent); color: black; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);">📲</div>
                         <div>
-                            <span style="font-weight: 800; color: #ffffff; font-size: 0.85rem; display: block;">Completa tu Pago con Yape / Plin</span>
+                            <span style="font-weight: 800; color: #1e293b; font-size: 0.85rem; display: block;">Completa tu Pago con Yape / Plin</span>
                             <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 500;">Envía tu comprobante para activar tu pasaje de forma oficial.</span>
                         </div>
                     </div>
@@ -264,7 +264,7 @@
                         <div style="display: flex; flex-direction: column; gap: 6px;">
                             <span style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Número de Celular</span>
                             <span style="font-size: 1.25rem; font-weight: 800; color: var(--pastel-amber-accent); letter-spacing: 0.5px;" id="yape-display-phone">987 654 321</span>
-                            <span style="font-size: 0.72rem; font-weight: 700; color: #cbd5e1; margin-top: 2px;" id="yape-display-titular">Titular: Herrera Trans S.A.</span>
+                            <span style="font-size: 0.72rem; font-weight: 700; color: #475569; margin-top: 2px;" id="yape-display-titular">Titular: Herrera Trans S.A.</span>
                             <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 500; display: block; margin-top: 4px;">• Monto exacto a transferir: <strong style="color: var(--pastel-amber-accent);" id="yape-display-monto">S/ 0.00</strong></span>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
