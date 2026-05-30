@@ -83,25 +83,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
             <style>
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-            </style>
-        `;
+            </style>`;
         return;
     }
 
-    // Inicializar iconos
+    // Inicializar iconos de Lucide
     lucide.createIcons();
-    
-    // Obtener parámetros de multi-tenancy de la URL
+
+    // Inicializar parámetros URL
     const urlParams = new URLSearchParams(window.location.search);
-    state.companyId = urlParams.get('companyId') || urlParams.get('empresa');
-    
-    // Inicializar Datepicker Premium
+    state.companyId = urlParams.get('companyId') || urlParams.get('company') || urlParams.get('c');
+
+    // Cargar Datepickers
     initPremiumDatepickers();
-    
-    // Cargar datos catálogos
+
+    // Cargar datos iniciales
     await loadInitialData();
-    
-    // Configurar controladores de eventos y navegación
+
     setupEventListeners();
     
     // Cargar el historial de pasajes si existe en el tab

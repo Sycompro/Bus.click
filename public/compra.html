@@ -11,6 +11,26 @@
 </head>
 <body class="b2c-body">
 
+    <!-- PANTALLA DE BIENVENIDA PREMIUM (TECNICA A: PANTALLA COMPLETA NATIVA) -->
+    <div id="b2c-splash-screen" class="b2c-splash">
+        <div class="b2c-splash-content">
+            <div class="b2c-splash-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bus"><rect width="16" height="16" x="4" y="2" rx="2"/><path d="M4 14h16"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M6 18H5a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1h1"/><path d="M18 18h1a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1h-1"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/></svg>
+            </div>
+            <h1 class="b2c-splash-title">Bus<strong>.click</strong></h1>
+            <p class="b2c-splash-subtitle">Tu viaje comienza aquí. Compra y gestiona tus pasajes de forma rápida y segura.</p>
+            
+            <button type="button" id="btn-enter-fullscreen" class="b2c-splash-btn-enter">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Ingresar a la App
+            </button>
+            <div class="b2c-splash-footer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11 2 2 4-4"/></svg>
+                Conexión Segura Encriptada
+            </div>
+        </div>
+    </div>
+
     <!-- NAVBAR SUPERIOR -->
     <nav class="b2c-navbar">
         <div class="b2c-navbar-inner">
@@ -411,13 +431,29 @@
                 btn.classList.add('active');
             });
         });
-        // Sync radio buttons para estilo visual de método de pago
+
         document.querySelectorAll('.b2c-payment-opt input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', () => {
                 document.querySelectorAll('.b2c-payment-opt').forEach(opt => opt.classList.remove('selected'));
                 radio.closest('.b2c-payment-opt').classList.add('selected');
             });
         });
+
+        const sScreen = document.getElementById("b2c-splash-screen");
+        const bEnter = document.getElementById("btn-enter-fullscreen");
+        if (sScreen && bEnter) {
+            bEnter.addEventListener("click", () => {
+                const de = document.documentElement;
+                try {
+                    if (de.requestFullscreen) de.requestFullscreen();
+                    else if (de.webkitRequestFullscreen) de.webkitRequestFullscreen();
+                    else if (de.mozRequestFullScreen) de.mozRequestFullScreen();
+                    else if (de.msRequestFullscreen) de.msRequestFullscreen();
+                } catch (e) { console.warn(e); }
+                sScreen.classList.add("hidden");
+            });
+        }
     </script>
 </body>
 </html>
+
