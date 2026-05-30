@@ -48,7 +48,7 @@
                 <!-- Formulario de búsqueda -->
                 <form id="form-mobile-search" class="b2c-search-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #7c3aed;"></i> Origen</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #f59e0b;"></i> Origen</label>
                         <select id="search-origin" class="b2c-select" required>
                             <option value="" disabled selected>¿Desde dónde sales?</option>
                         </select>
@@ -63,14 +63,14 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #e11d48;"></i> Destino</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #ef4444;"></i> Destino</label>
                         <select id="search-destination" class="b2c-select" required>
                             <option value="" disabled selected>¿A dónde vas?</option>
                         </select>
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #0891b2;"></i> Fecha del viaje</label>
+                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #14b8a6;"></i> Fecha del viaje</label>
                         <div class="datepicker-wrapper">
                             <input type="text" class="datepicker-input b2c-input" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
                             <input type="hidden" id="search-date" required>
@@ -86,7 +86,7 @@
                 <!-- Beneficios -->
                 <div class="b2c-benefits">
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: #ede9fe; color: #7c3aed;">
+                        <div class="b2c-benefit-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
                             <i data-lucide="shield-check"></i>
                         </div>
                         <div>
@@ -95,7 +95,7 @@
                         </div>
                     </div>
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: #fce7f3; color: #db2777;">
+                        <div class="b2c-benefit-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
                             <i data-lucide="ticket"></i>
                         </div>
                         <div>
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: #d1fae5; color: #059669;">
+                        <div class="b2c-benefit-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;">
                             <i data-lucide="zap"></i>
                         </div>
                         <div>
@@ -160,13 +160,13 @@
                 <!-- Leyenda -->
                 <div class="b2c-legend">
                     <div class="b2c-legend-item">
-                        <div class="b2c-legend-dot" style="background: #f1f5f9; border: 2px solid #cbd5e1;"></div> Libre
+                        <div class="b2c-legend-dot" style="background: #0a0b0d; border: 2px solid #1e2028;"></div> Libre
                     </div>
                     <div class="b2c-legend-item">
-                        <div class="b2c-legend-dot" style="background: #fee2e2; border: 2px solid #fca5a5;"></div> Ocupado
+                        <div class="b2c-legend-dot" style="background: rgba(185, 28, 28, 0.12); border: 2px solid #b91c1c;"></div> Ocupado
                     </div>
                     <div class="b2c-legend-item">
-                        <div class="b2c-legend-dot" style="background: #7c3aed; border: 2px solid #7c3aed;"></div> Tu Selección
+                        <div class="b2c-legend-dot" style="background: #14b8a6; border: 2px solid #14b8a6;"></div> Tu Selección
                     </div>
                 </div>
 
@@ -201,7 +201,7 @@
 
                 <form id="form-mobile-passenger" class="b2c-passenger-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #7c3aed;"></i> DNI del Pasajero</label>
+                        <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #f59e0b;"></i> DNI del Pasajero</label>
                         <div class="b2c-dni-row">
                             <input type="text" id="passenger-dni" class="b2c-input" required placeholder="Ej: 12345678" maxlength="8">
                             <button type="button" id="btn-mobile-reniec" class="b2c-btn-reniec">
@@ -211,26 +211,26 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #0891b2;"></i> Nombre Completo</label>
+                        <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #14b8a6;"></i> Nombre Completo</label>
                         <input type="text" id="passenger-name" class="b2c-input" required placeholder="Nombres y apellidos">
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #25d366;"></i> WhatsApp del Pasajero (para recibir tu boleto)</label>
+                        <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #10b981;"></i> WhatsApp del Pasajero (para recibir tu boleto)</label>
                         <input type="tel" id="passenger-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}">
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="wallet" class="b2c-label-icon" style="color: #059669;"></i> Método de Pago</label>
+                        <label class="b2c-label"><i data-lucide="wallet" class="b2c-label-icon" style="color: #10b981;"></i> Método de Pago</label>
                         <div class="b2c-payment-options">
                             <label class="b2c-payment-opt selected">
                                 <input type="radio" name="mobile-payment" value="Yape/Plin" checked>
-                                <div class="b2c-payment-icon" style="background: #ede9fe; color: #7c3aed;"><i data-lucide="smartphone"></i></div>
+                                <div class="b2c-payment-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;"><i data-lucide="smartphone"></i></div>
                                 <span>Yape / Plin</span>
                             </label>
                             <label class="b2c-payment-opt">
                                 <input type="radio" name="mobile-payment" value="Tarjeta">
-                                <div class="b2c-payment-icon" style="background: #fce7f3; color: #db2777;"><i data-lucide="credit-card"></i></div>
+                                <div class="b2c-payment-icon" style="background: rgba(245, 158, 11, 0.12); color: #f59e0b;"><i data-lucide="credit-card"></i></div>
                                 <span>Tarjeta</span>
                             </label>
                         </div>
@@ -251,24 +251,24 @@
                 </div>
 
                 <!-- BANNER INTERACTIVO DE PAGO YAPE/PLIN PREMIUM -->
-                <div id="yape-payment-instructions" class="hidden" style="background: #faf5ff; border: 1px solid #ede9fe; padding: 1.25rem; border-radius: 16px; margin: 0 auto 1.5rem auto; text-align: left; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 4px 25px rgba(124, 58, 237, 0.05); max-width: 450px;">
-                    <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px dashed #ede9fe; padding-bottom: 0.75rem;">
-                        <div style="width: 36px; height: 36px; border-radius: 50%; background: #7c3aed; color: white; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(124, 58, 237, 0.2);">📲</div>
+                <div id="yape-payment-instructions" class="hidden" style="background: #0d0e12; border: 1px solid #1e2028; padding: 1.25rem; border-radius: 16px; margin: 0 auto 1.5rem auto; text-align: left; display: flex; flex-direction: column; gap: 0.75rem; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); max-width: 450px;">
+                    <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px dashed #1e2028; padding-bottom: 0.75rem;">
+                        <div style="width: 36px; height: 36px; border-radius: 50%; background: #f59e0b; color: black; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);">📲</div>
                         <div>
-                            <span style="font-weight: 800; color: #1e1b4b; font-size: 0.85rem; display: block;">Completa tu Pago con Yape / Plin</span>
-                            <span style="font-size: 0.7rem; color: #64748b; font-weight: 500;">Envía tu comprobante para activar tu pasaje de forma oficial.</span>
+                            <span style="font-weight: 800; color: #ffffff; font-size: 0.85rem; display: block;">Completa tu Pago con Yape / Plin</span>
+                            <span style="font-size: 0.7rem; color: #94a3b8; font-weight: 500;">Envía tu comprobante para activar tu pasaje de forma oficial.</span>
                         </div>
                     </div>
                     
                     <div style="display: grid; grid-template-columns: 1fr auto; gap: 1.25rem; align-items: center;">
                         <div style="display: flex; flex-direction: column; gap: 6px;">
                             <span style="font-size: 0.65rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Número de Celular</span>
-                            <span style="font-size: 1.25rem; font-weight: 800; color: #7c3aed; letter-spacing: 0.5px;" id="yape-display-phone">987 654 321</span>
-                            <span style="font-size: 0.72rem; font-weight: 700; color: #334155; margin-top: 2px;" id="yape-display-titular">Titular: Herrera Trans S.A.</span>
-                            <span style="font-size: 0.65rem; color: #64748b; font-weight: 500; display: block; margin-top: 4px;">• Monto exacto a transferir: <strong style="color: #7c3aed;" id="yape-display-monto">S/ 0.00</strong></span>
+                            <span style="font-size: 1.25rem; font-weight: 800; color: #f59e0b; letter-spacing: 0.5px;" id="yape-display-phone">987 654 321</span>
+                            <span style="font-size: 0.72rem; font-weight: 700; color: #cbd5e1; margin-top: 2px;" id="yape-display-titular">Titular: Herrera Trans S.A.</span>
+                            <span style="font-size: 0.65rem; color: #94a3b8; font-weight: 500; display: block; margin-top: 4px;">• Monto exacto a transferir: <strong style="color: #f59e0b;" id="yape-display-monto">S/ 0.00</strong></span>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-                            <div style="width: 90px; height: 90px; border: 1px solid #e8ecf3; border-radius: 12px; background: white; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.02);" id="yape-qr-box">
+                            <div style="width: 90px; height: 90px; border: 1px solid #1e2028; border-radius: 12px; background: white; padding: 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.02);" id="yape-qr-box">
                                 <!-- QR Dinámico de Yape -->
                             </div>
                             <span style="font-size: 0.55rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;">Escanear QR</span>
