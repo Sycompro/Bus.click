@@ -454,10 +454,10 @@
         if (sScreen && bEnter) {
             bEnter.addEventListener("click", () => {
                 sScreen.classList.add("hidden");
-                // Scroll suave de un píxel para colapsar la barra de direcciones de Chrome y Safari de forma elegante
+                // Scroll programático de 80px para forzar el colapso inmediato del header de Chrome/Safari en móviles
                 setTimeout(() => {
-                    window.scrollTo({ top: 1, behavior: 'smooth' });
-                }, 300);
+                    window.scrollTo(0, 80);
+                }, 80);
             });
         }
     </script>

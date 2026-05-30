@@ -3933,6 +3933,7 @@ body {
     background: #f8f9fc;
     color: #1e293b;
     -webkit-font-smoothing: antialiased;
+    min-height: calc(100vh + 80px) !important;
 }
 
 /* ── Navbar ── */
