@@ -40,17 +40,22 @@ const MOCK_NAMES = {
     "45678901": "Alejandro Ruiz Ortiz",
     "12345678": "Renzo Valdivia Ludeña",
     "87654321": "Milagros Cáceres Rivas"
-};
-
-// --- AL CARGAR EL DOCUMENTO ---
+};// --- AL CARGAR EL DOCUMENTO ---
 document.addEventListener("DOMContentLoaded", async () => {
-    // Detección estricta de WhatsApp o bypass de desarrollo/admin
+    // Detección estricta de procedencia de WhatsApp
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const isWhatsApp = /WhatsApp/i.test(userAgent);
+    const isWhatsAppUA = /WhatsApp/i.test(userAgent);
+    const isWhatsAppReferrer = document.referrer && document.referrer.toLowerCase().includes('whatsapp');
+    const isWhatsAppUrlParam = new URLSearchParams(window.location.search).get('from') === 'whatsapp' || 
+                               new URLSearchParams(window.location.search).get('ref') === 'wa' ||
+                               new URLSearchParams(window.location.search).has('wps');
+                               
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('.local');
     const hasBypass = new URLSearchParams(window.location.search).has('bypass') || new URLSearchParams(window.location.search).has('admin');
 
-    if (!isWhatsApp && !isLocalhost && !hasBypass) {
+    const allowedAccess = isWhatsAppUA || isWhatsAppReferrer || isWhatsAppUrlParam || isLocalhost || hasBypass;
+
+    if (!allowedAccess) {
         // Bloquear acceso e inyectar pantalla de bloqueo premium blanco pastel
         document.body.innerHTML = `
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: #ffffff; background-image: radial-gradient(ellipse at 50% 50%, rgba(37, 211, 102, 0.04) 0%, transparent 60%) !important; font-family: 'Outfit', sans-serif; text-align: center; box-sizing: border-box; color: #1e293b; animation: fadeIn 0.4s ease;">
