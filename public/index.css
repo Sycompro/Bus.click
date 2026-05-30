@@ -5036,48 +5036,54 @@ body {
 }
 
 /* ==========================================================================
-   📲 B2C PASSENGER PORTAL — PREMIUM DARK MODE (BLACK THEME - CYBER AMBER)
+   📲 B2C PASSENGER PORTAL — TEMA BLANCO PASTEL PREMIUM
    ========================================================================== */
 .b2c-body, .b2c-app-container {
-    background: #000000 !important;
-    color: #e2e8f0 !important;
+    background: #ffffff !important;
+    color: #334155 !important;
 }
 
 /* Navbar */
 .b2c-navbar {
-    background: rgba(0, 0, 0, 0.9) !important;
-    border-bottom: 1px solid #1e2028 !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--border-soft) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8) !important;
+    box-shadow: 0 1px 8px rgba(99, 102, 241, 0.06) !important;
 }
 .b2c-logo strong {
-    color: #f59e0b !important; /* Ámbar Neón */
+    color: var(--brand-primary) !important;
 }
 .b2c-logo span {
-    color: #ffffff !important;
+    color: #1e293b !important;
 }
 .b2c-nav-btn {
-    color: #94a3b8 !important;
+    color: #64748b !important;
 }
 .b2c-nav-btn:hover {
-    background: rgba(255, 255, 255, 0.05) !important;
-    color: #ffffff !important;
+    background: var(--brand-primary-pale) !important;
+    color: var(--brand-primary) !important;
 }
 .b2c-nav-btn.active {
-    background: rgba(245, 158, 11, 0.15) !important;
-    color: #f59e0b !important;
+    background: var(--brand-primary-pale) !important;
+    color: var(--brand-primary) !important;
 }
 
 /* Titles */
 .b2c-hero-title, .b2c-step-title, .b2c-summary-value {
-    color: #ffffff !important;
+    color: #1e293b !important;
 }
-.b2c-hero-sub, .b2c-step-sub, .b2c-label, .b2c-summary-label {
-    color: #94a3b8 !important;
+.b2c-hero-sub, .b2c-step-sub {
+    color: #64748b !important;
+}
+.b2c-label {
+    color: #475569 !important;
+}
+.b2c-summary-label {
+    color: #64748b !important;
 }
 
-/* Cards (Azul Noche Profundo Sólido) */
+/* Cards */
 .b2c-search-card, 
 .b2c-route-card, 
 .b2c-bus-map, 
@@ -5085,34 +5091,34 @@ body {
 .b2c-passenger-card, 
 .b2c-benefit,
 #step-ticket {
-    background: #0d0e12 !important; /* Azul Noche */
-    border: 1px solid #1e2028 !important; /* Borde Noche */
+    background: #ffffff !important;
+    border: 1px solid var(--border-soft) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7) !important;
+    box-shadow: var(--shadow-soft) !important;
 }
 
 /* Route card hover */
 .b2c-route-card:hover {
-    border-color: #f59e0b !important;
-    background: rgba(245, 158, 11, 0.05) !important;
-    box-shadow: 0 10px 40px rgba(245, 158, 11, 0.08) !important;
+    border-color: var(--brand-primary-light) !important;
+    background: var(--brand-primary-pale) !important;
+    box-shadow: var(--shadow-medium) !important;
 }
 
 /* Inputs & Selects */
 .b2c-select, .b2c-input, .b2c-body .datepicker-input {
-    background: #0a0b0d !important;
-    border: 1.5px solid #1e2028 !important;
-    color: #ffffff !important;
+    background: #f8fafc !important;
+    border: 1.5px solid var(--border-soft) !important;
+    color: #1e293b !important;
 }
 .b2c-select:focus, .b2c-input:focus, .b2c-body .datepicker-input:focus {
-    background: #0a0b0d !important;
-    border-color: #f59e0b !important;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
+    background: #ffffff !important;
+    border-color: var(--brand-primary) !important;
+    box-shadow: 0 0 0 3px var(--brand-primary-glow) !important;
 }
 .b2c-select option {
-    background: #0d0e12 !important;
-    color: #ffffff !important;
+    background: #ffffff !important;
+    color: #1e293b !important;
 }
 
 /* Datepicker placeholder B2C override */
@@ -5122,83 +5128,156 @@ body {
 
 /* Buttons */
 .b2c-btn-back, .b2c-floor-btn {
-    background: rgba(255, 255, 255, 0.04) !important;
-    border: 1.5px solid #1e2028 !important;
-    color: #cbd5e1 !important;
+    background: #f1f5f9 !important;
+    border: 1.5px solid var(--border-soft) !important;
+    color: #475569 !important;
 }
 .b2c-btn-back:hover, .b2c-floor-btn:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border-color: #2e303d !important;
-    color: #ffffff !important;
+    background: var(--brand-primary-pale) !important;
+    border-color: var(--brand-primary-lighter) !important;
+    color: var(--brand-primary) !important;
 }
 .b2c-floor-btn.active {
-    background: #f59e0b !important;
-    color: #000000 !important;
-    border-color: #f59e0b !important;
+    background: var(--brand-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--brand-primary) !important;
 }
 
-/* Primary Button (Cyber Amber Sólido) */
+/* Primary Button (Pastel violeta premium) */
 .b2c-btn-primary {
-    background: #f59e0b !important; /* Ámbar Sólido */
-    color: #000000 !important;      /* Contraste oscuro premium */
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25) !important;
+    background: var(--brand-primary) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25) !important;
 }
 .b2c-btn-primary:hover {
-    background: #d97706 !important; /* Ámbar Oscuro */
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35) !important;
+    background: var(--brand-secondary) !important;
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35) !important;
     transform: translateY(-1px);
 }
 .b2c-btn-primary:active {
     transform: translateY(0);
 }
 .b2c-btn-primary:disabled {
-    background: rgba(245, 158, 11, 0.5) !important;
-    color: rgba(0, 0, 0, 0.5) !important;
+    background: rgba(99, 102, 241, 0.4) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
     box-shadow: none !important;
     transform: none !important;
 }
 
 /* Swap button */
 .b2c-swap-btn {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-color: #1e2028 !important;
-    color: #ffffff !important;
+    background: #f1f5f9 !important;
+    border-color: var(--border-soft) !important;
+    color: #475569 !important;
 }
 .b2c-swap-btn:hover {
-    background: #f59e0b !important;
-    border-color: #f59e0b !important;
-    color: #000000 !important;
+    background: var(--brand-primary) !important;
+    border-color: var(--brand-primary) !important;
+    color: #ffffff !important;
 }
 
 /* Seat Map Cabin Grid */
 .b2c-bus-cabin-header {
-    border-bottom-color: #1e2028 !important;
+    border-bottom-color: var(--border-soft) !important;
     color: #64748b !important;
 }
 .mobile-bus-seat {
-    background: #0a0b0d !important;
-    border: 2px solid #1e2028 !important;
-    color: #cbd5e1 !important;
+    background: #f8fafc !important;
+    border: 2px solid var(--border-soft) !important;
+    color: #475569 !important;
 }
 .mobile-bus-seat:hover:not(.occupied) {
-    border-color: #14b8a6 !important;
-    background: rgba(20, 184, 166, 0.12) !important;
-    color: #14b8a6 !important;
+    border-color: var(--pastel-teal-accent) !important;
+    background: var(--pastel-teal) !important;
+    color: var(--pastel-teal-text) !important;
 }
 .mobile-bus-seat.occupied {
-    background: rgba(185, 28, 28, 0.12) !important;
-    border-color: #b91c1c !important;
-    color: #f87171 !important;
+    background: var(--pastel-rose) !important;
+    border-color: var(--pastel-rose-accent) !important;
+    color: var(--pastel-rose-text) !important;
 }
 .mobile-bus-seat.selected {
-    background: #14b8a6 !important; /* Menta Sólido */
-    border-color: #14b8a6 !important;
-    color: #000000 !important;      /* Contraste oscuro premium */
+    background: var(--pastel-sky-accent) !important;
+    border-color: var(--pastel-sky-accent) !important;
+    color: #ffffff !important;
 }
 
 /* Benefit Cards text override */
 .b2c-benefit-title {
+    color: #1e293b !important;
+}
+
+/* Mobile Tab Bar */
+.b2c-mobile-tabbar {
+    background: #ffffff !important;
+    border-top: 1px solid var(--border-soft) !important;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.04) !important;
+}
+.b2c-tabbar-item {
+    color: #94a3b8 !important;
+}
+.b2c-tabbar-item.active {
+    color: var(--brand-primary) !important;
+}
+
+/* Ticket section */
+.b2c-ticket {
+    background: #ffffff !important;
+    border: 1px solid var(--border-soft) !important;
+    box-shadow: var(--shadow-soft) !important;
+}
+.b2c-ticket-label {
+    color: #64748b !important;
+}
+.b2c-ticket-val, .b2c-ticket-city, .b2c-ticket-company {
+    color: #1e293b !important;
+}
+
+/* Payment options */
+.b2c-payment-opt {
+    border-color: var(--border-soft) !important;
+    background: #f8fafc !important;
+}
+.b2c-payment-opt.selected {
+    border-color: var(--brand-primary) !important;
+    background: var(--brand-primary-pale) !important;
+}
+
+/* Legend */
+.b2c-legend-item {
+    color: #475569 !important;
+}
+
+/* Yape payment section text overrides for white theme */
+#yape-payment-instructions {
+    background: #f8fafc !important;
+    border: 1px solid var(--border-soft) !important;
+    box-shadow: var(--shadow-medium) !important;
+}
+#yape-payment-instructions span[style*="color: #ffffff"] {
+    color: #1e293b !important;
+}
+#yape-payment-instructions span[style*="color: #94a3b8"] {
+    color: #64748b !important;
+}
+#yape-payment-instructions span[style*="color: #cbd5e1"] {
+    color: #475569 !important;
+}
+
+/* RENIEC button */
+.b2c-btn-reniec {
+    background: var(--pastel-violet) !important;
+    color: var(--pastel-violet-text) !important;
+    border: 1px solid var(--pastel-violet-border) !important;
+}
+.b2c-btn-reniec:hover {
+    background: var(--pastel-violet-accent) !important;
     color: #ffffff !important;
+}
+
+/* Price accent */
+.b2c-price {
+    color: var(--brand-primary) !important;
 }
 
 
