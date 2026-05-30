@@ -5036,23 +5036,23 @@ body {
 }
 
 /* ==========================================================================
-   📲 B2C PASSENGER PORTAL — PREMIUM DARK MODE (BLACK THEME)
+   📲 B2C PASSENGER PORTAL — PREMIUM DARK MODE (BLACK THEME - CYBER AMBER)
    ========================================================================== */
 .b2c-body, .b2c-app-container {
     background: #000000 !important;
-    color: #f8fafc !important;
+    color: #e2e8f0 !important;
 }
 
 /* Navbar */
 .b2c-navbar {
-    background: rgba(0, 0, 0, 0.8) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 0, 0, 0.9) !important;
+    border-bottom: 1px solid #1e2028 !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8) !important;
 }
 .b2c-logo strong {
-    color: #a78bfa !important;
+    color: #f59e0b !important; /* Ámbar Neón */
 }
 .b2c-logo span {
     color: #ffffff !important;
@@ -5065,8 +5065,8 @@ body {
     color: #ffffff !important;
 }
 .b2c-nav-btn.active {
-    background: rgba(124, 58, 237, 0.2) !important;
-    color: #a78bfa !important;
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #f59e0b !important;
 }
 
 /* Titles */
@@ -5077,7 +5077,7 @@ body {
     color: #94a3b8 !important;
 }
 
-/* Cards (Glassmorphism Premium) */
+/* Cards (Azul Noche Profundo Sólido) */
 .b2c-search-card, 
 .b2c-route-card, 
 .b2c-bus-map, 
@@ -5085,33 +5085,33 @@ body {
 .b2c-passenger-card, 
 .b2c-benefit,
 #step-ticket {
-    background: rgba(15, 23, 42, 0.55) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
+    background: #0d0e12 !important; /* Azul Noche */
+    border: 1px solid #1e2028 !important; /* Borde Noche */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7) !important;
 }
 
 /* Route card hover */
 .b2c-route-card:hover {
-    border-color: #8b5cf6 !important;
-    background: rgba(124, 58, 237, 0.08) !important;
-    box-shadow: 0 10px 40px rgba(124, 58, 237, 0.15) !important;
+    border-color: #f59e0b !important;
+    background: rgba(245, 158, 11, 0.05) !important;
+    box-shadow: 0 10px 40px rgba(245, 158, 11, 0.08) !important;
 }
 
 /* Inputs & Selects */
 .b2c-select, .b2c-input, .b2c-body .datepicker-input {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+    background: #0a0b0d !important;
+    border: 1.5px solid #1e2028 !important;
     color: #ffffff !important;
 }
 .b2c-select:focus, .b2c-input:focus, .b2c-body .datepicker-input:focus {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-color: #8b5cf6 !important;
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25) !important;
+    background: #0a0b0d !important;
+    border-color: #f59e0b !important;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
 }
 .b2c-select option {
-    background: #090d16 !important;
+    background: #0d0e12 !important;
     color: #ffffff !important;
 }
 
@@ -5123,55 +5123,77 @@ body {
 /* Buttons */
 .b2c-btn-back, .b2c-floor-btn {
     background: rgba(255, 255, 255, 0.04) !important;
-    border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+    border: 1.5px solid #1e2028 !important;
     color: #cbd5e1 !important;
 }
 .b2c-btn-back:hover, .b2c-floor-btn:hover {
     background: rgba(255, 255, 255, 0.08) !important;
-    border-color: rgba(255, 255, 255, 0.15) !important;
+    border-color: #2e303d !important;
     color: #ffffff !important;
 }
 .b2c-floor-btn.active {
-    background: #7c3aed !important;
-    color: #ffffff !important;
-    border-color: #7c3aed !important;
+    background: #f59e0b !important;
+    color: #000000 !important;
+    border-color: #f59e0b !important;
+}
+
+/* Primary Button (Cyber Amber Sólido) */
+.b2c-btn-primary {
+    background: #f59e0b !important; /* Ámbar Sólido */
+    color: #000000 !important;      /* Contraste oscuro premium */
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25) !important;
+}
+.b2c-btn-primary:hover {
+    background: #d97706 !important; /* Ámbar Oscuro */
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35) !important;
+    transform: translateY(-1px);
+}
+.b2c-btn-primary:active {
+    transform: translateY(0);
+}
+.b2c-btn-primary:disabled {
+    background: rgba(245, 158, 11, 0.5) !important;
+    color: rgba(0, 0, 0, 0.5) !important;
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 /* Swap button */
 .b2c-swap-btn {
     background: rgba(255, 255, 255, 0.05) !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: #1e2028 !important;
     color: #ffffff !important;
 }
 .b2c-swap-btn:hover {
-    background: #7c3aed !important;
-    border-color: #7c3aed !important;
+    background: #f59e0b !important;
+    border-color: #f59e0b !important;
+    color: #000000 !important;
 }
 
 /* Seat Map Cabin Grid */
 .b2c-bus-cabin-header {
-    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    border-bottom-color: #1e2028 !important;
     color: #64748b !important;
 }
 .mobile-bus-seat {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 2px solid rgba(255, 255, 255, 0.08) !important;
+    background: #0a0b0d !important;
+    border: 2px solid #1e2028 !important;
     color: #cbd5e1 !important;
 }
 .mobile-bus-seat:hover:not(.occupied) {
-    border-color: #a78bfa !important;
-    background: rgba(124, 58, 237, 0.15) !important;
-    color: #a78bfa !important;
+    border-color: #14b8a6 !important;
+    background: rgba(20, 184, 166, 0.12) !important;
+    color: #14b8a6 !important;
 }
 .mobile-bus-seat.occupied {
-    background: rgba(239, 68, 68, 0.15) !important;
-    border-color: rgba(239, 68, 68, 0.3) !important;
+    background: rgba(185, 28, 28, 0.12) !important;
+    border-color: #b91c1c !important;
     color: #f87171 !important;
 }
 .mobile-bus-seat.selected {
-    background: #7c3aed !important;
-    border-color: #7c3aed !important;
-    color: #ffffff !important;
+    background: #14b8a6 !important; /* Menta Sólido */
+    border-color: #14b8a6 !important;
+    color: #000000 !important;      /* Contraste oscuro premium */
 }
 
 /* Benefit Cards text override */
