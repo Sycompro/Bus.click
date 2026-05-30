@@ -5041,6 +5041,12 @@ body {
 .b2c-body, .b2c-app-container {
     background: #ffffff !important;
     color: #334155 !important;
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 100% 0%, rgba(56, 189, 248, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(244, 114, 182, 0.04) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 50%, rgba(52, 211, 153, 0.03) 0%, transparent 40%) !important;
+    background-attachment: fixed !important;
 }
 
 /* Navbar */
@@ -5143,22 +5149,24 @@ body {
     border-color: var(--brand-primary) !important;
 }
 
-/* Primary Button (Pastel violeta premium) */
+/* Primary Button (Gradiente Colorido Vibrante) */
 .b2c-btn-primary {
-    background: var(--brand-primary) !important;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1, #38bdf8) !important;
+    background-size: 200% 200% !important;
     color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25) !important;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3) !important;
+    transition: all 0.3s ease !important;
 }
 .b2c-btn-primary:hover {
-    background: var(--brand-secondary) !important;
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.35) !important;
-    transform: translateY(-1px);
+    background-position: 100% 0 !important;
+    box-shadow: 0 6px 24px rgba(139, 92, 246, 0.4) !important;
+    transform: translateY(-2px);
 }
 .b2c-btn-primary:active {
     transform: translateY(0);
 }
 .b2c-btn-primary:disabled {
-    background: rgba(99, 102, 241, 0.4) !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.4), rgba(99, 102, 241, 0.4)) !important;
     color: rgba(255, 255, 255, 0.6) !important;
     box-shadow: none !important;
     transform: none !important;
@@ -5168,12 +5176,14 @@ body {
 .b2c-swap-btn {
     background: #f1f5f9 !important;
     border-color: var(--border-soft) !important;
-    color: #475569 !important;
+    color: #8b5cf6 !important;
+    transition: all 0.3s ease !important;
 }
 .b2c-swap-btn:hover {
-    background: var(--brand-primary) !important;
-    border-color: var(--brand-primary) !important;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+    border-color: #8b5cf6 !important;
     color: #ffffff !important;
+    transform: rotate(180deg);
 }
 
 /* Seat Map Cabin Grid */
@@ -5197,9 +5207,10 @@ body {
     color: var(--pastel-rose-text) !important;
 }
 .mobile-bus-seat.selected {
-    background: var(--pastel-sky-accent) !important;
-    border-color: var(--pastel-sky-accent) !important;
+    background: linear-gradient(135deg, #38bdf8, #2dd4bf) !important;
+    border-color: #38bdf8 !important;
     color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3) !important;
 }
 
 /* Benefit Cards text override */
@@ -5266,19 +5277,147 @@ body {
 
 /* RENIEC button */
 .b2c-btn-reniec {
-    background: var(--pastel-violet) !important;
-    color: var(--pastel-violet-text) !important;
-    border: 1px solid var(--pastel-violet-border) !important;
+    background: #ede9fe !important;
+    color: #8b5cf6 !important;
+    border: 1px solid #ddd6fe !important;
+    transition: all 0.3s ease !important;
 }
 .b2c-btn-reniec:hover {
-    background: var(--pastel-violet-accent) !important;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
     color: #ffffff !important;
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
 }
 
 /* Price accent */
 .b2c-price {
-    color: var(--brand-primary) !important;
+    color: #6366f1 !important;
+    font-weight: 900 !important;
 }
+
+/* ═══ VIDA Y DINAMISMO ═══ */
+
+/* Benefit icon hover animation */
+.b2c-benefit-icon {
+    transition: all 0.3s var(--ease-spring) !important;
+}
+.b2c-benefit:hover .b2c-benefit-icon {
+    transform: scale(1.15) rotate(-5deg) !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08) !important;
+}
+
+/* Benefit cards colorful left border */
+.b2c-benefit {
+    transition: all 0.3s ease !important;
+    border-left: 3px solid transparent !important;
+}
+.b2c-benefit:nth-child(1) { border-left-color: #8b5cf6 !important; }
+.b2c-benefit:nth-child(2) { border-left-color: #38bdf8 !important; }
+.b2c-benefit:nth-child(3) { border-left-color: #2dd4bf !important; }
+.b2c-benefit:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* Route card colorful left accent on hover */
+.b2c-route-card {
+    transition: all 0.3s ease !important;
+    border-left: 3px solid transparent !important;
+}
+.b2c-route-card:hover {
+    border-left-color: #8b5cf6 !important;
+    transform: translateX(4px) !important;
+}
+
+/* Search card top gradient accent */
+.b2c-search-card {
+    border-top: 3px solid transparent !important;
+    border-image: linear-gradient(90deg, #8b5cf6, #38bdf8, #34d399, #fbbf24, #fb7185) 1 !important;
+}
+
+/* Hero title colorful */
+.b2c-hero-title {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #38bdf8) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+/* Tab bar active item colorful */
+.b2c-tabbar-item.active {
+    color: #8b5cf6 !important;
+    position: relative !important;
+}
+.b2c-tabbar-item.active::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -1px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 20px !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, #8b5cf6, #38bdf8) !important;
+    border-radius: 0 0 4px 4px !important;
+}
+
+/* Nav button active colorful */
+.b2c-nav-btn.active {
+    background: linear-gradient(135deg, #ede9fe, #e0f2fe) !important;
+    color: #6366f1 !important;
+    border-radius: 10px !important;
+}
+
+/* Payment option selected colorful border */
+.b2c-payment-opt.selected {
+    border-color: #8b5cf6 !important;
+    background: linear-gradient(135deg, #ede9fe, #e0f2fe) !important;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.15) !important;
+}
+
+/* Floor button active colorful */
+.b2c-floor-btn.active {
+    background: linear-gradient(135deg, #8b5cf6, #6366f1) !important;
+    color: #ffffff !important;
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Summary card colorful price */
+.b2c-summary-card {
+    border-top: 2px solid transparent !important;
+    border-image: linear-gradient(90deg, #8b5cf6, #38bdf8) 1 !important;
+}
+
+/* Ticket colorful top border */
+.b2c-ticket {
+    border-top: 3px solid transparent !important;
+    border-image: linear-gradient(90deg, #8b5cf6, #38bdf8, #2dd4bf) 1 !important;
+    overflow: visible !important;
+}
+
+/* Logo icon colorful */
+.b2c-logo-icon {
+    background: linear-gradient(135deg, #ede9fe, #e0f2fe) !important;
+    color: #8b5cf6 !important;
+}
+
+/* Animated dot for the search button */
+.b2c-btn-primary i {
+    transition: transform 0.3s ease !important;
+}
+.b2c-btn-primary:hover i {
+    transform: scale(1.2) !important;
+}
+
+/* Colorful loading spinner animation */
+@keyframes colorShift {
+    0%   { color: #8b5cf6; }
+    25%  { color: #38bdf8; }
+    50%  { color: #34d399; }
+    75%  { color: #fbbf24; }
+    100% { color: #fb7185; }
+}
+
 
 
 

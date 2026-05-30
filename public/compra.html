@@ -48,7 +48,7 @@
                 <!-- Formulario de búsqueda -->
                 <form id="form-mobile-search" class="b2c-search-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: var(--pastel-green-text);"></i> Origen</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #34d399;"></i> Origen</label>
                         <select id="search-origin" class="b2c-select" required>
                             <option value="" disabled selected>¿Desde dónde sales?</option>
                         </select>
@@ -63,14 +63,14 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: var(--pastel-rose-text);"></i> Destino</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #fb7185;"></i> Destino</label>
                         <select id="search-destination" class="b2c-select" required>
                             <option value="" disabled selected>¿A dónde vas?</option>
                         </select>
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: var(--pastel-sky-text);"></i> Fecha del viaje</label>
+                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #38bdf8;"></i> Fecha del viaje</label>
                         <div class="datepicker-wrapper">
                             <input type="text" class="datepicker-input b2c-input" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
                             <input type="hidden" id="search-date" required>
@@ -86,7 +86,7 @@
                 <!-- Beneficios -->
                 <div class="b2c-benefits">
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: var(--pastel-violet); color: var(--pastel-violet-text);">
+                        <div class="b2c-benefit-icon" style="background: #ede9fe; color: #8b5cf6;">
                             <i data-lucide="shield-check"></i>
                         </div>
                         <div>
@@ -95,7 +95,7 @@
                         </div>
                     </div>
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: var(--pastel-sky); color: var(--pastel-sky-text);">
+                        <div class="b2c-benefit-icon" style="background: #e0f2fe; color: #38bdf8;">
                             <i data-lucide="ticket"></i>
                         </div>
                         <div>
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                     <div class="b2c-benefit">
-                        <div class="b2c-benefit-icon" style="background: var(--pastel-teal); color: var(--pastel-teal-text);">
+                        <div class="b2c-benefit-icon" style="background: #ccfbf1; color: #2dd4bf;">
                             <i data-lucide="zap"></i>
                         </div>
                         <div>
@@ -201,7 +201,7 @@
 
                 <form id="form-mobile-passenger" class="b2c-passenger-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: var(--pastel-violet-text);"></i> DNI del Pasajero</label>
+                        <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #8b5cf6;"></i> DNI del Pasajero</label>
                         <div class="b2c-dni-row">
                             <input type="text" id="passenger-dni" class="b2c-input" required placeholder="Ej: 12345678" maxlength="8">
                             <button type="button" id="btn-mobile-reniec" class="b2c-btn-reniec">
@@ -211,26 +211,26 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: var(--pastel-sky-text);"></i> Nombre Completo</label>
+                        <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #f472b6;"></i> Nombre Completo</label>
                         <input type="text" id="passenger-name" class="b2c-input" required placeholder="Nombres y apellidos">
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: var(--pastel-green-text);"></i> WhatsApp del Pasajero (para recibir tu boleto)</label>
+                        <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #34d399;"></i> WhatsApp del Pasajero (para recibir tu boleto)</label>
                         <input type="tel" id="passenger-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}">
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="wallet" class="b2c-label-icon" style="color: var(--pastel-amber-text);"></i> Método de Pago</label>
+                        <label class="b2c-label"><i data-lucide="wallet" class="b2c-label-icon" style="color: #fbbf24;"></i> Método de Pago</label>
                         <div class="b2c-payment-options">
                             <label class="b2c-payment-opt selected">
                                 <input type="radio" name="mobile-payment" value="Yape/Plin" checked>
-                                <div class="b2c-payment-icon" style="background: var(--pastel-violet); color: var(--pastel-violet-text);"><i data-lucide="smartphone"></i></div>
+                                <div class="b2c-payment-icon" style="background: #ede9fe; color: #8b5cf6;"><i data-lucide="smartphone"></i></div>
                                 <span>Yape / Plin</span>
                             </label>
                             <label class="b2c-payment-opt">
                                 <input type="radio" name="mobile-payment" value="Tarjeta">
-                                <div class="b2c-payment-icon" style="background: var(--pastel-sky); color: var(--pastel-sky-text);"><i data-lucide="credit-card"></i></div>
+                                <div class="b2c-payment-icon" style="background: #e0f2fe; color: #38bdf8;"><i data-lucide="credit-card"></i></div>
                                 <span>Tarjeta</span>
                             </label>
                         </div>
@@ -245,8 +245,8 @@
             <!-- ═══ PASO 5: BOLETO ═══ -->
             <section id="step-ticket" class="wizard-step hidden">
                 <div class="b2c-success-header" id="b2c-status-header">
-                    <div class="b2c-success-icon" id="b2c-status-icon-box" style="background: var(--pastel-green); color: var(--pastel-green-text);"><i data-lucide="check" id="b2c-status-icon"></i></div>
-                    <h2 class="b2c-step-title" id="b2c-status-title" style="color: var(--pastel-green-text);">¡Compra Confirmada!</h2>
+                    <div class="b2c-success-icon" id="b2c-status-icon-box" style="background: #d1fae5; color: #34d399;"><i data-lucide="check" id="b2c-status-icon"></i></div>
+                    <h2 class="b2c-step-title" id="b2c-status-title" style="color: #059669;">¡Compra Confirmada!</h2>
                     <p class="b2c-step-sub" id="b2c-status-subtitle">Tu boleto digital está listo. Muéstralo al abordar.</p>
                 </div>
 

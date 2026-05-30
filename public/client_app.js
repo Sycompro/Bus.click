@@ -449,12 +449,12 @@ async function handleSearchSubmit() {
     } catch (e) {
         routesList.innerHTML = `
             <div style="text-align: center; padding: 3rem 1.5rem; color: #ef4444; background: #ffffff; border-radius: 20px; border: 1px solid #e0e7ff; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.06);">
-                <div style="width: 48px; height: 48px; border-radius: 50%; background: #ffe4e6; color: #881337; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: #ffe4e6; color: #fb7185; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
                     <i data-lucide="wifi-off" style="width: 22px; height: 22px;"></i>
                 </div>
                 <div style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">Error de conexión</div>
                 <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.4rem; line-height: 1.4;">No pudimos comunicarnos con el servidor. Por favor, inténtalo de nuevo.</div>
-                <button type="button" class="b2c-btn-back" onclick="handleSearchSubmit()" style="margin: 1.25rem auto 0 auto; display: inline-flex; gap: 0.4rem; border-color: #e0e7ff; color: #881337; background: #ffe4e6;">
+                <button type="button" class="b2c-btn-back" onclick="handleSearchSubmit()" style="margin: 1.25rem auto 0 auto; display: inline-flex; gap: 0.4rem; border-color: #e0e7ff; color: #fb7185; background: #ffe4e6;">
                     <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i> Reintentar
                 </button>
             </div>
@@ -471,7 +471,7 @@ function renderAvailableBuses() {
     if (state.availableBuses.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 3.5rem 1.5rem; background: #ffffff; border-radius: 20px; border: 1px solid #e0e7ff; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.06);">
-                <div style="width: 52px; height: 52px; border-radius: 50%; background: #fef3c7; color: #78350f; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: #fef3c7; color: #fbbf24; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
                     <i data-lucide="alert-circle" style="width: 26px; height: 26px;"></i>
                 </div>
                 <div style="font-size: 1rem; font-weight: 800; color: #1e293b;">Sin servicios disponibles</div>
@@ -1299,7 +1299,7 @@ function renderTicketsListHtml() {
                 <div style="background: #ffffff; border: 1px solid #e0e7ff; border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.06); position: relative;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                         <span style="font-size: 0.72rem; font-weight: 800; color: #6366f1;"><i data-lucide="bus" style="width: 11px; height: 11px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i> ${company.name}</span>
-                        <span style="font-size: 0.65rem; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #10b981; padding: 2px 8px; border-radius: 20px;">Válido</span>
+                        <span style="font-size: 0.65rem; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #34d399; padding: 2px 8px; border-radius: 20px;">Válido</span>
                     </div>
                     
                     <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b;">
@@ -1378,7 +1378,7 @@ function showHistoryModal() {
     overlay.innerHTML = `
         <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 80%; padding: 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #fef3c7; color: #78350f; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #fef3c7; color: #fbbf24; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
                     <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                 </button>
@@ -1435,14 +1435,14 @@ function showHelpModal() {
     overlay.innerHTML = `
         <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; box-sizing: border-box; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #e0f2fe; color: #0c4a6e; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #e0f2fe; color: #38bdf8; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
                     <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                 </button>
             </div>
             
             <div style="text-align: center; padding: 0.5rem 0;">
-                <div style="background: #e0f2fe; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; color: #0c4a6e;">
+                <div style="background: #e0f2fe; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; color: #38bdf8;">
                     <i data-lucide="message-square" style="width: 22px; height: 22px;"></i>
                 </div>
                 <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">¿Necesitas ayuda con tu pasaje?</h4>
@@ -1450,15 +1450,15 @@ function showHelpModal() {
                 
                 <div style="background: #f8fafc; border: 1px solid #e0e7ff; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #065f46; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #34d399; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: ${supportPhone}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #e0f2fe; color: #0c4a6e; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #e0f2fe; color: #38bdf8; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: ${supportEmail}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #ede9fe; color: #4c1d95; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #ede9fe; color: #8b5cf6; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Seguridad de Compra Garantizada</span>
                     </div>
                 </div>
