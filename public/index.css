@@ -5020,6 +5020,21 @@ body {
     color: #94a3b8 !important;
 }
 
+/* 📲 CUADRÍCULA DE CONFIGURACIÓN PREMIUM SAAS */
+.settings-grid-premium {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 1.5rem;
+    align-items: start;
+    width: 100%;
+}
+
+@media (max-width: 1024px) {
+    .settings-grid-premium {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 
 

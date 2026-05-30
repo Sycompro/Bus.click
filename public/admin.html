@@ -149,86 +149,107 @@
 
                         <!-- ═══ AJUSTES DE EMPRESA ═══ -->
                         <div id="tab-admin-settings" class="tab-content-item hidden">
-                            <div class="content-split-layout">
-                                <div class="form-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="settings"></i> Configuración de Empresa</h3>
+                            <div class="settings-grid-premium">
+                                <!-- COLUMNA IZQUIERDA: DATOS DE EMPRESA Y MÉTODOS DE PAGO -->
+                                <div class="form-container-card glass" style="display: flex; flex-direction: column; gap: 1.25rem;">
+                                    <div>
+                                        <h3 class="card-title" style="margin-bottom: 0.25rem;"><i data-lucide="building" style="color: var(--brand-primary); width: 18px; height: 18px;"></i> Empresa</h3>
+                                        <p class="section-desc">Identificación oficial registrada en el sistema de Bus.click.</p>
+                                    </div>
                                     <div class="form-premium">
                                         <div class="form-group">
                                             <label>Razón Social / RUC</label>
-                                            <input type="text" id="admin-settings-company-name" readonly style="background: var(--bg-subtle); cursor: not-allowed;">
-                                        </div>
-                                        <div class="form-group mt-3">
-                                            <label for="input-new-payment-method">Nuevo Método de Pago</label>
-                                            <div class="input-group-premium">
-                                                <input type="text" id="input-new-payment-method" placeholder="Ej: Tarjeta Visa / Transferencia">
-                                                <button type="button" id="btn-add-payment-method" class="btn btn-primary">
-                                                    <i data-lucide="plus"></i> Agregar
-                                                </button>
-                                            </div>
+                                            <input type="text" id="admin-settings-company-name" readonly style="background: var(--bg-subtle); cursor: not-allowed; font-weight: 600;">
                                         </div>
                                     </div>
-                                </div>
-                                <div class="list-container-card glass">
-                                    <h3 class="card-title"><i data-lucide="wallet"></i> Métodos de Pago Activos</h3>
-                                    <p class="section-desc mb-3">Estos son los métodos de pago habilitados para emitir boletos en tus terminales de venta.</p>
-                                    <div class="payment-methods-admin-list" id="admin-payment-methods-list-render">
-                                        <!-- Se inyectará dinámicamente -->
-                                    </div>
-                                    <button type="button" id="btn-save-payment-methods" class="btn btn-primary btn-full mt-6">
-                                        <i data-lucide="save"></i> Guardar Métodos de Pago
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- 📞 CONFIGURACIÓN DE CANAL DE SOPORTE B2C -->
-                            <div class="form-container-card glass mt-6" style="width: 100%; box-sizing: border-box;">
-                                <h3 class="card-title"><i data-lucide="headphones"></i> Canal de Soporte B2C (Marca Blanca)</h3>
-                                <p class="section-desc">Personaliza los datos de contacto que verán tus pasajeros en el portal de compras al presionar el botón "Soporte".</p>
-                                <form id="form-admin-support-settings" class="form-premium" style="margin-top: 1.25rem;">
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; width: 100%;">
-                                        <div class="form-group">
-                                            <label for="admin-support-phone">WhatsApp / Celular de Soporte</label>
-                                            <input type="text" id="admin-support-phone" required placeholder="Ej: +51 987 654 321">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="admin-support-email">Correo Electrónico de Soporte</label>
-                                            <input type="email" id="admin-support-email" required placeholder="Ej: soporte@miempresa.com">
-                                        </div>
-                                    </div>
-                                    <div class="form-group mt-3" style="width: 100%;">
-                                        <label for="admin-support-message">Mensaje Personalizado de Ayuda</label>
-                                        <textarea id="admin-support-message" required placeholder="Ej: Escríbenos por WhatsApp o envíanos un correo para reprogramaciones, anulaciones o consultas sobre tu viaje..." style="width: 100%; min-height: 80px; background: rgba(15, 23, 42, 0.3); border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #fff; padding: 0.55rem 0.85rem; font-family: inherit; font-size: var(--text-xs); box-sizing: border-box; outline: none; transition: all 0.2s ease; resize: vertical;"></textarea>
-                                    </div>
-                                    <button type="submit" id="btn-save-support-settings" class="btn btn-primary mt-4" style="width: auto; padding: 0.65rem 1.5rem; display: flex; align-items: center; gap: 0.4rem;">
-                                        <i data-lucide="save"></i> Guardar Ajustes de Soporte
-                                    </button>
-                                </form>
-                            </div>
 
-                            <!-- 📲 CONFIGURACIÓN DE INTEGRACIÓN DE WHATSAPP -->
-                            <div class="form-container-card glass mt-6" style="width: 100%; box-sizing: border-box;">
-                                <h3 class="card-title"><i data-lucide="message-square" style="color: #25d366;"></i> Integración de la API de WhatsApp</h3>
-                                <p class="section-desc">Configura la pasarela y credenciales para el envío automático de notificaciones asíncronas a los pasajeros cuando realicen reservas y compras.</p>
-                                <form id="form-admin-whatsapp-settings" class="form-premium" style="margin-top: 1.25rem;">
-                                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; width: 100%;">
-                                        <div class="form-group">
-                                            <label for="admin-whatsapp-url">URL de Envío de Mensajes (POST)</label>
-                                            <input type="url" id="admin-whatsapp-url" required placeholder="Ej: https://qr-api-wps-production.up.railway.app/api/external/send-message">
+                                    <div style="border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem;">
+                                        <div>
+                                            <h3 class="card-title" style="margin-bottom: 0.25rem;"><i data-lucide="wallet" style="color: var(--brand-primary); width: 18px; height: 18px;"></i> Métodos de Pago</h3>
+                                            <p class="section-desc">Habilita los métodos que estarán disponibles en tus terminales.</p>
                                         </div>
-                                        <div class="form-group">
-                                            <label for="admin-whatsapp-key">API Key de WhatsApp (x-api-key)</label>
-                                            <div class="input-group-premium">
-                                                <input type="password" id="admin-whatsapp-key" required placeholder="Ingresa tu API Key secreta" autocomplete="new-password">
-                                                <button type="button" id="btn-toggle-whatsapp-key" class="btn btn-secondary" style="height: 38px; margin: 0; padding: 0 0.85rem; display: flex; align-items: center; justify-content: center;">
-                                                    <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+                                        
+                                        <div class="payment-methods-admin-list" id="admin-payment-methods-list-render" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 220px; overflow-y: auto; padding-right: 4px;">
+                                            <!-- Se inyectará dinámicamente -->
+                                        </div>
+
+                                        <div class="form-premium" style="margin-top: 0.25rem;">
+                                            <label for="input-new-payment-method">Agregar Nuevo Método</label>
+                                            <div class="input-group-premium" style="margin-top: 0.35rem;">
+                                                <input type="text" id="input-new-payment-method" placeholder="Ej: Transferencia BCP">
+                                                <button type="button" id="btn-add-payment-method" class="btn btn-primary" style="height: 38px; padding: 0 0.85rem !important;">
+                                                    <i data-lucide="plus"></i>
                                                 </button>
                                             </div>
                                         </div>
+
+                                        <button type="button" id="btn-save-payment-methods" class="btn btn-primary btn-full mt-2">
+                                            <i data-lucide="save"></i> Guardar Métodos de Pago
+                                        </button>
                                     </div>
-                                    <button type="submit" id="btn-save-whatsapp-settings" class="btn btn-primary mt-4" style="width: auto; padding: 0.65rem 1.5rem; display: flex; align-items: center; gap: 0.4rem;">
-                                        <i data-lucide="save"></i> Guardar Ajustes de WhatsApp
-                                    </button>
-                                </form>
+                                </div>
+
+                                <!-- COLUMNA DERECHA: CANALES DIGITALES (SOPORTE Y NOTIFICACIONES) -->
+                                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                                    
+                                    <!-- Tarjeta 1: Canal de Soporte B2C -->
+                                    <div class="form-container-card glass" style="display: flex; flex-direction: column; gap: 1rem;">
+                                        <div>
+                                            <h3 class="card-title" style="margin-bottom: 0.25rem;"><i data-lucide="headphones" style="color: var(--brand-primary); width: 18px; height: 18px;"></i> Soporte B2C (Marca Blanca)</h3>
+                                            <p class="section-desc">Datos de contacto para el pasajero al pulsar "Soporte" en el portal web.</p>
+                                        </div>
+                                        
+                                        <form id="form-admin-support-settings" class="form-premium" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                                <div class="form-group">
+                                                    <label for="admin-support-phone">WhatsApp de Soporte</label>
+                                                    <input type="text" id="admin-support-phone" required placeholder="Ej: +51 987 654 321">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="admin-support-email">Correo de Soporte</label>
+                                                    <input type="email" id="admin-support-email" required placeholder="Ej: soporte@miempresa.com">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="admin-support-message">Mensaje Personalizado de Ayuda</label>
+                                                <textarea id="admin-support-message" required placeholder="Ej: Escríbenos para reprogramaciones o consultas..." style="width: 100%; min-height: 70px; background: rgba(15, 23, 42, 0.3); border: 1.5px solid rgba(255, 255, 255, 0.08); border-radius: 12px; color: #fff; padding: 0.55rem 0.85rem; font-family: inherit; font-size: var(--text-xs); box-sizing: border-box; outline: none; transition: all 0.2s ease; resize: vertical;"></textarea>
+                                            </div>
+                                            <button type="submit" id="btn-save-support-settings" class="btn btn-primary" style="width: auto; align-self: flex-start; padding: 0.55rem 1.25rem;">
+                                                <i data-lucide="save"></i> Guardar Soporte
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Tarjeta 2: Integración de WhatsApp -->
+                                    <div class="form-container-card glass" style="display: flex; flex-direction: column; gap: 1rem;">
+                                        <div>
+                                            <h3 class="card-title" style="margin-bottom: 0.25rem;"><i data-lucide="message-square" style="color: #25d366; width: 18px; height: 18px;"></i> Notificaciones de WhatsApp</h3>
+                                            <p class="section-desc">Pasarela de comunicación automática para boletos e instrucciones de pago.</p>
+                                        </div>
+                                        
+                                        <form id="form-admin-whatsapp-settings" class="form-premium" style="display: flex; flex-direction: column; gap: 0.85rem;">
+                                            <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 1rem;">
+                                                <div class="form-group">
+                                                    <label for="admin-whatsapp-url">URL del Servicio (POST)</label>
+                                                    <input type="url" id="admin-whatsapp-url" required placeholder="Ej: https://api.whatsapp.com...">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="admin-whatsapp-key">API Key (x-api-key)</label>
+                                                    <div class="input-group-premium">
+                                                        <input type="password" id="admin-whatsapp-key" required placeholder="API Key secreta" autocomplete="new-password">
+                                                        <button type="button" id="btn-toggle-whatsapp-key" class="btn btn-secondary" style="height: 38px; margin: 0; padding: 0 0.85rem; display: flex; align-items: center; justify-content: center;">
+                                                            <i data-lucide="eye" style="width: 14px; height: 14px;"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="submit" id="btn-save-whatsapp-settings" class="btn btn-primary" style="width: auto; align-self: flex-start; padding: 0.55rem 1.25rem;">
+                                                <i data-lucide="save"></i> Guardar WhatsApp
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
