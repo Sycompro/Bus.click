@@ -5035,6 +5035,150 @@ body {
     }
 }
 
+/* ==========================================================================
+   📲 B2C PASSENGER PORTAL — PREMIUM DARK MODE (BLACK THEME)
+   ========================================================================== */
+.b2c-body, .b2c-app-container {
+    background: #000000 !important;
+    color: #f8fafc !important;
+}
+
+/* Navbar */
+.b2c-navbar {
+    background: rgba(0, 0, 0, 0.8) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+}
+.b2c-logo strong {
+    color: #a78bfa !important;
+}
+.b2c-logo span {
+    color: #ffffff !important;
+}
+.b2c-nav-btn {
+    color: #94a3b8 !important;
+}
+.b2c-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #ffffff !important;
+}
+.b2c-nav-btn.active {
+    background: rgba(124, 58, 237, 0.2) !important;
+    color: #a78bfa !important;
+}
+
+/* Titles */
+.b2c-hero-title, .b2c-step-title, .b2c-summary-value {
+    color: #ffffff !important;
+}
+.b2c-hero-sub, .b2c-step-sub, .b2c-label, .b2c-summary-label {
+    color: #94a3b8 !important;
+}
+
+/* Cards (Glassmorphism Premium) */
+.b2c-search-card, 
+.b2c-route-card, 
+.b2c-bus-map, 
+.b2c-summary-card, 
+.b2c-passenger-card, 
+.b2c-benefit,
+#step-ticket {
+    background: rgba(15, 23, 42, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Route card hover */
+.b2c-route-card:hover {
+    border-color: #8b5cf6 !important;
+    background: rgba(124, 58, 237, 0.08) !important;
+    box-shadow: 0 10px 40px rgba(124, 58, 237, 0.15) !important;
+}
+
+/* Inputs & Selects */
+.b2c-select, .b2c-input, .b2c-body .datepicker-input {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+.b2c-select:focus, .b2c-input:focus, .b2c-body .datepicker-input:focus {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.25) !important;
+}
+.b2c-select option {
+    background: #090d16 !important;
+    color: #ffffff !important;
+}
+
+/* Datepicker placeholder B2C override */
+.b2c-body .datepicker-icon {
+    color: #94a3b8 !important;
+}
+
+/* Buttons */
+.b2c-btn-back, .b2c-floor-btn {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+    color: #cbd5e1 !important;
+}
+.b2c-btn-back:hover, .b2c-floor-btn:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+}
+.b2c-floor-btn.active {
+    background: #7c3aed !important;
+    color: #ffffff !important;
+    border-color: #7c3aed !important;
+}
+
+/* Swap button */
+.b2c-swap-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+.b2c-swap-btn:hover {
+    background: #7c3aed !important;
+    border-color: #7c3aed !important;
+}
+
+/* Seat Map Cabin Grid */
+.b2c-bus-cabin-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+    color: #64748b !important;
+}
+.mobile-bus-seat {
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 2px solid rgba(255, 255, 255, 0.08) !important;
+    color: #cbd5e1 !important;
+}
+.mobile-bus-seat:hover:not(.occupied) {
+    border-color: #a78bfa !important;
+    background: rgba(124, 58, 237, 0.15) !important;
+    color: #a78bfa !important;
+}
+.mobile-bus-seat.occupied {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #f87171 !important;
+}
+.mobile-bus-seat.selected {
+    background: #7c3aed !important;
+    border-color: #7c3aed !important;
+    color: #ffffff !important;
+}
+
+/* Benefit Cards text override */
+.b2c-benefit-title {
+    color: #ffffff !important;
+}
+
 
 
 
