@@ -44,6 +44,45 @@ const MOCK_NAMES = {
 
 // --- AL CARGAR EL DOCUMENTO ---
 document.addEventListener("DOMContentLoaded", async () => {
+    // Detección estricta de WhatsApp o bypass de desarrollo/admin
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const isWhatsApp = /WhatsApp/i.test(userAgent);
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('.local');
+    const hasBypass = new URLSearchParams(window.location.search).has('bypass') || new URLSearchParams(window.location.search).has('admin');
+
+    if (!isWhatsApp && !isLocalhost && !hasBypass) {
+        // Bloquear acceso e inyectar pantalla de bloqueo premium blanco pastel
+        document.body.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; background: #ffffff; background-image: radial-gradient(ellipse at 50% 50%, rgba(37, 211, 102, 0.04) 0%, transparent 60%) !important; font-family: 'Outfit', sans-serif; text-align: center; box-sizing: border-box; color: #1e293b; animation: fadeIn 0.4s ease;">
+                <div style="width: 72px; height: 72px; border-radius: 50%; background: #e8f5e9; color: #25d366; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 4px 14px rgba(37, 211, 102, 0.15);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h2 style="font-size: 1.35rem; font-weight: 800; color: #1e293b; margin: 0 0 0.75rem 0; letter-spacing: -0.3px;">Acceso Seguro vía WhatsApp</h2>
+                <p style="font-size: 0.88rem; color: #64748b; line-height: 1.6; max-width: 320px; margin: 0 auto 2rem auto;">Para garantizar la autenticidad y el formato seguro de tus boletos, esta plataforma solo está disponible abriendo el enlace oficial recibido en tu chat de **WhatsApp**.</p>
+                
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 20px; padding: 1.25rem; text-align: left; max-width: 320px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin: 0 auto 2rem auto;">
+                    <div style="font-size: 0.8rem; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-help-circle"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+                        ¿Cómo ingresar?
+                    </div>
+                    <div style="display: flex; gap: 0.6rem; font-size: 0.8rem; color: #475569; margin-bottom: 0.6rem; align-items: flex-start;">
+                        <span style="font-weight: 800; color: #25d366; background: #e8f5e9; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; margin-top: 1px;">1</span>
+                        <span>Solicita el enlace de compras en la sede o recibe tu confirmación de boleto.</span>
+                    </div>
+                    <div style="display: flex; gap: 0.6rem; font-size: 0.8rem; color: #475569; align-items: flex-start;">
+                        <span style="font-weight: 800; color: #25d366; background: #e8f5e9; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; margin-top: 1px;">2</span>
+                        <span>Abre el enlace recibido en tu aplicación de **WhatsApp** en tu celular.</span>
+                    </div>
+                </div>
+                <div style="font-size: 0.75rem; color: #94a3b8; font-weight: 500;">Bus.click - Conectando tu viaje</div>
+            </div>
+            <style>
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+            </style>
+        `;
+        return;
+    }
+
     // Inicializar iconos
     lucide.createIcons();
     
