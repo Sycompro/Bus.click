@@ -2,10 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     
     <!-- Color de la Barra de Estado en Celulares (Status Bar Blanca) -->
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: dark)">
+    <meta name="color-scheme" content="light">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
@@ -445,12 +448,16 @@
             });
         });
 
-        // Configurar el botón del Splash Screen para desvanecerse (Sin Fullscreen para barra blanca activa)
+        // Configurar el botón del Splash Screen para desvanecerse y ocultar la barra de direcciones con un scroll nativo
         const sScreen = document.getElementById("b2c-splash-screen");
         const bEnter = document.getElementById("btn-enter-fullscreen");
         if (sScreen && bEnter) {
             bEnter.addEventListener("click", () => {
                 sScreen.classList.add("hidden");
+                // Scroll suave de un píxel para colapsar la barra de direcciones de Chrome y Safari de forma elegante
+                setTimeout(() => {
+                    window.scrollTo({ top: 1, behavior: 'smooth' });
+                }, 300);
             });
         }
     </script>

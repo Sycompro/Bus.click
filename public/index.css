@@ -5,6 +5,7 @@
 
 /* ─── VARIABLES GLOBALES ─── */
 :root {
+    color-scheme: light !important;
     --font-primary: 'Inter', sans-serif;
     --font-heading: 'Inter', sans-serif;
 
@@ -125,6 +126,8 @@
 
 html {
     scroll-behavior: smooth;
+    color-scheme: light !important;
+    background-color: #ffffff !important;
 }
 
 body {
