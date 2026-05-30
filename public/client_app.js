@@ -107,6 +107,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     // Sincronizar en segundo plano de inmediato los pasajes locales con el servidor
     syncClientTickets();
+
+    // Si el usuario ya entró (Splash Screen oculto), re-gatillamos el scroll programático ahora que el DOM tiene la altura final
+    if (window.forceMobileImmersiveScroll) {
+        const splash = document.getElementById("b2c-splash-screen");
+        if (splash && splash.classList.contains("hidden")) {
+            window.forceMobileImmersiveScroll();
+        }
+    }
 });
 
 // --- CARGA DE DATOS INICIALES ---

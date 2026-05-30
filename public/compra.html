@@ -448,18 +448,30 @@
             });
         });
 
-        // Configurar el botón del Splash Screen para desvanecerse y ocultar la barra de direcciones con un scroll nativo
+        // Configurar el botón del Splash Screen para desvanecerse y ocultar la barra de direcciones de Chrome/Safari de forma robusta e inmersiva
         const sScreen = document.getElementById("b2c-splash-screen");
         const bEnter = document.getElementById("btn-enter-fullscreen");
+        
+        function forceMobileImmersiveScroll() {
+            // Realizar scrolls repetitivos cortos para asegurar que el navegador responda tras la transición del layout
+            let count = 0;
+            const scrollTimer = setInterval(() => {
+                window.scrollTo(0, 80);
+                count++;
+                if (count >= 6) clearInterval(scrollTimer);
+            }, 100);
+        }
+        
         if (sScreen && bEnter) {
             bEnter.addEventListener("click", () => {
                 sScreen.classList.add("hidden");
-                // Scroll programático de 80px para forzar el colapso inmediato del header de Chrome/Safari en móviles
-                setTimeout(() => {
-                    window.scrollTo(0, 80);
-                }, 80);
+                // Forzar el colapso nativo de la barra URL de Chrome con re-intentos inteligentes
+                forceMobileImmersiveScroll();
             });
         }
+        
+        // Exportar la función a nivel global para que client_app.js la llame al poblar el DOM con datos de Railway
+        window.forceMobileImmersiveScroll = forceMobileImmersiveScroll;
     </script>
 </body>
 </html>
