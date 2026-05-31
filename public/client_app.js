@@ -1,7 +1,11 @@
-/**
- * Bus.click - Lógica de la Web Móvil del Cliente B2C (client_app.js)
- * Diseñado 100% Mobile-First con estética Ultra-Premium
- */
+// --- FALLBACK DEFENSIVO CONTRA CAÍDAS O LATENCIA EN EL CDN DE LUCIDE ---
+if (typeof window.lucide === 'undefined') {
+    window.lucide = {
+        createIcons: () => {
+            console.warn("SW: Lucide no está disponible en la red en este momento.");
+        }
+    };
+}
 
 // --- ESTADO GLOBAL DE LA APP MÓVIL ---
 const state = {
