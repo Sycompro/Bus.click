@@ -5563,3 +5563,170 @@ body {
 :fullscreen, :-webkit-full-screen, :fullscreen * {
     background-color: #ffffff !important;
 }
+
+/* ══════════════════════════════════════════════════════════
+   📱 PWA STANDALONE & WHATSAPP IN-APP BROWSER OPTIMIZATIONS
+   Estas reglas solo aplican cuando la app se abre en modo
+   standalone (PWA instalada) o dentro del WebView de WhatsApp.
+   ══════════════════════════════════════════════════════════ */
+
+/* Modo Standalone: padding para safe areas (notch, barra de estado) */
+@media all and (display-mode: standalone) {
+    .b2c-body {
+        padding-top: env(safe-area-inset-top, 0px) !important;
+        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+        min-height: 100vh !important;
+        /* Deshabilitar over-scroll bounce nativo para sentirse más como app */
+        overscroll-behavior-y: contain;
+    }
+
+    .b2c-navbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        padding-top: env(safe-area-inset-top, 0px) !important;
+        background: rgba(255, 255, 255, 0.97) !important;
+        backdrop-filter: blur(20px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(200%) !important;
+        border-bottom: 1px solid rgba(232, 236, 243, 0.8) !important;
+        box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    .b2c-app-container {
+        padding-top: calc(56px + env(safe-area-inset-top, 0px)) !important;
+    }
+
+    .b2c-mobile-tabbar {
+        padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    /* Indicador de "home" estilo iOS en la parte inferior */
+    .b2c-mobile-tabbar::after {
+        content: '';
+        position: absolute;
+        bottom: calc(6px + env(safe-area-inset-bottom, 0px));
+        left: 50%;
+        transform: translateX(-50%);
+        width: 134px;
+        height: 5px;
+        border-radius: 100px;
+        background: rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* Banner "Agregar a pantalla de inicio" para usuarios que abren desde WhatsApp */
+.pwa-install-banner {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 2rem);
+    max-width: 420px;
+    background: #ffffff;
+    border: 1px solid #e8ecf3;
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+    z-index: 9000;
+    animation: slideUpBanner 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pwa-install-banner.dismissed {
+    animation: slideDownBanner 0.3s ease forwards;
+}
+
+.pwa-install-banner-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ede9fe, #e0f2fe);
+    color: #8b5cf6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pwa-install-banner-icon i { width: 22px; height: 22px; }
+
+.pwa-install-banner-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.pwa-install-banner-text strong {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #1e293b;
+    display: block;
+}
+
+.pwa-install-banner-text span {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.pwa-install-banner-btn {
+    padding: 0.5rem 0.9rem;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.pwa-install-banner-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+}
+
+.pwa-install-banner-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.pwa-install-banner-close:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+@keyframes slideUpBanner {
+    from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes slideDownBanner {
+    from { opacity: 1; transform: translateX(-50%) translateY(0); }
+    to { opacity: 0; transform: translateX(-50%) translateY(30px); }
+}
+
+/* Ocultar el banner en modo standalone (ya está instalada) */
+@media all and (display-mode: standalone) {
+    .pwa-install-banner {
+        display: none !important;
+    }
+}

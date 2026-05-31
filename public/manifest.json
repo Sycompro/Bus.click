@@ -1,0 +1,27 @@
+{
+  "name": "Bus.click - Compra de Pasajes",
+  "short_name": "Bus.click",
+  "description": "Compra pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.",
+  "start_url": "/compra",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#ffffff",
+  "background_color": "#ffffff",
+  "categories": ["travel", "transportation"],
+  "lang": "es",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%238b5cf6'/><g transform='translate(128,96) scale(0.5)'><rect width='256' height='256' x='64' y='32' rx='32' fill='none' stroke='white' stroke-width='24'/><path d='M64 224h256' fill='none' stroke='white' stroke-width='24'/><circle cx='128' cy='288' r='32' fill='none' stroke='white' stroke-width='24'/><circle cx='256' cy='288' r='32' fill='none' stroke='white' stroke-width='24'/></g></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%238b5cf6'/><g transform='translate(48,36) scale(0.5)'><rect width='128' height='128' x='32' y='16' rx='16' fill='none' stroke='white' stroke-width='14'/><path d='M32 112h128' fill='none' stroke='white' stroke-width='14'/><circle cx='64' cy='144' r='16' fill='none' stroke='white' stroke-width='14'/><circle cx='128' cy='144' r='16' fill='none' stroke='white' stroke-width='14'/></g></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -11,6 +11,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bus.click">
+    <meta name="msapplication-TileColor" content="#8b5cf6">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- PWA Manifest para experiencia standalone sin barra del navegador -->
+    <link rel="manifest" href="/manifest.json">
     
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
@@ -461,6 +467,29 @@
                 if (count >= 6) clearInterval(scrollTimer);
             }, 100);
         }
+
+        // Detectar si estamos en un WebView/in-app browser (WhatsApp, Instagram, Facebook, etc.)
+        function isInAppBrowser() {
+            const ua = navigator.userAgent || '';
+            return /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Twitter|Weibo|MicroMessenger|KAKAOTALK/i.test(ua);
+        }
+
+        // Detectar si ya estamos en modo standalone (PWA instalada)
+        function isStandaloneMode() {
+            return window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone === true;
+        }
+
+        // Si estamos en un WebView de WhatsApp o en modo standalone, auto-dismiss el splash
+        if (isInAppBrowser() || isStandaloneMode()) {
+            if (sScreen) {
+                // Splash breve de 800ms para que se sienta como carga de app nativa
+                setTimeout(() => {
+                    sScreen.classList.add("hidden");
+                    forceMobileImmersiveScroll();
+                }, 800);
+            }
+        }
         
         if (sScreen && bEnter) {
             bEnter.addEventListener("click", () => {
@@ -472,6 +501,114 @@
         
         // Exportar la función a nivel global para que client_app.js la llame al poblar el DOM con datos de Railway
         window.forceMobileImmersiveScroll = forceMobileImmersiveScroll;
+
+        // Registrar Service Worker para habilitar PWA standalone
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then(() => {
+                console.log('✔ Service Worker registrado para PWA standalone.');
+            }).catch((err) => {
+                console.warn('⚠ Error registrando Service Worker:', err);
+            });
+        }
+
+        // ═══ SISTEMA DE INSTALACIÓN PWA (Banner inteligente) ═══
+        let deferredInstallPrompt = null;
+
+        // Capturar el evento nativo de instalación de Chrome/Edge
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            // Mostrar banner personalizado si no está en modo standalone
+            if (!isStandaloneMode()) {
+                showPWAInstallBanner();
+            }
+        });
+
+        function showPWAInstallBanner() {
+            // No mostrar si ya lo descartó en esta sesión
+            if (sessionStorage.getItem('pwa-banner-dismissed')) return;
+
+            // No mostrar si ya existe
+            if (document.querySelector('.pwa-install-banner')) return;
+
+            const banner = document.createElement('div');
+            banner.className = 'pwa-install-banner';
+            banner.innerHTML = `
+                <button class="pwa-install-banner-close" id="pwa-close-banner">✕</button>
+                <div class="pwa-install-banner-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="2" rx="2"/><path d="M4 14h16"/><path d="M8 10h.01"/><path d="M16 10h.01"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/></svg>
+                </div>
+                <div class="pwa-install-banner-text">
+                    <strong>Agrega Bus.click a tu inicio</strong>
+                    <span>Accede más rápido, sin barra del navegador</span>
+                </div>
+                <button class="pwa-install-banner-btn" id="pwa-install-btn">Instalar</button>
+            `;
+
+            document.body.appendChild(banner);
+
+            // Botón de instalar
+            document.getElementById('pwa-install-btn').addEventListener('click', async () => {
+                if (deferredInstallPrompt) {
+                    deferredInstallPrompt.prompt();
+                    const { outcome } = await deferredInstallPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('✔ Usuario instaló la PWA');
+                    }
+                    deferredInstallPrompt = null;
+                }
+                dismissPWABanner(banner);
+            });
+
+            // Botón de cerrar
+            document.getElementById('pwa-close-banner').addEventListener('click', () => {
+                dismissPWABanner(banner);
+            });
+
+            // Auto-dismiss después de 15 segundos
+            setTimeout(() => {
+                if (document.body.contains(banner)) {
+                    dismissPWABanner(banner);
+                }
+            }, 15000);
+        }
+
+        function dismissPWABanner(banner) {
+            banner.classList.add('dismissed');
+            sessionStorage.setItem('pwa-banner-dismissed', 'true');
+            banner.addEventListener('animationend', () => {
+                banner.remove();
+            });
+        }
+
+        // Para navegadores donde no hay beforeinstallprompt (Safari iOS),
+        // mostrar un banner instructivo después de 5 segundos si es in-app browser
+        if (isInAppBrowser() && !isStandaloneMode()) {
+            setTimeout(() => {
+                if (!document.querySelector('.pwa-install-banner') && !sessionStorage.getItem('pwa-banner-dismissed')) {
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    const banner = document.createElement('div');
+                    banner.className = 'pwa-install-banner';
+                    banner.innerHTML = `
+                        <button class="pwa-install-banner-close" onclick="this.parentElement.classList.add('dismissed'); sessionStorage.setItem('pwa-banner-dismissed','true'); this.parentElement.addEventListener('animationend',()=>this.parentElement.remove())">✕</button>
+                        <div class="pwa-install-banner-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="2" rx="2"/><path d="M4 14h16"/><path d="M8 10h.01"/><path d="M16 10h.01"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/></svg>
+                        </div>
+                        <div class="pwa-install-banner-text">
+                            <strong>Experiencia App Completa</strong>
+                            <span>${isIOS ? 'Abre en Safari → Compartir → Agregar a Inicio' : 'Abre en Chrome → Menú → Agregar a Inicio'}</span>
+                        </div>
+                    `;
+                    document.body.appendChild(banner);
+                    setTimeout(() => {
+                        if (document.body.contains(banner)) {
+                            banner.classList.add('dismissed');
+                            banner.addEventListener('animationend', () => banner.remove());
+                        }
+                    }, 12000);
+                }
+            }, 5000);
+        }
     </script>
 </body>
 </html>
