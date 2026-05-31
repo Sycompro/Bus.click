@@ -459,14 +459,44 @@
         const bEnter = document.getElementById("btn-enter-fullscreen");
         
         function forceMobileImmersiveScroll() {
+            // Activar scroll temporal en el body para permitir que el navegador contraiga la barra
+            document.body.style.overflowY = "scroll";
+            document.documentElement.style.overflowY = "scroll";
+            
             // Realizar scrolls repetitivos cortos para asegurar que el navegador responda tras la transición del layout
             let count = 0;
             const scrollTimer = setInterval(() => {
-                window.scrollTo(0, 80);
+                window.scrollTo(0, 100);
                 count++;
-                if (count >= 6) clearInterval(scrollTimer);
-            }, 100);
+                if (count >= 8) {
+                    clearInterval(scrollTimer);
+                    // Una vez contraída la barra, fijamos el tamaño al viewport disponible real
+                    adjustAppViewport();
+                }
+            }, 80);
         }
+
+        function adjustAppViewport() {
+            // Fijar la altura del body y contenedor al tamaño exacto de pantalla disponible sin barras
+            const vh = window.innerHeight;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            document.body.style.height = `${vh}px`;
+            document.body.style.overflowY = "hidden";
+            document.documentElement.style.overflowY = "hidden";
+            
+            const container = document.querySelector('.b2c-app-container');
+            if (container) {
+                container.style.height = `calc(${vh}px - 56px)`;
+                container.style.overflowY = "auto";
+            }
+        }
+
+        // Registrar evento de resize para mantener la consistencia del alto de pantalla
+        window.addEventListener('resize', () => {
+            if (!sScreen || sScreen.classList.contains('hidden')) {
+                adjustAppViewport();
+            }
+        });
 
         // Detectar si estamos en un WebView/in-app browser (WhatsApp, Instagram, Facebook, etc.)
         function isInAppBrowser() {
@@ -494,8 +524,28 @@
         if (sScreen && bEnter) {
             bEnter.addEventListener("click", () => {
                 sScreen.classList.add("hidden");
-                // Forzar el colapso nativo de la barra URL de Chrome con re-intentos inteligentes
-                forceMobileImmersiveScroll();
+
+                // INTENTO DE PANTALLA COMPLETA NATIVA (Fullscreen API) para Chrome/Android
+                // Esto oculta la barra de direcciones superior de inmediato de forma oficial.
+                const docEl = document.documentElement;
+                const requestFS = docEl.requestFullscreen 
+                    || docEl.webkitRequestFullscreen 
+                    || docEl.mozRequestFullScreen 
+                    || docEl.msRequestFullscreen;
+
+                if (requestFS) {
+                    requestFS.call(docEl)
+                        .then(() => {
+                            console.log("✔ Pantalla completa inmersiva activada.");
+                            adjustAppViewport();
+                        })
+                        .catch(err => {
+                            console.warn("⚠ Fullscreen API rechazada o no soportada, usando colapso de scroll suave:", err);
+                            forceMobileImmersiveScroll();
+                        });
+                } else {
+                    forceMobileImmersiveScroll();
+                }
             });
         }
         
