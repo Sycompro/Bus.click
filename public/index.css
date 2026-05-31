@@ -5335,21 +5335,9 @@ body {
     transform: translateX(4px) !important;
 }
 
-/* Search card top gradient accent with rounded corners */
+/* Search card rounded border */
 .b2c-search-card {
-    position: relative !important;
-    overflow: hidden !important;
     border: 1px solid var(--border-soft) !important;
-}
-.b2c-search-card::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 4px !important;
-    background: linear-gradient(90deg, #8b5cf6, #38bdf8, #34d399, #fbbf24, #fb7185) !important;
-    z-index: 10 !important;
 }
 
 /* Hero title colorful */
