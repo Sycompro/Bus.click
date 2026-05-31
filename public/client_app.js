@@ -50,10 +50,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                                new URLSearchParams(window.location.search).get('ref') === 'wa' ||
                                new URLSearchParams(window.location.search).has('wps');
                                
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('.local');
-    const hasBypass = new URLSearchParams(window.location.search).has('bypass') || new URLSearchParams(window.location.search).has('admin');
+    const hasCompanyParam = new URLSearchParams(window.location.search).has('empresa') || 
+                            new URLSearchParams(window.location.search).has('company') || 
+                            new URLSearchParams(window.location.search).has('companyId') || 
+                            new URLSearchParams(window.location.search).has('c');
 
-    const allowedAccess = isWhatsAppUA || isWhatsAppReferrer || isWhatsAppUrlParam || isLocalhost || hasBypass;
+    const allowedAccess = isWhatsAppUA || isWhatsAppReferrer || isWhatsAppUrlParam || isLocalhost || hasBypass || hasCompanyParam;
 
     if (!allowedAccess) {
         // Bloquear acceso e inyectar pantalla de bloqueo premium blanco pastel
