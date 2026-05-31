@@ -15,9 +15,7 @@
     <meta name="msapplication-TileColor" content="#8b5cf6">
     <meta name="format-detection" content="telephone=no">
     
-    <!-- PWA Manifest para experiencia standalone sin barra del navegador -->
-    <link rel="manifest" href="/manifest.json">
-    
+    <!-- removed manifest for standalone pwa -->
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -25,7 +23,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
-            document.write('<script src="https://unpkg.com/lucide@latest"><\/script>');
+            var script = document.createElement('script');
+            script.src = 'https://unpkg.com/lucide@latest';
+            document.head.appendChild(script);
         }
     </script>
 </head>
@@ -119,7 +119,7 @@
                     </div>
 
                     <button type="submit" class="b2c-btn-primary">
-                        Buscar Pasajes
+                        <i data-lucide="search"></i> Buscar Pasajes
                     </button>
                 </form>
 
@@ -509,14 +509,10 @@
             return /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Twitter|Weibo|MicroMessenger|KAKAOTALK/i.test(ua);
         }
 
-        // Detectar si ya estamos en modo standalone (PWA instalada)
-        function isStandaloneMode() {
-            return window.matchMedia('(display-mode: standalone)').matches
-                || window.navigator.standalone === true;
-        }
+        // Se ha retirado el chequeo de modo standalone (PWA instalada)
 
-        // Si estamos en un WebView de WhatsApp o en modo standalone, auto-dismiss el splash
-        if (isInAppBrowser() || isStandaloneMode()) {
+        // Si estamos en un WebView de WhatsApp, auto-dismiss el splash
+        if (isInAppBrowser()) {
             if (sScreen) {
                 // Splash breve de 800ms para que se sienta como carga de app nativa
                 setTimeout(() => {
@@ -557,16 +553,7 @@
         // Exportar la función a nivel global para que client_app.js la llame al poblar el DOM con datos de Railway
         window.forceMobileImmersiveScroll = forceMobileImmersiveScroll;
 
-        // Registrar Service Worker para habilitar PWA standalone
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then(() => {
-                console.log('✔ Service Worker registrado para PWA standalone.');
-            }).catch((err) => {
-                console.warn('⚠ Error registrando Service Worker:', err);
-            });
-        }
-
-
+        // Se ha retirado el registro del Service Worker (PWA)
     </script>
 </body>
 </html>

@@ -4029,12 +4029,12 @@ body {
 
 /* ── Search Card ── */
 .b2c-search-card {
-    background: #ffffff;
+    background: transparent;
     border-radius: 20px;
-    padding: 1.5rem;
+    padding: 0.5rem;
     margin-top: 1.25rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    border: 1px solid #eef2f7;
+    box-shadow: none;
+    border: none;
 }
 
 /* ── Fields ── */
@@ -4162,7 +4162,7 @@ body {
 .b2c-btn-primary:hover { box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35); transform: translateY(-1px); }
 .b2c-btn-primary:active { transform: translateY(0); }
 .b2c-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-.b2c-btn-primary i, .b2c-btn-primary svg { width: 16px; height: 16px; flex-shrink: 0; }
+.b2c-btn-primary i, .b2c-btn-primary svg { width: 20px; height: 20px; flex-shrink: 0; }
 
 /* ── Benefits ── */
 .b2c-benefits {
@@ -5337,7 +5337,10 @@ body {
 
 /* Search card rounded border */
 .b2c-search-card {
-    border: 1px solid var(--border-soft) !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0.5rem !important;
 }
 
 /* Hero title colorful */
