@@ -5724,5 +5724,4 @@ body {
         display: none !important;
     }
 }
-/ *   F I X   F O R   I C O N S   R E N D E R I N G   A S   S O L I D   B L O C K S   * /   i [ d a t a - l u c i d e ] ,   s v g . l u c i d e   {   b a c k g r o u n d :   t r a n s p a r e n t   ! i m p o r t a n t ;   b a c k g r o u n d - c o l o r :   t r a n s p a r e n t   ! i m p o r t a n t ;   f i l l :   n o n e   ! i m p o r t a n t ;   }  
- 
+/* FIX FOR ICONS RENDERING AS SOLID BLOCKS */ i[data-lucide], svg.lucide { background: transparent !important; background-color: transparent !important; fill: none !important; }
