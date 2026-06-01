@@ -641,8 +641,17 @@ function setupEventListeners() {
     const tabHelp = document.getElementById("tab-help");
     const tabProfile = document.getElementById("tab-profile");
     
+    // Helper para cerrar modales de apartados activos al cambiar de pestaña
+    function closeActiveModals() {
+        document.querySelectorAll(".mobile-modal-overlay").forEach(overlay => {
+            overlay.classList.remove('show');
+            setTimeout(() => overlay.remove(), 300);
+        });
+    }
+    
     if (tabHome) {
         tabHome.addEventListener("click", () => {
+            closeActiveModals();
             setActiveTab("tab-home");
             goToStep("step-search");
         });
@@ -650,6 +659,7 @@ function setupEventListeners() {
     
     if (tabHistory) {
         tabHistory.addEventListener("click", () => {
+            closeActiveModals();
             setActiveTab("tab-history");
             showHistoryModal();
         });
@@ -657,6 +667,7 @@ function setupEventListeners() {
     
     if (tabHelp) {
         tabHelp.addEventListener("click", () => {
+            closeActiveModals();
             setActiveTab("tab-help");
             showHelpModal();
         });
@@ -664,6 +675,7 @@ function setupEventListeners() {
 
     if (tabProfile) {
         tabProfile.addEventListener("click", () => {
+            closeActiveModals();
             setActiveTab("tab-profile");
             if (state.user && state.user.email) {
                 showEditProfileModal();
