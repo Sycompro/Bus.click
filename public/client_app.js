@@ -639,6 +639,7 @@ function setupEventListeners() {
     const tabHome = document.getElementById("tab-home");
     const tabHistory = document.getElementById("tab-history");
     const tabHelp = document.getElementById("tab-help");
+    const tabProfile = document.getElementById("tab-profile");
     
     if (tabHome) {
         tabHome.addEventListener("click", () => {
@@ -658,6 +659,18 @@ function setupEventListeners() {
         tabHelp.addEventListener("click", () => {
             setActiveTab("tab-help");
             showHelpModal();
+        });
+    }
+
+    if (tabProfile) {
+        tabProfile.addEventListener("click", () => {
+            setActiveTab("tab-profile");
+            if (state.user && state.user.email) {
+                showEditProfileModal();
+            } else {
+                showHistoryModal();
+                showMobileNotification("Inicia sesión para gestionar tu perfil.", "info");
+            }
         });
     }
     
@@ -1691,11 +1704,20 @@ async function syncClientTickets() {
 
 // --- CONTROLADOR DE ACTIVACIÓN DE TABS ---
 function setActiveTab(tabId) {
-    document.querySelectorAll(".tab-bar-item").forEach(item => {
+    // Sincronizar botones de arriba (escritorio)
+    document.querySelectorAll(".b2c-nav-btn").forEach(item => {
         item.classList.remove("active");
     });
     const targetTab = document.getElementById(tabId);
     if (targetTab) targetTab.classList.add("active");
+    
+    // Sincronizar botones de abajo (móvil)
+    document.querySelectorAll(".b2c-tabbar-item").forEach(item => {
+        item.classList.remove("active");
+        if (item.getAttribute("data-tab") === tabId) {
+            item.classList.add("active");
+        }
+    });
 }
 
 // --- RENDERIZAR HTML DE LISTA DE TICKETS (B2C) ---
