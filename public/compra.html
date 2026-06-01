@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.47">
+    <link rel="stylesheet" href="index.css?v=4.48">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -102,6 +102,25 @@
                         <div class="datepicker-wrapper">
                             <input type="text" class="datepicker-input b2c-input" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
                             <input type="hidden" id="search-date" required>
+                            <i data-lucide="calendar" class="datepicker-icon"></i>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; padding: 12px; background: #f8fafc; border-radius: 12px; border: 1px solid #e2e8f0;">
+                        <label for="toggle-return" style="display: flex; align-items: center; gap: 8px; font-weight: 600; color: #475569; font-size: 0.95rem; cursor: pointer; margin: 0;">
+                            <i data-lucide="calendar-plus" style="width: 18px; height: 18px; color: #8b5cf6;"></i> Pasaje de Retorno
+                        </label>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="toggle-return" class="toggle-checkbox">
+                            <label class="toggle-label" for="toggle-return"></label>
+                        </div>
+                    </div>
+
+                    <div class="b2c-field" id="return-date-container" style="display: none; animation: fadeIn 0.3s ease;">
+                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #8b5cf6;"></i> Fecha de retorno</label>
+                        <div class="datepicker-wrapper">
+                            <input type="text" class="datepicker-input b2c-input" id="search-date-return-display" placeholder="Fecha de vuelta" readonly>
+                            <input type="hidden" id="search-date-return">
                             <i data-lucide="calendar" class="datepicker-icon"></i>
                         </div>
                     </div>
@@ -449,7 +468,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.47"></script>
+    <script src="client_app.js?v=4.48"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {
