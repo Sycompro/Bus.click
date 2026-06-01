@@ -64,13 +64,7 @@ window.handleGoogleCredentialResponse = function(response) {
             picture: payload.picture
         };
         
-        // Actualizar UI del perfil en la barra superior
-        const profileText = document.querySelector("#btn-user-profile span");
-        if(profileText) profileText.textContent = state.user.name;
-        const profileImg = document.querySelector("#btn-user-profile div");
-        if(profileImg && state.user.picture) {
-            profileImg.innerHTML = `<img src="${state.user.picture}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-        }
+        // (La UI del Navbar ya no cambia a la foto/nombre, es un botón fijo de Menú)
         
         // Cerrar modal de Historial/Login si está abierto
         document.querySelectorAll(".mobile-modal-overlay").forEach(m => m.remove());
@@ -81,9 +75,13 @@ window.handleGoogleCredentialResponse = function(response) {
             state.user.dni = savedProfile.dni;
             state.user.whatsapp = savedProfile.whatsapp;
             state.user.ruc = savedProfile.ruc;
-            showHistoryModal();
-        } else {
-            showAccountCompletionModal();
+            state.user.razonSocial = savedProfile.razonSocial;
+        }
+        
+        // Abrir/Actualizar el Sidebar
+        const sidebar = document.getElementById('profile-sidebar');
+        if (sidebar && typeof openSidebar === 'function') {
+            openSidebar();
         }
         
     } catch(e) {
@@ -2171,157 +2169,75 @@ function showAccountCompletionModal() {
 }
 
 
-// --- LÓGICA DE DROPDOWN DE PERFIL Y EDICIÓN ---
+
+// --- LÓGICA DEL SIDEBAR DE PERFIL ---
+function updateSidebarUI() {
+    const unauthView = document.getElementById('sidebar-unauth-view');
+    const authView = document.getElementById('sidebar-auth-view');
+    
+    if (state.user && state.user.email) {
+        // Mostrar vista autenticada
+        unauthView.style.display = 'none';
+        authView.style.display = 'flex';
+        
+        // Poblar datos
+        document.getElementById('sidebar-user-photo').src = state.user.picture || '';
+        document.getElementById('sidebar-user-email').textContent = state.user.email || '';
+        document.getElementById('sidebar-dni').value = state.user.dni || '';
+        document.getElementById('sidebar-name').value = state.user.name || '';
+        document.getElementById('sidebar-whatsapp').value = state.user.whatsapp || '';
+        document.getElementById('sidebar-ruc').value = state.user.ruc || '';
+        document.getElementById('sidebar-razon').value = state.user.razonSocial || '';
+        
+        const razonContainer = document.getElementById('sidebar-razon-container');
+        if (state.user.ruc) {
+            razonContainer.style.display = 'block';
+        } else {
+            razonContainer.style.display = 'none';
+        }
+    } else {
+        // Mostrar vista no autenticada
+        authView.style.display = 'none';
+        unauthView.style.display = 'flex';
+        
+        // Renderizar botón de Google aquí si está listo
+        const sidebarGoogleContainer = document.getElementById('sidebar-google-btn-container');
+        if (sidebarGoogleContainer && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+            google.accounts.id.renderButton(
+                sidebarGoogleContainer,
+                { theme: "outline", size: "large", width: 280, text: "continue_with" }
+            );
+        }
+    }
+}
+
+function openSidebar() {
+    document.getElementById('sidebar-overlay').classList.add('show');
+    document.getElementById('profile-sidebar').classList.add('open');
+    updateSidebarUI();
+}
+
+function closeSidebar() {
+    document.getElementById('sidebar-overlay').classList.remove('show');
+    document.getElementById('profile-sidebar').classList.remove('open');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const profileBtn = document.getElementById('btn-user-profile');
-    const dropdown = document.getElementById('user-profile-dropdown');
-    const btnMiPerfil = document.getElementById('btn-menu-mi-perfil');
-    const btnLogout = document.getElementById('btn-menu-logout');
-
-    if (profileBtn && dropdown) {
-        // Toggle dropdown
-        profileBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('show');
-            // Check login state to show/hide logout
-            if (state.user && state.user.email) {
-                btnLogout.style.display = 'flex';
-            } else {
-                btnLogout.style.display = 'none';
-            }
-        });
-
-        // Click outside to close
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target) && !profileBtn.contains(e.target)) {
-                dropdown.classList.remove('show');
-            }
-        });
-
-        // Botón Mi Perfil
-        btnMiPerfil.addEventListener('click', () => {
-            dropdown.classList.remove('show');
-            if (state.user && state.user.email) {
-                // Está logueado, mostrar edición
-                showEditProfileModal();
-            } else {
-                // No está logueado, pedir login
-                showHistoryModal();
-            }
-        });
-
-        // Botón Cerrar Sesión
-        btnLogout.addEventListener('click', () => {
-            dropdown.classList.remove('show');
-            // Limpiar estado
-            state.user = null;
-            localStorage.removeItem('busclick_client_profile');
-            
-            // Si GSI está disponible, revocar o deshabilitar auto-select
-            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-                google.accounts.id.disableAutoSelect();
-            }
-
-            // Restaurar UI del botón
-            const profileText = document.querySelector("#btn-user-profile span");
-            if(profileText) profileText.textContent = "Mi Perfil";
-            const profileImg = document.querySelector("#btn-user-profile div");
-            if(profileImg) profileImg.innerHTML = `<i data-lucide="user"></i>`;
-            lucide.createIcons();
-
-            // Refrescar modal de tickets si está abierto
-            const listArea = document.getElementById("modal-tickets-list-area");
-            if (listArea) {
-                listArea.innerHTML = renderTicketsListHtml();
-                lucide.createIcons();
-                const overlay = document.querySelector(".mobile-modal-overlay");
-                if(overlay) setupHistoryModalListeners(overlay);
-            }
-            
-            showMobileNotification("Sesión cerrada exitosamente", "success");
+    // Abrir Sidebar
+    const btnUserProfile = document.getElementById('btn-user-profile');
+    if (btnUserProfile) {
+        btnUserProfile.addEventListener('click', () => {
+            openSidebar();
         });
     }
-});
 
-function showEditProfileModal() {
-    // Eliminar modales previos
-    document.querySelectorAll('.mobile-modal-overlay').forEach(m => m.remove());
-    
-    const overlay = document.createElement('div');
-    overlay.className = 'mobile-modal-overlay';
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.4)';
-    overlay.style.backdropFilter = 'blur(4px)';
-    overlay.style.zIndex = '9999';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'flex-end';
-
-    const modalHTML = `
-        <div class="mobile-modal-content" style="width: 100%; background: white; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; max-height: 90vh; box-shadow: 0 -4px 24px rgba(0,0,0,0.1);">
-            <div style="padding: 16px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
-                <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">Mi Perfil</h3>
-                <button type="button" class="btn-close-edit-modal" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b;">
-                    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
-                </button>
-            </div>
-            <div style="padding: 20px; overflow-y: auto;">
-                
-                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 24px;">
-                    <img src="${state.user.picture || ''}" alt="Foto" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 3px solid #eff6ff;">
-                    <div style="font-weight: 600; font-size: 1.1rem; color: #1e293b;">${state.user.email || ''}</div>
-                    <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;"><i data-lucide="shield-check" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Cuenta de Google verificada</div>
-                </div>
-
-                <div class="b2c-field" style="margin-bottom: 16px;">
-                    <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #3b82f6;"></i> DNI</label>
-                    <input type="text" id="edit-dni" class="b2c-input" required placeholder="Ingresa tus 8 dígitos" maxlength="8" value="${state.user.dni || ''}" style="width: 100%; margin-top: 4px;">
-                </div>
-                
-                <div class="b2c-field" style="margin-bottom: 16px;">
-                    <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #f472b6;"></i> Nombres Completos</label>
-                    <input type="text" id="edit-name" class="b2c-input" required readonly placeholder="Se autocompletará con tu DNI..." value="${state.user.name || ''}" style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;">
-                </div>
-
-                <div class="b2c-field" style="margin-bottom: 16px;">
-                    <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #34d399;"></i> Número de WhatsApp</label>
-                    <input type="tel" id="edit-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}" value="${state.user.whatsapp || ''}" style="width: 100%; margin-top: 4px;">
-                </div>
-
-                <div class="b2c-field" style="margin-bottom: 16px;">
-                    <label class="b2c-label"><i data-lucide="building-2" class="b2c-label-icon" style="color: #8b5cf6;"></i> RUC (Opcional)</label>
-                    <input type="text" id="edit-ruc" class="b2c-input" placeholder="Ingresa tus 11 dígitos" maxlength="11" value="${state.user.ruc || ''}" style="width: 100%; margin-top: 4px;">
-                </div>
-
-                <div class="b2c-field" style="margin-bottom: 24px; display: ${state.user.ruc ? 'block' : 'none'};" id="edit-razon-container">
-                    <label class="b2c-label"><i data-lucide="briefcase" class="b2c-label-icon" style="color: #64748b;"></i> Razón Social</label>
-                    <input type="text" id="edit-razon" class="b2c-input" readonly value="${state.user.razonSocial || ''}" style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;">
-                </div>
-
-            </div>
-            <div style="padding: 16px 20px; border-top: 1px solid #f1f5f9; background: white;">
-                <button id="btn-save-edit" class="b2c-btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 1rem;">
-                    <i data-lucide="save"></i> Guardar Cambios
-                </button>
-            </div>
-        </div>
-    `;
-
-    overlay.innerHTML = modalHTML;
-    document.body.appendChild(overlay);
-    lucide.createIcons();
-
-    // Listeners
-    overlay.querySelector('.btn-close-edit-modal').addEventListener('click', () => {
-        overlay.remove();
-    });
+    // Cerrar Sidebar
+    document.getElementById('btn-close-sidebar').addEventListener('click', closeSidebar);
+    document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
 
     // Validación Automática RENIEC
-    const dniInput = document.getElementById('edit-dni');
-    const nameInput = document.getElementById('edit-name');
+    const dniInput = document.getElementById('sidebar-dni');
+    const nameInput = document.getElementById('sidebar-name');
     dniInput.addEventListener('input', async (e) => {
         const val = e.target.value.replace(/\D/g, '');
         e.target.value = val;
@@ -2358,9 +2274,9 @@ function showEditProfileModal() {
     });
 
     // Validación Automática SUNAT
-    const rucInput = document.getElementById('edit-ruc');
-    const razonContainer = document.getElementById('edit-razon-container');
-    const razonInput = document.getElementById('edit-razon');
+    const rucInput = document.getElementById('sidebar-ruc');
+    const razonContainer = document.getElementById('sidebar-razon-container');
+    const razonInput = document.getElementById('sidebar-razon');
     rucInput.addEventListener('input', async (e) => {
         const val = e.target.value.replace(/\D/g, '');
         e.target.value = val;
@@ -2380,7 +2296,6 @@ function showEditProfileModal() {
                         razonInput.readOnly = false;
                     }
                 } else {
-                    // MOCK Fallback
                     razonInput.value = "EMPRESA MOCK S.A.C.";
                     showMobileNotification("RUC verificado (Local).", "success");
                 }
@@ -2393,11 +2308,11 @@ function showEditProfileModal() {
         }
     });
 
-    // Guardar
-    document.getElementById('btn-save-edit').addEventListener('click', () => {
+    // Guardar Perfil
+    document.getElementById('btn-save-sidebar').addEventListener('click', () => {
         const dni = dniInput.value;
         const name = nameInput.value;
-        const whatsapp = document.getElementById('edit-whatsapp').value;
+        const whatsapp = document.getElementById('sidebar-whatsapp').value;
         const ruc = rucInput.value;
         const razon = razonInput.value;
 
@@ -2406,7 +2321,6 @@ function showEditProfileModal() {
         if (whatsapp.length !== 9) return showMobileNotification("El WhatsApp debe tener 9 dígitos.", "error");
         if (ruc && ruc.length !== 11) return showMobileNotification("El RUC debe tener 11 dígitos.", "error");
 
-        // Actualizar State
         state.user.dni = dni;
         state.user.name = name;
         state.user.whatsapp = whatsapp;
@@ -2418,16 +2332,33 @@ function showEditProfileModal() {
             state.user.razonSocial = null;
         }
 
-        // Persistir en LocalStorage
         localStorage.setItem('busclick_client_profile', JSON.stringify({
             dni, whatsapp, ruc, razonSocial: razon
         }));
 
-        // Actualizar botón de perfil
-        const profileText = document.querySelector("#btn-user-profile span");
-        if(profileText) profileText.textContent = state.user.name.split(' ')[0];
-
         showMobileNotification("¡Perfil guardado exitosamente!", "success");
-        overlay.remove();
+        closeSidebar();
     });
-}
+
+    // Cerrar Sesión
+    document.getElementById('btn-logout-sidebar').addEventListener('click', () => {
+        state.user = null;
+        localStorage.removeItem('busclick_client_profile');
+        
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+            google.accounts.id.disableAutoSelect();
+        }
+
+        const listArea = document.getElementById("modal-tickets-list-area");
+        if (listArea) {
+            listArea.innerHTML = renderTicketsListHtml();
+            lucide.createIcons();
+            const overlay = document.querySelector(".mobile-modal-overlay");
+            if(overlay) setupHistoryModalListeners(overlay);
+        }
+        
+        showMobileNotification("Sesión cerrada exitosamente", "success");
+        updateSidebarUI();
+        closeSidebar();
+    });
+});
