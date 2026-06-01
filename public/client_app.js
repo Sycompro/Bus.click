@@ -801,8 +801,16 @@ async function handleSearchSubmit() {
     const toggleReturn = document.getElementById("toggle-return");
     const returnDate = document.getElementById("search-date-return").value;
     
-    if (!origin || !destination || !date) {
-        showMobileNotification("Por favor, complete todos los campos de búsqueda.", "warning");
+    if (!origin) {
+        showMobileNotification("Selecciona desde dónde quieres viajar (Origen).", "warning");
+        return;
+    }
+    if (!destination) {
+        showMobileNotification("Selecciona hacia dónde quieres viajar (Destino).", "warning");
+        return;
+    }
+    if (!date) {
+        showMobileNotification("Por favor, elige la fecha en la que deseas viajar.", "warning");
         return;
     }
     
@@ -1684,7 +1692,7 @@ function showMobileNotification(message, type = "success") {
     if (type === "info") { icon = "info"; color = "#6366f1"; bg = "rgba(99, 102, 241, 0.12)"; border = "#c7d2fe"; }
     
     toast.innerHTML = `
-        <div style="background: #ffffff; border: 1.5px solid ${border}; box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 0.75rem 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 0.6rem; max-width: 340px; animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border: 1.5px solid ${border}; box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 0.75rem 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 0.6rem; max-width: 340px; animation: slideDownToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="width: 24px; height: 24px; border-radius: 50%; background: ${bg}; color: ${color}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <i data-lucide="${icon}" style="width: 14px; height: 14px;"></i>
             </div>
@@ -1694,7 +1702,8 @@ function showMobileNotification(message, type = "success") {
     
     // Estilos fijos para la notificación dentro del contenedor responsivo
     toast.style.position = "fixed";
-    toast.style.bottom = "80px";
+    toast.style.top = "env(safe-area-inset-top, 20px)";
+    toast.style.marginTop = "15px";
     toast.style.left = "50%";
     toast.style.transform = "translateX(-50%)";
     toast.style.zIndex = "2000";
