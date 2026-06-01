@@ -3999,7 +3999,7 @@ body {
 /* ── Main Container ── */
 .b2c-app-container {
     width: 100%;
-    min-height: calc(100vh - 56px);
+    min-height: 100vh;
     background: #f8f9fc;
 }
 .b2c-main {
