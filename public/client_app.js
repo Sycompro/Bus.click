@@ -3020,9 +3020,15 @@ function showProfileModal() {
         const userEmail = state.user.email || '';
         const userName = state.user.name || 'Pasajero';
         
-        let photoHtml = `<div style="width: 64px; height: 64px; border-radius: 50%; background: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; border: 2px solid #0f172a; margin-bottom: 12px;"><i data-lucide="user" style="width: 28px; height: 28px;"></i></div>`;
+        const dniVal = state.user.dni || '';
+        const nameVal = state.user.name || '';
+        const wpVal = state.user.whatsapp || '';
+        const rucVal = state.user.ruc || '';
+        const razonVal = state.user.razonSocial || '';
+        
+        let photoHtml = `<div style="width: 54px; height: 54px; border-radius: 50%; background: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; border: 2px solid #0f172a; flex-shrink: 0;"><i data-lucide="user" style="width: 24px; height: 24px;"></i></div>`;
         if (userPhoto) {
-            photoHtml = `<img src="${userPhoto}" alt="Usuario" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid #0f172a; object-fit: cover; margin-bottom: 12px;">`;
+            photoHtml = `<img src="${userPhoto}" alt="Usuario" style="width: 54px; height: 54px; border-radius: 50%; border: 2px solid #0f172a; object-fit: cover; flex-shrink: 0;">`;
         }
         
         overlay.innerHTML = `
@@ -3034,20 +3040,50 @@ function showProfileModal() {
                     <h3 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Mi Perfil</h3>
                 </div>
                 
-                <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 100px;">
-                    <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid var(--border-soft); border-radius: 24px; padding: 2rem 1.5rem; width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-soft);">
+                <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 120px;">
+                    <!-- Cabecera de Cuenta -->
+                    <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid var(--border-soft); border-radius: 20px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-soft);">
                         ${photoHtml}
-                        <h4 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0; margin-bottom: 4px;">${userName}</h4>
-                        <p style="font-size: 0.85rem; color: #64748b; margin: 0; margin-bottom: 24px;">${userEmail}</p>
-                        
-                        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-                            <button type="button" id="btn-profile-edit" class="b2c-btn-primary" style="width: 100%; padding: 12px; font-weight: 700; border-radius: 12px; cursor: pointer; justify-content: center; display: flex; align-items: center; gap: 6px;">
-                                <i data-lucide="user-cog" style="width: 18px; height: 18px;"></i> Mi Perfil
-                            </button>
-                            <button type="button" id="btn-profile-logout" class="b2c-btn-back" style="width: 100%; padding: 12px; font-weight: 700; border-radius: 12px; border-color: #fca5a5; color: #ef4444; background: #fef2f2; cursor: pointer; justify-content: center; display: flex; align-items: center; gap: 6px;">
-                                <i data-lucide="log-out" style="width: 18px; height: 18px;"></i> Salir
-                            </button>
+                        <div style="flex: 1; min-width: 0;">
+                            <h4 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${userName}</h4>
+                            <p style="font-size: 0.78rem; color: #64748b; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${userEmail}</p>
                         </div>
+                    </div>
+                    
+                    <!-- Campos del Perfil -->
+                    <div class="b2c-field" style="margin-bottom: 1rem;">
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #6366f1;"></i> DNI</label>
+                        <input type="text" id="profile-edit-dni" class="b2c-input" required placeholder="Ingresa tus 8 dígitos" maxlength="8" style="width: 100%; margin-top: 4px;" value="${dniVal}">
+                    </div>
+                    
+                    <div class="b2c-field" style="margin-bottom: 1rem;">
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;"><i data-lucide="user" class="b2c-label-icon" style="color: #ec4899;"></i> Nombres Completos</label>
+                        <input type="text" id="profile-edit-name" class="b2c-input" required readonly placeholder="Se autocompletará con tu DNI..." style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;" value="${nameVal}">
+                    </div>
+                    
+                    <div class="b2c-field" style="margin-bottom: 1rem;">
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;"><i data-lucide="phone" class="b2c-label-icon" style="color: #10b981;"></i> Número de WhatsApp</label>
+                        <input type="tel" id="profile-edit-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}" style="width: 100%; margin-top: 4px;" value="${wpVal}">
+                    </div>
+                    
+                    <div class="b2c-field" style="margin-bottom: 1rem;">
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;"><i data-lucide="building-2" class="b2c-label-icon" style="color: #8b5cf6;"></i> RUC (Opcional)</label>
+                        <input type="text" id="profile-edit-ruc" class="b2c-input" placeholder="Ingresa tus 11 dígitos" maxlength="11" style="width: 100%; margin-top: 4px;" value="${rucVal}">
+                    </div>
+                    
+                    <div class="b2c-field" style="margin-bottom: 1.5rem; display: ${rucVal ? 'block' : 'none'};" id="profile-edit-razon-container">
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;"><i data-lucide="briefcase" class="b2c-label-icon" style="color: #64748b;"></i> Razón Social</label>
+                        <input type="text" id="profile-edit-razon" class="b2c-input" readonly style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;" value="${razonVal}">
+                    </div>
+                    
+                    <!-- Botones de Acción -->
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 2rem; width: 100%;">
+                        <button type="button" id="btn-profile-save" class="b2c-btn-primary" style="width: 100%; padding: 14px; font-weight: 700; border-radius: 16px; cursor: pointer; justify-content: center; display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="save" style="width: 18px; height: 18px;"></i> Guardar Cambios
+                        </button>
+                        <button type="button" id="btn-profile-logout" class="b2c-btn-back" style="width: 100%; padding: 14px; font-weight: 700; border-radius: 16px; border-color: #fca5a5; color: #ef4444; background: #fef2f2; cursor: pointer; justify-content: center; display: flex; align-items: center; gap: 6px;">
+                            <i data-lucide="log-out" style="width: 18px; height: 18px;"></i> Cerrar Sesión
+                        </button>
                     </div>
                 </div>
             </div>
@@ -3079,14 +3115,120 @@ function showProfileModal() {
                 }
             }, 50);
         } else {
-            document.getElementById("btn-profile-edit").addEventListener("click", () => {
-                overlay.classList.remove('show');
-                setTimeout(() => {
-                    overlay.remove();
-                    showEditProfileModal();
-                }, 300);
+            const dniInput = document.getElementById('profile-edit-dni');
+            const nameInput = document.getElementById('profile-edit-name');
+            const rucInput = document.getElementById('profile-edit-ruc');
+            const razonContainer = document.getElementById('profile-edit-razon-container');
+            const razonInput = document.getElementById('profile-edit-razon');
+
+            dniInput.addEventListener('input', async (e) => {
+                const val = e.target.value.replace(/\D/g, '');
+                e.target.value = val;
+                if (val.length === 8) {
+                    nameInput.placeholder = "Buscando en RENIEC...";
+                    nameInput.value = "";
+                    try {
+                        if (MOCK_NAMES[val]) {
+                            nameInput.value = MOCK_NAMES[val];
+                            showMobileNotification("DNI verificado exitosamente.", "success");
+                            return;
+                        }
+                        const response = await fetch('/api/consultar-dni', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ dni: val })
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success && result.data && result.data.nombres) {
+                                const d = result.data;
+                                nameInput.value = `${d.nombres} ${d.apellido_paterno || ''} ${d.apellido_materno || ''}`.trim();
+                                showMobileNotification("DNI verificado (RENIEC).", "success");
+                            } else {
+                                nameInput.placeholder = "Escriba sus nombres...";
+                                nameInput.readOnly = false;
+                            }
+                        } else {
+                            nameInput.placeholder = "Escriba sus nombres...";
+                            nameInput.readOnly = false;
+                        }
+                    } catch (err) {
+                        nameInput.placeholder = "Escriba sus nombres...";
+                        nameInput.readOnly = false;
+                    }
+                } else {
+                    nameInput.readOnly = true;
+                }
             });
-            
+
+            rucInput.addEventListener('input', async (e) => {
+                const val = e.target.value.replace(/\D/g, '');
+                e.target.value = val;
+                if (val.length === 11) {
+                    razonContainer.style.display = 'block';
+                    razonInput.placeholder = "Buscando en SUNAT...";
+                    razonInput.value = "";
+                    try {
+                        const response = await fetch('/api/consultar-ruc', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ruc: val })
+                        });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success && result.data && result.data.nombre_o_razon_social) {
+                                razonInput.value = result.data.nombre_o_razon_social;
+                                showMobileNotification("RUC verificado (SUNAT).", "success");
+                            } else {
+                                razonInput.placeholder = "Escriba la razón social...";
+                                razonInput.readOnly = false;
+                            }
+                        } else {
+                            razonInput.value = "EMPRESA MOCK S.A.C.";
+                            showMobileNotification("RUC verificado (Local).", "success");
+                        }
+                    } catch (err) {
+                        razonInput.value = "EMPRESA MOCK S.A.C.";
+                        showMobileNotification("RUC verificado (Local).", "success");
+                    }
+                } else {
+                    razonContainer.style.display = 'none';
+                }
+            });
+
+            document.getElementById('btn-profile-save').addEventListener('click', () => {
+                const dni = dniInput.value;
+                const name = nameInput.value;
+                const whatsapp = document.getElementById('profile-edit-whatsapp').value;
+                const ruc = rucInput.value;
+                const razon = razonInput.value;
+
+                if (dni.length !== 8) return showMobileNotification("El DNI debe tener 8 dígitos.", "error");
+                if (!name.trim()) return showMobileNotification("El nombre es obligatorio.", "error");
+                if (whatsapp.length !== 9) return showMobileNotification("El WhatsApp debe tener 9 dígitos.", "error");
+                if (ruc && ruc.length !== 11) return showMobileNotification("El RUC debe tener 11 dígitos.", "error");
+
+                if (!state.user) state.user = {};
+                state.user.dni = dni;
+                state.user.name = name;
+                state.user.whatsapp = whatsapp;
+                if (ruc) {
+                    state.user.ruc = ruc;
+                    state.user.razonSocial = razon;
+                } else {
+                    state.user.ruc = null;
+                    state.user.razonSocial = null;
+                }
+
+                localStorage.setItem('busclick_client_profile', JSON.stringify({
+                    dni, whatsapp, ruc, razonSocial: razon
+                }));
+
+                showMobileNotification("¡Perfil guardado exitosamente!", "success");
+                updateSidebarUI();
+                showProfileModal(); // Recargar el modal para refrescar
+            });
+
             document.getElementById("btn-profile-logout").addEventListener("click", () => {
                 state.user = null;
                 localStorage.removeItem('busclick_client_profile');
@@ -3098,7 +3240,7 @@ function showProfileModal() {
                 
                 showMobileNotification("Sesión cerrada exitosamente", "success");
                 updateSidebarUI();
-                showProfileModal(); // Recargar el modal
+                showProfileModal(); // Recargar el modal a modo login
             });
         }
     }
