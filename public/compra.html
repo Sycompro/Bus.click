@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.51">
+    <link rel="stylesheet" href="index.css?v=4.52">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -144,6 +144,21 @@
                         <i data-lucide="arrow-left"></i> Volver
                     </button>
                 </div>
+                
+                <div id="results-terminals-info" style="margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; display: none;">
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                            <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i> DIRECCIÓN DE ORIGEN
+                        </div>
+                        <div id="results-origin-address" style="font-size: 13px; color: #1e293b; font-weight: 500; margin-top: 2px;">Cargando...</div>
+                    </div>
+                    <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                            <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i> DIRECCIÓN DE LLEGADA
+                        </div>
+                        <div id="results-destination-address" style="font-size: 13px; color: #1e293b; font-weight: 500; margin-top: 2px;">Cargando...</div>
+                    </div>
+                </div>
                 <div id="mobile-routes-list"></div>
             </section>
 
@@ -157,6 +172,21 @@
                     <button type="button" class="b2c-btn-back btn-back-to-routes">
                         <i data-lucide="arrow-left"></i> Volver
                     </button>
+                </div>
+                
+                <div id="seats-terminals-info" style="margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px;">
+                    <div style="margin-bottom: 8px;">
+                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                            <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i> DIRECCIÓN DE ORIGEN
+                        </div>
+                        <div id="seats-origin-address" style="font-size: 13px; color: #1e293b; font-weight: 500; margin-top: 2px;">Cargando...</div>
+                    </div>
+                    <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+                        <div style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px;">
+                            <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i> DIRECCIÓN DE LLEGADA
+                        </div>
+                        <div id="seats-destination-address" style="font-size: 13px; color: #1e293b; font-weight: 500; margin-top: 2px;">Cargando...</div>
+                    </div>
                 </div>
 
                 <!-- Toggle pisos -->
@@ -504,7 +534,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.51"></script>
+    <script src="client_app.js?v=4.52"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {

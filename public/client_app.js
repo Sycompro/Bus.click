@@ -455,10 +455,20 @@ function setupEventListeners() {
                             // Preparar búsqueda de VUELTA
                             showMobileNotification("Selecciona ahora tu pasaje de retorno", "success");
                             
-                            const tempFrom = state.searchFrom;
-                            state.searchFrom = state.searchTo;
-                            state.searchTo = tempFrom;
-                            state.selectedDate = state.returnDate;
+                            const originSelect = document.getElementById("search-origin");
+                            const destSelect = document.getElementById("search-destination");
+                            const dateInput = document.getElementById("search-date");
+                            
+                            if (originSelect && destSelect && dateInput) {
+                                const tempFrom = originSelect.value;
+                                originSelect.value = destSelect.value;
+                                destSelect.value = tempFrom;
+                                dateInput.value = state.returnDate;
+                                
+                                // Ocultar temporalmente el check de retorno para la vuelta
+                                const toggleReturn = document.getElementById("toggle-return");
+                                if (toggleReturn) toggleReturn.checked = false;
+                            }
                             
                             // Limpiar selección actual
                             state.selectedSeat = null;
@@ -466,8 +476,7 @@ function setupEventListeners() {
                             state.selectedBus = null;
                             
                             // Buscar rutas de retorno
-                            await loadRoutesMobile();
-                            goToStep("step-routes");
+                            await handleSearchSubmit();
                         } else {
                             if (state.isRoundTrip && state.outboundReservation) {
                                 state.returnReservation = {
@@ -725,14 +734,32 @@ async function handleSearchSubmit() {
     }
     
     try {
-        // Consultar Movilidades y Tickets de forma paralela
-        const [movRes, tickRes] = await Promise.all([
+        // Consultar Movilidades, Tickets y Sedes de forma paralela
+        const [movRes, tickRes, sedesRes] = await Promise.all([
             fetch('/api/movilidades'),
-            fetch('/api/tickets')
+            fetch('/api/tickets'),
+            fetch('/api/sedes')
         ]);
         
         state.movilidades = await movRes.json();
         state.tickets = await tickRes.json();
+        state.sedes = await sedesRes.json();
+        
+        // Renderizar direcciones de terminales
+        const terminalsInfo = document.getElementById("results-terminals-info");
+        const originAddr = document.getElementById("results-origin-address");
+        const destAddr = document.getElementById("results-destination-address");
+        
+        if (terminalsInfo && originAddr && destAddr) {
+            const companyId = state.activeCompany ? state.activeCompany.id : null;
+            const originSede = state.sedes.find(s => s.companyId === companyId && s.city.toLowerCase() === origin.toLowerCase());
+            const destSede = state.sedes.find(s => s.companyId === companyId && s.city.toLowerCase() === destination.toLowerCase());
+            
+            originAddr.textContent = originSede && originSede.address ? originSede.address : "Terminal Terrestre Principal";
+            destAddr.textContent = destSede && destSede.address ? destSede.address : "Terminal Terrestre Principal";
+            terminalsInfo.style.display = "block";
+            lucide.createIcons();
+        }
         
         // Filtrar movilidades que coincidan con la ruta y con la empresa activa
         const filteredBuses = state.movilidades.filter(m => {
@@ -885,6 +912,16 @@ function selectBusForBooking(bus) {
     const busTypeLabel = bus.modelType === "bus2p" ? "Bus 2 Pisos VIP Lounge" : "Bus 1 Piso Premium";
     document.getElementById("seats-bus-subtitle").textContent = `${company.name} | ${bus.plate} - ${busTypeLabel}`;
     
+    // Renderizar Direcciones de Terminales en Paso 3
+    const seatsOriginAddr = document.getElementById("seats-origin-address");
+    const seatsDestAddr = document.getElementById("seats-destination-address");
+    if (seatsOriginAddr && seatsDestAddr && state.sedes) {
+        const originSede = state.sedes.find(s => s.companyId === bus.companyId && s.city.toLowerCase() === bus.routeFrom.toLowerCase());
+        const destSede = state.sedes.find(s => s.companyId === bus.companyId && s.city.toLowerCase() === bus.routeTo.toLowerCase());
+        seatsOriginAddr.textContent = originSede && originSede.address ? originSede.address : "Terminal Terrestre Principal";
+        seatsDestAddr.textContent = destSede && destSede.address ? destSede.address : "Terminal Terrestre Principal";
+    }
+
     // Reseteo visual del asiento
     document.getElementById("selected-seat-text").textContent = "-";
     document.getElementById("selected-seat-price").textContent = "S/ 0.00";
