@@ -1499,10 +1499,13 @@ function setupHistoryModalListeners(overlay) {
     // Renderizar botón de Google real si está el contenedor
     const googleBtnContainer = document.getElementById("google-btn-container");
     if (googleBtnContainer && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-        google.accounts.id.initialize({
-            client_id: "794712381168-4nau3n8ag7ilhhil9a5lbqmvjekjq7qk.apps.googleusercontent.com",
-            callback: handleGoogleCredentialResponse
-        });
+        if (!window.googleAuthInitialized) {
+            google.accounts.id.initialize({
+                client_id: "794712381168-4nau3n8ag7ilhhil9a5lbqmvjekjq7qk.apps.googleusercontent.com",
+                callback: handleGoogleCredentialResponse
+            });
+            window.googleAuthInitialized = true;
+        }
         google.accounts.id.renderButton(
             googleBtnContainer,
             { theme: "outline", size: "large", width: 280, text: "continue_with" }
