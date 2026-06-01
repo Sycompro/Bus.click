@@ -41,7 +41,9 @@ const state = {
     paymentMethod: "Yape/Plin",
     
     // Pasajes comprados localmente en esta sesión (almacenados en localStorage)
-    myTickets: JSON.parse(localStorage.getItem('busclick_client_tickets') || '[]')
+    myTickets: JSON.parse(localStorage.getItem('busclick_client_tickets') || '[]'),
+    
+    user: null // Estado de autenticación del usuario (mock para UI Google)
 };
 
 // --- LISTADO AUXILIAR DNI RENIEC (FALLBACK) ---
@@ -1347,6 +1349,25 @@ function setActiveTab(tabId) {
 // --- RENDERIZAR HTML DE LISTA DE TICKETS (B2C) ---
 function renderTicketsListHtml() {
     let ticketsListHtml = "";
+    
+    // Si no ha iniciado sesión, mostrar botón de Login con Google (UI Mock)
+    if (!state.user) {
+        return `
+            <div style="text-align: center; padding: 2rem 1rem; color: #64748b; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.2);">
+                    <i data-lucide="shield-check" style="width: 32px; height: 32px;"></i>
+                </div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Protegemos tus Pasajes</h3>
+                <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem; line-height: 1.5; max-width: 280px;">Inicia sesión de forma segura para ver, descargar y gestionar los boletos que has comprado.</p>
+                
+                <button type="button" class="btn-mock-google-login" style="display: flex; align-items: center; gap: 12px; background: white; border: 1px solid #cbd5e1; padding: 10px 16px; border-radius: 8px; font-weight: 600; color: #334155; font-size: 0.9rem; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s ease; width: 100%; justify-content: center;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width: 18px; height: 18px;">
+                    Continuar con Google
+                </button>
+            </div>
+        `;
+    }
+
     if (state.myTickets.length === 0) {
         ticketsListHtml = `
             <div style="text-align: center; padding: 3rem 0; color: #64748b;">
@@ -1354,7 +1375,7 @@ function renderTicketsListHtml() {
                     <i data-lucide="ticket" style="width: 24px; height: 24px;"></i>
                 </div>
                 <div style="font-size: 0.95rem; font-weight: 800; color: #475569;">No tienes pasajes emitidos</div>
-                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">Tus boletos comprados en esta sesión aparecerán listados aquí.</div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">Tus boletos comprados aparecerán listados aquí.</div>
             </div>
         `;
     } else {
@@ -1421,6 +1442,26 @@ function setupHistoryModalListeners(overlay) {
                 overlay.remove();
                 setActiveTab("tab-home");
                 goToStep("step-ticket");
+            }
+        });
+    });
+    
+    // Listener para mock de Google Login
+    overlay.querySelectorAll(".btn-mock-google-login").forEach(btn => {
+        btn.addEventListener("click", () => {
+            // Simulamos inicio de sesión
+            state.user = { name: "Cliente VIP", email: "cliente@gmail.com" };
+            
+            // Actualizar la interfaz (nombre en el menú, etc.)
+            const profileText = document.querySelector("#btn-user-profile span");
+            if(profileText) profileText.textContent = state.user.name;
+            
+            // Recargar la lista
+            const listArea = document.getElementById("modal-tickets-list-area");
+            if (listArea) {
+                listArea.innerHTML = renderTicketsListHtml();
+                lucide.createIcons();
+                setupHistoryModalListeners(overlay);
             }
         });
     });
