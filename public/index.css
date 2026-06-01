@@ -5419,14 +5419,7 @@ body {
     border: 1px solid var(--border-soft) !important;
 }
 .b2c-summary-card::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 4px !important;
-    background: linear-gradient(90deg, #3b82f6, #38bdf8) !important;
-    z-index: 10 !important;
+    display: none !important;
 }
 
 /* Ticket top gradient accent with rounded corners */
