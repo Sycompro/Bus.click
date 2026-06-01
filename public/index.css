@@ -4626,11 +4626,19 @@ body {
 
 @media (max-width: 640px) {
     .b2c-nav-links { display: none !important; }
-    .b2c-mobile-tabbar { display: flex !important; }
+    .b2c-mobile-tabbar { display: flex !important; z-index: 100000 !important; }
     .b2c-user-profile-btn { display: none !important; }
     .b2c-sidebar, .b2c-sidebar-overlay { display: none !important; }
     .b2c-main { padding-bottom: 5rem !important; }
     .b2c-hero-title { font-size: 1.35rem !important; }
+
+    /* Los modales flotan exactamente encima de la barra inferior */
+    .mobile-modal-overlay {
+        height: calc(100% - 65px - env(safe-area-inset-bottom, 0px)) !important;
+        bottom: calc(65px + env(safe-area-inset-bottom, 0px)) !important;
+        top: 0 !important;
+        z-index: 99999 !important;
+    }
 }
 
 @media (min-width: 641px) {
