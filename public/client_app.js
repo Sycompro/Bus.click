@@ -475,6 +475,14 @@ function setupEventListeners() {
             showHelpModal();
         });
     }
+    
+    // Botón de Perfil en Navbar
+    const btnUserProfile = document.getElementById("btn-user-profile");
+    if (btnUserProfile) {
+        btnUserProfile.addEventListener("click", () => {
+            showHistoryModal();
+        });
+    }
 }
 
 // --- TRANSICIÓN DE PASOS DEL WIZARD ---
