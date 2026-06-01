@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.52">
+    <link rel="stylesheet" href="index.css?v=4.53">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -407,12 +407,20 @@
                         </div>
                     </div>
 
-                    <!-- Dirección de destino física para información del pasajero -->
-                    <div style="margin: 0 1.25rem 0.75rem 1.25rem; text-align: left; background: #faf5ff; border: 1px solid #eff6ff; padding: 0.5rem 0.75rem; border-radius: 8px;">
-                        <span class="b2c-ticket-label" style="display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: #3b82f6; font-weight: bold; letter-spacing: 0.5px;">
-                            <i data-lucide="map-pin" style="width: 12px; height: 12px; stroke-width: 2.5;"></i> DIRECCIÓN DE LLEGADA
-                        </span>
-                        <span class="b2c-ticket-val" id="ticket-destination-address" style="font-size: 0.7rem; font-weight: 600; color: #1e1b4b; margin-top: 2px; white-space: normal;">—</span>
+                    <!-- Direcciones físicas para información del pasajero -->
+                    <div style="margin: 0 1.25rem 0.75rem 1.25rem; text-align: left; background: #faf5ff; border: 1px solid #eff6ff; padding: 0.5rem 0.75rem; border-radius: 8px; display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            <span class="b2c-ticket-label" style="display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: #3b82f6; font-weight: bold; letter-spacing: 0.5px;">
+                                <i data-lucide="map-pin" style="width: 12px; height: 12px; stroke-width: 2.5;"></i> DIRECCIÓN DE PARTIDA
+                            </span>
+                            <span class="b2c-ticket-val" id="ticket-origin-address" style="font-size: 0.7rem; font-weight: 600; color: #1e1b4b; margin-top: 2px; white-space: normal;">—</span>
+                        </div>
+                        <div style="border-top: 1px dashed #cbd5e1; padding-top: 8px;">
+                            <span class="b2c-ticket-label" style="display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: #3b82f6; font-weight: bold; letter-spacing: 0.5px;">
+                                <i data-lucide="map-pin" style="width: 12px; height: 12px; stroke-width: 2.5;"></i> DIRECCIÓN DE LLEGADA
+                            </span>
+                            <span class="b2c-ticket-val" id="ticket-destination-address" style="font-size: 0.7rem; font-weight: 600; color: #1e1b4b; margin-top: 2px; white-space: normal;">—</span>
+                        </div>
                     </div>
 
                     <div class="b2c-ticket-divider"></div>
@@ -534,7 +542,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.52"></script>
+    <script src="client_app.js?v=4.53"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {

@@ -1344,19 +1344,28 @@ function populateVirtualTicket(ticket) {
     const origin = mobility ? mobility.routeFrom : (ticket.routeFrom || state.selectedOrigin || "Origen");
     const destination = mobility ? mobility.routeTo : (ticket.routeTo || state.selectedDestination || "Destino");
     
-    // Buscar sede de llegada (destino) de la empresa para indicar la dirección exacta
+    // Buscar sede de llegada (destino) y salida (origen) de la empresa para indicar la dirección exacta
     const companySedes = state.sedes.filter(s => s.companyId === ticket.companyId);
+    
+    const originSede = companySedes.find(s => s.city.toLowerCase() === origin.toLowerCase());
     const destSede = companySedes.find(s => s.city.toLowerCase() === destination.toLowerCase());
+    
+    const originAddress = originSede ? `${originSede.name} - ${originSede.address}` : `Terminal Terrestre de ${origin}`;
     const destinationAddress = destSede ? `${destSede.name} - ${destSede.address}` : `Terminal Terrestre de ${destination}`;
 
     document.getElementById("ticket-company-name").textContent = company.name;
     document.getElementById("ticket-origin").textContent = origin;
     document.getElementById("ticket-destination").textContent = destination;
     
-    // Inyectar dirección de destino exacta
-    const addressContainer = document.getElementById("ticket-destination-address");
-    if (addressContainer) {
-        addressContainer.textContent = destinationAddress;
+    // Inyectar direcciones físicas de terminales
+    const originAddrContainer = document.getElementById("ticket-origin-address");
+    const destAddrContainer = document.getElementById("ticket-destination-address");
+    
+    if (originAddrContainer) {
+        originAddrContainer.textContent = originAddress;
+    }
+    if (destAddrContainer) {
+        destAddrContainer.textContent = destinationAddress;
     }
     
     // Fecha
