@@ -745,6 +745,16 @@ function goToStep(stepId) {
         if (scrollArea) scrollArea.scrollTop = 0;
     }
     
+    // Mostrar u ocultar el saludo de bienvenida según el paso
+    const welcomeHeader = document.getElementById("b2c-welcome-header");
+    if (welcomeHeader) {
+        if (stepId === "step-search") {
+            welcomeHeader.style.display = "";
+        } else {
+            welcomeHeader.style.display = "none";
+        }
+    }
+    
     // Actualizar barra de progreso del wizard
     const stepNumbers = {
         'step-search': 1,
