@@ -5894,7 +5894,7 @@ svg, i[data-lucide], .lucide {
     align-items: center;
     justify-content: center;
     gap: 0;
-    padding: 1.25rem 2rem 0.5rem 2rem;
+    padding: 1.25rem 2rem 1.75rem 2rem; /* Mayor padding inferior para separar del titulo */
 }
 .b2c-progress-dot {
     width: 10px;
