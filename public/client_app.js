@@ -1717,8 +1717,42 @@ function renderTicketsListHtml() {
         `;
     }
 
+    // Widget premium de información del perfil del usuario (en línea)
+    const userPhoto = state.user.picture || '';
+    const userEmail = state.user.email || '';
+    const userName = state.user.name || 'Pasajero';
+    
+    let photoHtml = `<div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6;"><i data-lucide="user" style="width: 22px; height: 22px;"></i></div>`;
+    if (userPhoto) {
+        photoHtml = `<img src="${userPhoto}" alt="Usuario" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #3b82f6; object-fit: cover;">`;
+    }
+
+    ticketsListHtml += `
+        <div style="background: linear-gradient(135deg, #f8fafc, #eff6ff); border: 1px solid #bfdbfe; border-radius: 20px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.04);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                ${photoHtml}
+                <div style="flex: 1; min-width: 0;">
+                    <h4 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${userName}</h4>
+                    <p style="font-size: 0.75rem; color: #64748b; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${userEmail}</p>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button type="button" id="btn-edit-profile-inline" class="b2c-btn-back" style="padding: 10px; justify-content: center; font-size: 0.78rem; font-weight: 700; border-color: #bfdbfe; color: #2563eb; background: #ffffff; cursor: pointer;">
+                    <i data-lucide="user-cog" style="width: 14px; height: 14px;"></i> Mi Perfil
+                </button>
+                <button type="button" id="btn-logout-inline" class="b2c-btn-back" style="padding: 10px; justify-content: center; font-size: 0.78rem; font-weight: 700; border-color: #fca5a5; color: #ef4444; background: #fef2f2; cursor: pointer;">
+                    <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Salir
+                </button>
+            </div>
+        </div>
+        
+        <h3 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px;">
+            <i data-lucide="ticket" style="width: 16px; height: 16px; color: #3b82f6;"></i> Mis Pasajes Comprados
+        </h3>
+    `;
+
     if (state.myTickets.length === 0) {
-        ticketsListHtml = `
+        ticketsListHtml += `
             <div style="text-align: center; padding: 3rem 0; color: #64748b;">
                 <div style="width: 52px; height: 52px; border-radius: 50%; background: #f1f5f9; color: #94a3b8; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
                     <i data-lucide="ticket" style="width: 24px; height: 24px;"></i>
@@ -1777,6 +1811,35 @@ function setupHistoryModalListeners(overlay) {
             overlay.remove();
             setActiveTab("tab-home");
         }, 300);
+    });
+
+    // Listener Editar Perfil en linea (celulares)
+    overlay.querySelector("#btn-edit-profile-inline")?.addEventListener("click", () => {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            overlay.remove();
+            showEditProfileModal();
+        }, 300);
+    });
+
+    // Listener Cerrar Sesión en linea (celulares)
+    overlay.querySelector("#btn-logout-inline")?.addEventListener("click", () => {
+        state.user = null;
+        localStorage.removeItem('busclick_client_profile');
+        localStorage.removeItem('busclick_user_session');
+        
+        if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+            google.accounts.id.disableAutoSelect();
+        }
+
+        const listArea = document.getElementById("modal-tickets-list-area");
+        if (listArea) {
+            listArea.innerHTML = renderTicketsListHtml();
+            lucide.createIcons();
+            setupHistoryModalListeners(overlay);
+        }
+        
+        showMobileNotification("Sesión cerrada exitosamente", "success");
     });
     
     // Listener ver boletos QR específicos
