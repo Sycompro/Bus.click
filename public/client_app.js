@@ -2263,12 +2263,12 @@ function showEditProfileModal() {
     const razonVal = state.user?.razonSocial || '';
     
     overlay.innerHTML = `
-        <div class="mobile-modal" style="height: 100vh; display: flex; flex-direction: column; position: relative; border-radius: 0;">
-            <div class="mobile-modal-header" style="flex-shrink: 0; padding: 16px 20px;">
-                <h3 style="font-weight: 800; font-size: 1.25rem;">Editar Perfil</h3>
-                <button class="mobile-modal-close" id="btn-close-edit-profile">
-                    <i data-lucide="x"></i>
+        <div class="mobile-modal" style="height: 100%; width: 100%; display: flex; flex-direction: column; position: relative; border-radius: 0;">
+            <div class="mobile-modal-header" style="flex-shrink: 0; padding: 16px 20px; display: flex; align-items: center; justify-content: flex-start; gap: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px));">
+                <button id="btn-close-edit-profile" style="background: none; border: none; color: #3b82f6; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 0; font-size: 1rem; cursor: pointer;">
+                    <i data-lucide="chevron-left"></i> Atrás
                 </button>
+                <h3 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Editar Perfil</h3>
             </div>
             
             <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px;">
