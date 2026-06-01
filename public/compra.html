@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.45">
+    <link rel="stylesheet" href="index.css?v=4.46">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -44,7 +44,7 @@
             </a>
             <div class="b2c-nav-links">
                 <button type="button" class="b2c-nav-btn active" id="tab-home">
-                    <i data-lucide="search"></i> <span>Comprar</span>
+                    <i data-lucide="ticket"></i> <span>Comprar</span>
                 </button>
                 <button type="button" class="b2c-nav-btn" id="tab-history">
                     <i data-lucide="ticket"></i> <span>Mis Pasajes</span>
@@ -384,7 +384,7 @@
     <!-- TAB BAR MÓVIL (solo visible en pantallas pequeñas) -->
     <footer class="b2c-mobile-tabbar">
         <button type="button" class="b2c-tabbar-item active" data-tab="tab-home">
-            <i data-lucide="search"></i><span>Comprar</span>
+            <i data-lucide="ticket"></i><span>Comprar</span>
         </button>
         <button type="button" class="b2c-tabbar-item" data-tab="tab-history">
             <i data-lucide="ticket"></i><span>Pasajes</span>
@@ -449,7 +449,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.45"></script>
+    <script src="client_app.js?v=4.46"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {
