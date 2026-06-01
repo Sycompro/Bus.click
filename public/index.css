@@ -5738,3 +5738,10 @@ svg, i[data-lucide], .lucide {
 }
 
 .b2c-ticket-brand, .b2c-ticket-bus-icon, .b2c-ticket-company { -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); isolation: isolate; }
+
+/* REDISENO BOTONES DE NAVEGACION */
+.b2c-nav-links { display: flex !important; justify-content: space-around !important; width: 100% !important; gap: 0 !important; }
+.b2c-nav-btn { display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: center !important; gap: 6px !important; background: transparent !important; border: none !important; padding: 0.4rem 0 !important; font-size: 0.75rem !important; font-weight: 500 !important; color: #94a3b8 !important; border-radius: 0 !important; min-width: 70px !important; height: auto !important; }
+.b2c-nav-btn svg, .b2c-nav-btn i { width: 22px !important; height: 22px !important; padding: 12px !important; border-radius: 18px !important; background: transparent !important; box-sizing: content-box !important; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important; margin: 0 !important; stroke-width: 2.2 !important; }
+.b2c-nav-btn.active { color: #6d28d9 !important; font-weight: 700 !important; background: transparent !important; }
+.b2c-nav-btn.active svg, .b2c-nav-btn.active i { background: #f3e8ff !important; color: #6d28d9 !important; }
