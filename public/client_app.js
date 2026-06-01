@@ -271,8 +271,17 @@ function renderCompanyPaymentMethods() {
     const company = state.activeCompany;
     if (!company) return;
     
-    // Forzar único método de pago para ventas por web: Yape / Plin
-    const methods = ['Yape/Plin'];
+    // Filtrar los métodos de pago configurados por el admin para mostrar SOLO Yape/Plin/Billeteras en la web
+    const allMethods = company.paymentMethods || [];
+    let methods = allMethods.filter(m => {
+        const lower = m.toLowerCase();
+        return lower.includes('yape') || lower.includes('plin') || lower.includes('billetera');
+    });
+    
+    // Fallback de seguridad si el admin no configuró explícitamente "Yape" pero igual cobra por Yape en la web
+    if (methods.length === 0) {
+        methods = ['Yape/Plin'];
+    }
     
     container.innerHTML = '';
     
