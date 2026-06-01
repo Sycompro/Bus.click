@@ -2170,42 +2170,32 @@ function showAccountCompletionModal() {
 
 
 
-// --- LÓGICA DEL SIDEBAR DE PERFIL ---
+
+// --- LÓGICA DEL SIDEBAR Y NAVEGACIÓN ---
 function updateSidebarUI() {
-    const unauthView = document.getElementById('sidebar-unauth-view');
-    const authView = document.getElementById('sidebar-auth-view');
+    const unauthHeader = document.getElementById('sidebar-header-unauth');
+    const authHeader = document.getElementById('sidebar-header-auth');
+    const btnLogout = document.getElementById('btn-logout-sidebar');
     
     if (state.user && state.user.email) {
-        // Mostrar vista autenticada
-        unauthView.style.display = 'none';
-        authView.style.display = 'flex';
+        // Logueado
+        unauthHeader.style.display = 'none';
+        authHeader.style.display = 'flex';
+        btnLogout.style.display = 'flex';
         
-        // Poblar datos
         document.getElementById('sidebar-user-photo').src = state.user.picture || '';
         document.getElementById('sidebar-user-email').textContent = state.user.email || '';
-        document.getElementById('sidebar-dni').value = state.user.dni || '';
-        document.getElementById('sidebar-name').value = state.user.name || '';
-        document.getElementById('sidebar-whatsapp').value = state.user.whatsapp || '';
-        document.getElementById('sidebar-ruc').value = state.user.ruc || '';
-        document.getElementById('sidebar-razon').value = state.user.razonSocial || '';
-        
-        const razonContainer = document.getElementById('sidebar-razon-container');
-        if (state.user.ruc) {
-            razonContainer.style.display = 'block';
-        } else {
-            razonContainer.style.display = 'none';
-        }
     } else {
-        // Mostrar vista no autenticada
-        authView.style.display = 'none';
-        unauthView.style.display = 'flex';
+        // No Logueado
+        authHeader.style.display = 'none';
+        unauthHeader.style.display = 'block';
+        btnLogout.style.display = 'none';
         
-        // Renderizar botón de Google aquí si está listo
         const sidebarGoogleContainer = document.getElementById('sidebar-google-btn-container');
         if (sidebarGoogleContainer && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
             google.accounts.id.renderButton(
                 sidebarGoogleContainer,
-                { theme: "outline", size: "large", width: 280, text: "continue_with" }
+                { theme: "outline", size: "large", width: 240, text: "continue_with" }
             );
         }
     }
@@ -2222,22 +2212,83 @@ function closeSidebar() {
     document.getElementById('profile-sidebar').classList.remove('open');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Abrir Sidebar
-    const btnUserProfile = document.getElementById('btn-user-profile');
-    if (btnUserProfile) {
-        btnUserProfile.addEventListener('click', () => {
-            openSidebar();
-        });
-    }
+// --- MODAL DE EDICIÓN DE PERFIL (PANTALLA COMPLETA) ---
+function showEditProfileModal() {
+    document.querySelectorAll('.mobile-modal-overlay').forEach(m => m.remove());
+    
+    const overlay = document.createElement("div");
+    overlay.className = "mobile-modal-overlay";
+    
+    // Obtener info actual
+    const dniVal = state.user?.dni || '';
+    const nameVal = state.user?.name || '';
+    const wpVal = state.user?.whatsapp || '';
+    const rucVal = state.user?.ruc || '';
+    const razonVal = state.user?.razonSocial || '';
+    
+    overlay.innerHTML = `
+        <div class="mobile-modal" style="height: 90vh; display: flex; flex-direction: column;">
+            <div class="mobile-modal-header" style="flex-shrink: 0;">
+                <h3 style="font-weight: 800; font-size: 1.25rem;">Editar Perfil</h3>
+                <button class="mobile-modal-close" id="btn-close-edit-profile">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding-bottom: 80px;">
+                <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; margin-bottom: 24px;">
+                    <p style="font-size: 0.9rem; color: #1e3a8a; margin: 0; line-height: 1.5;">
+                        <i data-lucide="info" style="width:16px; height:16px; display:inline-block; vertical-align:text-bottom;"></i>
+                        Mantén tus datos actualizados para agilizar tus compras de pasajes.
+                    </p>
+                </div>
 
-    // Cerrar Sidebar
-    document.getElementById('btn-close-sidebar').addEventListener('click', closeSidebar);
-    document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
+                <div class="b2c-field" style="margin-bottom: 20px;">
+                    <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #3b82f6;"></i> DNI</label>
+                    <input type="text" id="edit-profile-dni" class="b2c-input" required placeholder="Ingresa tus 8 dígitos" maxlength="8" style="width: 100%; margin-top: 4px;" value="${dniVal}">
+                </div>
+                
+                <div class="b2c-field" style="margin-bottom: 20px;">
+                    <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #f472b6;"></i> Nombres Completos</label>
+                    <input type="text" id="edit-profile-name" class="b2c-input" required readonly placeholder="Se autocompletará con tu DNI..." style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;" value="${nameVal}">
+                </div>
 
-    // Validación Automática RENIEC
-    const dniInput = document.getElementById('sidebar-dni');
-    const nameInput = document.getElementById('sidebar-name');
+                <div class="b2c-field" style="margin-bottom: 20px;">
+                    <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #34d399;"></i> Número de WhatsApp</label>
+                    <input type="tel" id="edit-profile-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}" style="width: 100%; margin-top: 4px;" value="${wpVal}">
+                </div>
+
+                <div class="b2c-field" style="margin-bottom: 20px;">
+                    <label class="b2c-label"><i data-lucide="building-2" class="b2c-label-icon" style="color: #8b5cf6;"></i> RUC (Opcional)</label>
+                    <input type="text" id="edit-profile-ruc" class="b2c-input" placeholder="Ingresa tus 11 dígitos" maxlength="11" style="width: 100%; margin-top: 4px;" value="${rucVal}">
+                </div>
+
+                <div class="b2c-field" style="margin-bottom: 20px; display: ${rucVal ? 'block' : 'none'};" id="edit-profile-razon-container">
+                    <label class="b2c-label"><i data-lucide="briefcase" class="b2c-label-icon" style="color: #64748b;"></i> Razón Social</label>
+                    <input type="text" id="edit-profile-razon" class="b2c-input" readonly style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;" value="${razonVal}">
+                </div>
+            </div>
+            
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: white; border-top: 1px solid #f1f5f9; border-radius: 0 0 16px 16px;">
+                <button id="btn-save-edit-profile" class="b2c-btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 1.1rem;">
+                    <i data-lucide="save"></i> Guardar Cambios
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    lucide.createIcons();
+
+    setTimeout(() => overlay.classList.add('show'), 10);
+
+    // Eventos del Modal
+    document.getElementById("btn-close-edit-profile").addEventListener("click", () => {
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 300);
+    });
+
+    const dniInput = document.getElementById('edit-profile-dni');
+    const nameInput = document.getElementById('edit-profile-name');
     dniInput.addEventListener('input', async (e) => {
         const val = e.target.value.replace(/\D/g, '');
         e.target.value = val;
@@ -2273,10 +2324,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Validación Automática SUNAT
-    const rucInput = document.getElementById('sidebar-ruc');
-    const razonContainer = document.getElementById('sidebar-razon-container');
-    const razonInput = document.getElementById('sidebar-razon');
+    const rucInput = document.getElementById('edit-profile-ruc');
+    const razonContainer = document.getElementById('edit-profile-razon-container');
+    const razonInput = document.getElementById('edit-profile-razon');
     rucInput.addEventListener('input', async (e) => {
         const val = e.target.value.replace(/\D/g, '');
         e.target.value = val;
@@ -2308,11 +2358,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Guardar Perfil
-    document.getElementById('btn-save-sidebar').addEventListener('click', () => {
+    document.getElementById('btn-save-edit-profile').addEventListener('click', () => {
         const dni = dniInput.value;
         const name = nameInput.value;
-        const whatsapp = document.getElementById('sidebar-whatsapp').value;
+        const whatsapp = document.getElementById('edit-profile-whatsapp').value;
         const ruc = rucInput.value;
         const razon = razonInput.value;
 
@@ -2321,6 +2370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (whatsapp.length !== 9) return showMobileNotification("El WhatsApp debe tener 9 dígitos.", "error");
         if (ruc && ruc.length !== 11) return showMobileNotification("El RUC debe tener 11 dígitos.", "error");
 
+        if (!state.user) state.user = {};
         state.user.dni = dni;
         state.user.name = name;
         state.user.whatsapp = whatsapp;
@@ -2337,7 +2387,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
 
         showMobileNotification("¡Perfil guardado exitosamente!", "success");
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 300);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Abrir Sidebar
+    const btnUserProfile = document.getElementById('btn-user-profile');
+    if (btnUserProfile) {
+        btnUserProfile.addEventListener('click', () => {
+            openSidebar();
+        });
+    }
+
+    // Cerrar Sidebar
+    const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+    if (btnCloseSidebar) btnCloseSidebar.addEventListener('click', closeSidebar);
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Navegación Sidebar
+    document.getElementById('btn-sidebar-home').addEventListener('click', () => {
         closeSidebar();
+        // Ya estamos en home
+    });
+
+    document.getElementById('btn-sidebar-tickets').addEventListener('click', () => {
+        closeSidebar();
+        showHistoryModal();
+    });
+
+    document.getElementById('btn-sidebar-profile').addEventListener('click', () => {
+        closeSidebar();
+        if (state.user && state.user.email) {
+            showEditProfileModal();
+        } else {
+            showMobileNotification("Por favor inicia sesión primero.", "error");
+        }
+    });
+
+    document.getElementById('btn-sidebar-help').addEventListener('click', () => {
+        closeSidebar();
+        showMobileNotification("Centro de ayuda en construcción.", "info");
     });
 
     // Cerrar Sesión

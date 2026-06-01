@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.34">
+    <link rel="stylesheet" href="index.css?v=4.35">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -439,51 +439,40 @@
             </button>
         </div>
         
-        <!-- Vista NO Logueado -->
-        <div class="b2c-sidebar-content" id="sidebar-unauth-view">
-            <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Bienvenido</h3>
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 24px; line-height: 1.5;">Inicia sesión para gestionar tus pasajes, ver tu historial y agilizar tus compras.</p>
-            <div id="sidebar-google-btn-container" style="display: flex; justify-content: center; width: 100%;"></div>
-        </div>
-
-        <!-- Vista Logueado -->
-        <div class="b2c-sidebar-content" id="sidebar-auth-view" style="display: none;">
-            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 24px;">
-                <img id="sidebar-user-photo" src="" alt="Foto" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 3px solid #eff6ff;">
-                <div id="sidebar-user-email" style="font-weight: 600; font-size: 1.1rem; color: #1e293b; text-align: center;"></div>
-                <div style="font-size: 0.85rem; color: #64748b; margin-top: 4px;"><i data-lucide="shield-check" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Verificado</div>
+        <div class="b2c-sidebar-content">
+            <!-- Header (User Info or Login prompt) -->
+            <div id="sidebar-header-auth" style="display: none; flex-direction: column; align-items: center; padding-bottom: 24px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px;">
+                <img id="sidebar-user-photo" src="" alt="Foto" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; margin-bottom: 12px; border: 2px solid #eff6ff;">
+                <div id="sidebar-user-email" style="font-weight: 600; font-size: 1rem; color: #1e293b; text-align: center;"></div>
+                <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;"><i data-lucide="shield-check" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"></i> Verificado</div>
             </div>
 
-            <div class="b2c-field" style="margin-bottom: 16px;">
-                <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #3b82f6;"></i> DNI</label>
-                <input type="text" id="sidebar-dni" class="b2c-input" required placeholder="Ingresa tus 8 dígitos" maxlength="8" style="width: 100%; margin-top: 4px;">
-            </div>
-            
-            <div class="b2c-field" style="margin-bottom: 16px;">
-                <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #f472b6;"></i> Nombres Completos</label>
-                <input type="text" id="sidebar-name" class="b2c-input" required readonly placeholder="Se autocompletará con tu DNI..." style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;">
+            <div id="sidebar-header-unauth" style="padding-bottom: 24px; border-bottom: 1px solid #f1f5f9; margin-bottom: 16px; text-align: center;">
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 8px;">Bienvenido</h3>
+                <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 16px; line-height: 1.4;">Inicia sesión para una mejor experiencia.</p>
+                <div id="sidebar-google-btn-container" style="display: flex; justify-content: center; width: 100%;"></div>
             </div>
 
-            <div class="b2c-field" style="margin-bottom: 16px;">
-                <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #34d399;"></i> Número de WhatsApp</label>
-                <input type="tel" id="sidebar-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}" style="width: 100%; margin-top: 4px;">
+            <!-- Navigation Links -->
+            <div class="b2c-sidebar-nav">
+                <button type="button" class="b2c-sidebar-nav-btn" id="btn-sidebar-home">
+                    <i data-lucide="home"></i> Inicio
+                </button>
+                <button type="button" class="b2c-sidebar-nav-btn" id="btn-sidebar-tickets">
+                    <i data-lucide="ticket"></i> Mis Pasajes
+                </button>
+                <button type="button" class="b2c-sidebar-nav-btn" id="btn-sidebar-profile">
+                    <i data-lucide="user-cog"></i> Mi Perfil
+                </button>
+                <button type="button" class="b2c-sidebar-nav-btn" id="btn-sidebar-help">
+                    <i data-lucide="headphones"></i> Soporte
+                </button>
             </div>
 
-            <div class="b2c-field" style="margin-bottom: 16px;">
-                <label class="b2c-label"><i data-lucide="building-2" class="b2c-label-icon" style="color: #8b5cf6;"></i> RUC (Opcional)</label>
-                <input type="text" id="sidebar-ruc" class="b2c-input" placeholder="Ingresa tus 11 dígitos" maxlength="11" style="width: 100%; margin-top: 4px;">
-            </div>
+            <div style="flex: 1;"></div>
 
-            <div class="b2c-field" style="margin-bottom: 24px; display: none;" id="sidebar-razon-container">
-                <label class="b2c-label"><i data-lucide="briefcase" class="b2c-label-icon" style="color: #64748b;"></i> Razón Social</label>
-                <input type="text" id="sidebar-razon" class="b2c-input" readonly style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;">
-            </div>
-
-            <button id="btn-save-sidebar" class="b2c-btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 1rem; margin-bottom: 16px;">
-                <i data-lucide="save"></i> Guardar Cambios
-            </button>
-            
-            <button id="btn-logout-sidebar" type="button" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 1rem; background: #fef2f2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.2s;">
+            <!-- Logout -->
+            <button id="btn-logout-sidebar" type="button" style="display: none; width: 100%; align-items: center; justify-content: center; gap: 8px; padding: 12px; font-size: 0.95rem; background: #fef2f2; border: 1px solid #fca5a5; color: #ef4444; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.2s;">
                 <i data-lucide="log-out"></i> Cerrar Sesión
             </button>
         </div>
@@ -492,7 +481,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.34"></script>
+    <script src="client_app.js?v=4.35"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {
