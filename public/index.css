@@ -5725,3 +5725,16 @@ body {
     }
 }
 /* FIX FOR ICONS RENDERING AS SOLID BLOCKS */ i[data-lucide], svg.lucide { background: transparent !important; background-color: transparent !important; fill: none !important; }
+
+/* SAFARI WEBKIT RENDER GLITCH FIX */
+svg, i[data-lucide], .lucide {
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+}
+.b2c-btn-primary, .b2c-ticket-top, #yape-send-whatsapp-btn {
+    -webkit-transform: translate3d(0,0,0);
+    transform: translate3d(0,0,0);
+    isolation: isolate;
+}
+
+.b2c-ticket-brand, .b2c-ticket-bus-icon, .b2c-ticket-company { -webkit-transform: translate3d(0,0,0); transform: translate3d(0,0,0); isolation: isolate; }

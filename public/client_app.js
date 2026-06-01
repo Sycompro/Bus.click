@@ -1449,7 +1449,7 @@ function showHistoryModal() {
     const ticketsListHtml = renderTicketsListHtml();
     
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-shrink: 0;">
                 <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #fef3c7; color: #fbbf24; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
@@ -1457,7 +1457,7 @@ function showHistoryModal() {
                 </button>
             </div>
             
-            <div style="overflow-y: auto; flex: 1; padding-bottom: 1rem;" id="modal-tickets-list-area">
+            <div style="overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; flex: 1; padding-bottom: 1rem;" id="modal-tickets-list-area">
                 ${ticketsListHtml}
             </div>
         </div>
