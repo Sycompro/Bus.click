@@ -354,16 +354,59 @@ function populateOriginDestinationSelects() {
 
 // --- CONFIGURACIÓN DE LISTENERS ---
 function setupEventListeners() {
+    // Alternar clase .completed visual al seleccionar valores (color suave)
+    const originSelect = document.getElementById("search-origin");
+    const destSelect = document.getElementById("search-destination");
+    const dateInput = document.getElementById("search-date");
+    const dateDisplay = document.getElementById("search-date-display");
+    const dateReturnInput = document.getElementById("search-date-return");
+    const dateReturnDisplay = document.getElementById("search-date-return-display");
+
+    const updateCompletedStatus = (element, hasValue) => {
+        if (hasValue) {
+            element.classList.add("completed");
+        } else {
+            element.classList.remove("completed");
+        }
+    };
+
+    if (originSelect) {
+        originSelect.addEventListener("change", () => {
+            updateCompletedStatus(originSelect, originSelect.value !== "");
+        });
+    }
+
+    if (destSelect) {
+        destSelect.addEventListener("change", () => {
+            updateCompletedStatus(destSelect, destSelect.value !== "");
+        });
+    }
+
+    if (dateInput && dateDisplay) {
+        dateInput.addEventListener("change", () => {
+            updateCompletedStatus(dateDisplay, dateInput.value !== "");
+        });
+    }
+
+    if (dateReturnInput && dateReturnDisplay) {
+        dateReturnInput.addEventListener("change", () => {
+            updateCompletedStatus(dateReturnDisplay, dateReturnInput.value !== "");
+        });
+    }
+
     // Intercambiar Origen y Destino
     const btnSwap = document.getElementById("btn-mobile-swap");
     if (btnSwap) {
         btnSwap.addEventListener("click", () => {
-            const originSelect = document.getElementById("search-origin");
-            const destSelect = document.getElementById("search-destination");
-            
-            const temp = originSelect.value;
-            originSelect.value = destSelect.value;
-            destSelect.value = temp;
+            if (originSelect && destSelect) {
+                const temp = originSelect.value;
+                originSelect.value = destSelect.value;
+                destSelect.value = temp;
+                
+                // Disparar eventos para recalcular color completado suave
+                originSelect.dispatchEvent(new Event('change'));
+                destSelect.dispatchEvent(new Event('change'));
+            }
         });
     }
     

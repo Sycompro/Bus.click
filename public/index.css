@@ -6107,3 +6107,79 @@ svg, i[data-lucide], .lucide {
     transform: translateX(20px);
 }
 
+/* ══════════════════════════════════════════════════════════
+   ⭐ FORMULARIO DE BUSQUEDA PREMIUM CON DEGRADADOS Y SUAVE
+   ══════════════════════════════════════════════════════════ */
+
+/* Contenedor del campo */
+.b2c-input-wrapper {
+    position: relative !important;
+    width: 100% !important;
+}
+
+/* Posicionar iconos de Lucide dentro del input/select */
+.b2c-field-icon {
+    position: absolute !important;
+    left: 1.15rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 20px !important;
+    height: 20px !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Campos de entrada: Más altos, color serio (negro/pizarra con degradados) */
+.b2c-select.has-icon, .b2c-input.has-icon {
+    min-height: 56px !important;
+    padding: 0.95rem 1rem 0.95rem 3rem !important;
+    background: linear-gradient(135deg, #1e293b, #0f172a) !important; /* Negro pizarra degradado serio */
+    border: 1.5px solid #334155 !important;
+    border-radius: 16px !important;
+    color: #f8fafc !important; /* Texto claro */
+    font-size: 0.98rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    outline: none !important;
+}
+
+/* Soportar placeholder en select (opción por defecto gris claro) */
+.b2c-select.has-icon option:first-child {
+    color: #64748b !important;
+}
+
+/* Efecto de Foco (:focus / Seleccionado por cursor): Color de fondo más claro y suave */
+.b2c-select.has-icon:focus, .b2c-input.has-icon:focus {
+    background: #f1f5f9 !important; /* Fondo suave y legible */
+    border-color: #3b82f6 !important;
+    color: #0f172a !important; /* Texto oscuro */
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18) !important;
+}
+
+/* Cambiar color de icono al hacer foco */
+.b2c-input-wrapper:focus-within .b2c-field-icon {
+    color: #3b82f6 !important;
+    transform: translateY(-50%) scale(1.1) !important;
+}
+
+/* Cuando ya están COMPLETADOS (tienen opción seleccionada): Fondo azul pastel muy suave */
+.b2c-select.has-icon.completed, .b2c-input.has-icon.completed {
+    background: #eff6ff !important; /* Azul pastel sumamente suave y relajante */
+    border-color: #bfdbfe !important;
+    color: #1e3a8a !important; /* Texto azul marino serio */
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.04) !important;
+}
+
+/* Cambiar color de icono a azul de marca cuando está completado */
+.b2c-input-wrapper:has(.completed) .b2c-field-icon {
+    color: #3b82f6 !important;
+}
+
+/* Ajustes adicionales del datepicker */
+.datepicker-wrapper .datepicker-icon {
+    display: none !important; /* Ocultamos el icono legado a la derecha */
+}
+
+

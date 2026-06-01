@@ -92,10 +92,13 @@
                 <!-- Formulario de búsqueda -->
                 <form id="form-mobile-search" class="b2c-search-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #10b981;"></i> Origen</label>
-                        <select id="search-origin" class="b2c-select" required>
-                            <option value="" disabled selected>¿Desde dónde sales?</option>
-                        </select>
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;">Origen (Abordar)</label>
+                        <div class="b2c-input-wrapper">
+                            <i data-lucide="log-in" class="b2c-field-icon" style="color: #10b981;"></i>
+                            <select id="search-origin" class="b2c-select has-icon" required>
+                                <option value="" disabled selected>¿Desde dónde sales?</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="b2c-swap-row">
@@ -107,18 +110,21 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #f43f5e;"></i> Destino</label>
-                        <select id="search-destination" class="b2c-select" required>
-                            <option value="" disabled selected>¿A dónde vas?</option>
-                        </select>
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;">Destino (Bajar)</label>
+                        <div class="b2c-input-wrapper">
+                            <i data-lucide="log-out" class="b2c-field-icon" style="color: #f43f5e;"></i>
+                            <select id="search-destination" class="b2c-select has-icon" required>
+                                <option value="" disabled selected>¿A dónde vas?</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #6366f1;"></i> Fecha del viaje</label>
-                        <div class="datepicker-wrapper">
-                            <input type="text" class="datepicker-input b2c-input" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;">Fecha del viaje</label>
+                        <div class="b2c-input-wrapper datepicker-wrapper">
+                            <i data-lucide="calendar" class="b2c-field-icon" style="color: #6366f1;"></i>
+                            <input type="text" class="datepicker-input b2c-input has-icon" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
                             <input type="hidden" id="search-date" required>
-                            <i data-lucide="calendar" class="datepicker-icon"></i>
                         </div>
                     </div>
 
@@ -133,11 +139,11 @@
                     </div>
 
                     <div class="b2c-field" id="return-date-container" style="display: none; animation: fadeIn 0.3s ease;">
-                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #8b5cf6;"></i> Fecha de retorno</label>
-                        <div class="datepicker-wrapper">
-                            <input type="text" class="datepicker-input b2c-input" id="search-date-return-display" placeholder="Fecha de vuelta" readonly>
+                        <label class="b2c-label" style="font-weight: 700; color: #475569;">Fecha de retorno</label>
+                        <div class="b2c-input-wrapper datepicker-wrapper">
+                            <i data-lucide="calendar-days" class="b2c-field-icon" style="color: #8b5cf6;"></i>
+                            <input type="text" class="datepicker-input b2c-input has-icon" id="search-date-return-display" placeholder="Fecha de vuelta" readonly>
                             <input type="hidden" id="search-date-return">
-                            <i data-lucide="calendar" class="datepicker-icon"></i>
                         </div>
                     </div>
 
