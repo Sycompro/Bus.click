@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.4">
+    <link rel="stylesheet" href="index.css?v=4.5">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -31,25 +31,7 @@
 </head>
 <body class="b2c-body">
 
-    <!-- PANTALLA DE BIENVENIDA PREMIUM (TECNICA A: PANTALLA COMPLETA NATIVA) -->
-    <div id="b2c-splash-screen" class="b2c-splash">
-        <div class="b2c-splash-content">
-            <div class="b2c-splash-logo">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bus"><rect width="16" height="16" x="4" y="2" rx="2"/><path d="M4 14h16"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M6 18H5a1 1 0 0 1-1-1v-1a1 1 0 0 1 1-1h1"/><path d="M18 18h1a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1h-1"/><circle cx="8" cy="18" r="2"/><circle cx="16" cy="18" r="2"/></svg>
-            </div>
-            <h1 class="b2c-splash-title">Bus<strong>.click</strong></h1>
-            <p class="b2c-splash-subtitle">Tu viaje comienza aquí. Compra y gestiona tus pasajes de forma rápida y segura.</p>
-            
-            <button type="button" id="btn-enter-fullscreen" class="b2c-splash-btn-enter">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                Ingresar a la App
-            </button>
-            <div class="b2c-splash-footer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11 2 2 4-4"/></svg>
-                Conexión Segura Encriptada
-            </div>
-        </div>
-    </div>
+    
 
     <!-- NAVBAR SUPERIOR -->
     <nav class="b2c-navbar">
@@ -443,7 +425,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.4"></script>
+    <script src="client_app.js?v=4.5"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {
@@ -463,99 +445,7 @@
             });
         });
 
-        // Configurar el botón del Splash Screen para desvanecerse y ocultar la barra de direcciones de Chrome/Safari de forma robusta e inmersiva
-        const sScreen = document.getElementById("b2c-splash-screen");
-        const bEnter = document.getElementById("btn-enter-fullscreen");
         
-        function forceMobileImmersiveScroll() {
-            // Activar scroll temporal en el body para permitir que el navegador contraiga la barra
-            document.body.style.overflowY = "scroll";
-            document.documentElement.style.overflowY = "scroll";
-            
-            // Realizar scrolls repetitivos cortos para asegurar que el navegador responda tras la transición del layout
-            let count = 0;
-            const scrollTimer = setInterval(() => {
-                window.scrollTo(0, 100);
-                count++;
-                if (count >= 8) {
-                    clearInterval(scrollTimer);
-                    // Una vez contraída la barra, fijamos el tamaño al viewport disponible real
-                    adjustAppViewport();
-                }
-            }, 80);
-        }
-
-        function adjustAppViewport() {
-            // Fijar la altura del body y contenedor al tamaño exacto de pantalla disponible sin barras
-            const vh = window.innerHeight;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-            document.body.style.height = `${vh}px`;
-            document.body.style.overflowY = "hidden";
-            document.documentElement.style.overflowY = "hidden";
-            
-            const container = document.querySelector('.b2c-app-container');
-            if (container) {
-                container.style.height = `calc(${vh}px - 64px)`;
-                container.style.overflowY = "auto";
-            }
-        }
-
-        // Registrar evento de resize para mantener la consistencia del alto de pantalla
-        window.addEventListener('resize', () => {
-            if (!sScreen || sScreen.classList.contains('hidden')) {
-                adjustAppViewport();
-            }
-        });
-
-        // Detectar si estamos en un WebView/in-app browser (WhatsApp, Instagram, Facebook, etc.)
-        function isInAppBrowser() {
-            const ua = navigator.userAgent || '';
-            return /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Twitter|Weibo|MicroMessenger|KAKAOTALK/i.test(ua);
-        }
-
-        // Se ha retirado el chequeo de modo standalone (PWA instalada)
-
-        // Si estamos en un WebView de WhatsApp, auto-dismiss el splash
-        if (isInAppBrowser()) {
-            if (sScreen) {
-                // Splash breve de 800ms para que se sienta como carga de app nativa
-                setTimeout(() => {
-                    sScreen.classList.add("hidden");
-                    forceMobileImmersiveScroll();
-                }, 800);
-            }
-        }
-        
-        if (sScreen && bEnter) {
-            bEnter.addEventListener("click", () => {
-                sScreen.classList.add("hidden");
-
-                // INTENTO DE PANTALLA COMPLETA NATIVA (Fullscreen API) para Chrome/Android
-                // Esto oculta la barra de direcciones superior de inmediato de forma oficial.
-                const docEl = document.documentElement;
-                const requestFS = docEl.requestFullscreen 
-                    || docEl.webkitRequestFullscreen 
-                    || docEl.mozRequestFullScreen 
-                    || docEl.msRequestFullscreen;
-
-                if (requestFS) {
-                    requestFS.call(docEl)
-                        .then(() => {
-                            console.log("✔ Pantalla completa inmersiva activada.");
-                            adjustAppViewport();
-                        })
-                        .catch(err => {
-                            console.warn("⚠ Fullscreen API rechazada o no soportada, usando colapso de scroll suave:", err);
-                            forceMobileImmersiveScroll();
-                        });
-                } else {
-                    forceMobileImmersiveScroll();
-                }
-            });
-        }
-        
-        // Exportar la función a nivel global para que client_app.js la llame al poblar el DOM con datos de Railway
-        window.forceMobileImmersiveScroll = forceMobileImmersiveScroll;
 
         if ('serviceWorker' in navigator) { navigator.serviceWorker.getRegistrations().then(function(registrations) { for(let registration of registrations) { registration.unregister(); } }); }
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); });
