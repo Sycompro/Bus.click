@@ -282,7 +282,7 @@ body {
     box-shadow: var(--shadow-soft);
 }
 
-.btn-full { width: 80%; max-width: 320px; }
+.btn-full { width: 100%; }
 
 .btn-sparkle {
     position: relative;
@@ -5904,7 +5904,8 @@ svg, i[data-lucide], .lucide {
 
 @media (max-width: 480px) {
     .b2c-sidebar {
-        width: 100%;
+        width: 75%;
+        max-width: 320px;
         right: -100%;
     }
 }
