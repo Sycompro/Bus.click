@@ -5774,3 +5774,6 @@ svg, i[data-lucide], .lucide {
 
 /* FORCE REMOVE BENEFIT CARD BORDERS */
 .b2c-benefit:nth-child(1), .b2c-benefit:nth-child(2), .b2c-benefit:nth-child(3) { border-left: 1px solid var(--border-soft) !important; }
+
+/* SEPARACION BOTON COMPRAR OTRO PASAJE */
+.btn-new-booking { margin-bottom: 2.5rem !important; }
