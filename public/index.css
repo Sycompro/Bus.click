@@ -6315,5 +6315,45 @@ svg, i[data-lucide], .lucide {
     display: none !important; /* Ocultamos el icono legado a la derecha */
 }
 
+@media (max-width: 640px) {
+    /* Ocultar el tabbar de forma infalible */
+    .b2c-mobile-tabbar.hidden-tabbar {
+        display: none !important;
+    }
+    
+    /* Botones de acción fijos en la parte inferior (en el lugar exacto del tabbar) */
+    #btn-confirm-seat, #btn-mobile-pay {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 100% !important;
+        max-width: 640px !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        z-index: 99999 !important;
+        height: calc(65px + env(safe-area-inset-bottom, 0px)) !important;
+        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        background: #2563eb !important; /* Azul Empresarial */
+        color: white !important;
+        font-weight: 700 !important;
+        font-size: 1.1rem !important;
+        border: none !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
+        transition: background-color 0.25s ease, color 0.25s ease !important;
+    }
+
+    #btn-confirm-seat:disabled {
+        background: #cbd5e1 !important;
+        color: #94a3b8 !important;
+        cursor: not-allowed !important;
+        box-shadow: none !important;
+    }
+}
+
 
 

@@ -759,9 +759,11 @@ function goToStep(stepId) {
     
     if (mobileTabbar) {
         if (stepId === "step-search" || stepId === "step-routes") {
-            mobileTabbar.style.display = "flex";
+            mobileTabbar.style.setProperty("display", "flex", "important");
+            mobileTabbar.classList.remove("hidden-tabbar");
         } else {
-            mobileTabbar.style.display = "none";
+            mobileTabbar.style.setProperty("display", "none", "important");
+            mobileTabbar.classList.add("hidden-tabbar");
         }
     }
     
