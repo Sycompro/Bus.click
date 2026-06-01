@@ -5346,8 +5346,8 @@ body {
 /* Hero title colorful */
 .b2c-hero-title {
     background: linear-gradient(135deg, #6366f1, #8b5cf6, #38bdf8) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
+    
+    color: #6d28d9 !important;
     background-clip: text !important;
 }
 
@@ -5751,3 +5751,8 @@ svg, i[data-lucide], .lucide {
 
 /* FORCE SEARCH CARD VISIBILITY */
 .b2c-search-card { background: #ffffff !important; border: 1px solid #e2e8f0 !important; border-radius: 24px !important; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important; padding: 1.5rem 1.25rem !important; margin-top: 1.5rem !important; }
+
+/* FORZAR COLORES SOLIDOS EN VEZ DE DEGRADADOS */
+.b2c-btn-primary, .b2c-btn, .b2c-floating-btn, .b2c-stepper-circle, .b2c-secure-badge { background: #6d28d9 !important; }
+.b2c-btn-primary:hover, .b2c-btn:hover { background: #5b21b6 !important; }
+.b2c-hero-title, .b2c-gradient-text, .b2c-highlight-text { background: transparent !important; color: #6d28d9 !important; -webkit-text-fill-color: initial !important; -webkit-background-clip: initial !important; background-clip: initial !important; }
