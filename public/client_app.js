@@ -1764,8 +1764,11 @@ function renderTicketsListHtml() {
 function setupHistoryModalListeners(overlay) {
     // Listener cerrar modal
     overlay.querySelector(".btn-close-mobile-modal")?.addEventListener("click", () => {
-        overlay.remove();
-        setActiveTab("tab-home");
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            overlay.remove();
+            setActiveTab("tab-home");
+        }, 300);
     });
     
     // Listener ver boletos QR específicos
@@ -1783,9 +1786,12 @@ function setupHistoryModalListeners(overlay) {
                 state.selectedFloor = targetTicket.floor;
                 
                 populateVirtualTicket(targetTicket);
-                overlay.remove();
-                setActiveTab("tab-home");
-                goToStep("step-ticket");
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    overlay.remove();
+                    setActiveTab("tab-home");
+                    goToStep("step-ticket");
+                }, 300);
             }
         });
     });
@@ -1814,29 +1820,19 @@ function showHistoryModal() {
     
     const overlay = document.createElement("div");
     overlay.className = "mobile-modal-overlay";
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.background = "rgba(15, 23, 42, 0.75)";
-    overlay.style.zIndex = "999";
-    overlay.style.display = "flex";
-    overlay.style.alignItems = "flex-end";
-    overlay.style.animation = "fadeInOverlay 0.25s ease";
     
     const ticketsListHtml = renderTicketsListHtml();
     
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #c7d2fe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-shrink: 0;">
-                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
-                <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
-                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+        <div class="mobile-modal" style="height: 100%; width: 100%; display: flex; flex-direction: column; position: relative; border-radius: 0;">
+            <div class="mobile-modal-header" style="flex-shrink: 0; padding: 16px 20px; display: flex; align-items: center; justify-content: flex-start; gap: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px));">
+                <button class="btn-close-mobile-modal" style="background: none; border: none; color: #3b82f6; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 0; font-size: 1rem; cursor: pointer;">
+                    <i data-lucide="chevron-left"></i> Atrás
                 </button>
+                <h3 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Mis Boletos Digitales</h3>
             </div>
             
-            <div style="overflow-y: auto; -webkit-overflow-scrolling: touch; min-height: 0; flex: 1; padding-bottom: 1rem;" id="modal-tickets-list-area">
+            <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px;" id="modal-tickets-list-area">
                 ${ticketsListHtml}
             </div>
         </div>
@@ -1868,16 +1864,6 @@ function showHelpModal() {
     
     const overlay = document.createElement("div");
     overlay.className = "mobile-modal-overlay";
-    overlay.style.position = "fixed";
-    overlay.style.top = "0";
-    overlay.style.left = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.background = "rgba(15, 23, 42, 0.75)";
-    overlay.style.zIndex = "999";
-    overlay.style.display = "flex";
-    overlay.style.alignItems = "flex-end";
-    overlay.style.animation = "fadeInOverlay 0.25s ease";
     
     const activeComp = state.activeCompany || {};
     const supportPhone = activeComp.supportPhone || '+51 987 654 321';
@@ -1885,37 +1871,41 @@ function showHelpModal() {
     const supportMsg = activeComp.supportMessage || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
 
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #c7d2fe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
-                <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
-                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+        <div class="mobile-modal" style="height: 100%; width: 100%; display: flex; flex-direction: column; position: relative; border-radius: 0;">
+            <div class="mobile-modal-header" style="flex-shrink: 0; padding: 16px 20px; display: flex; align-items: center; justify-content: flex-start; gap: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px));">
+                <button class="btn-close-mobile-modal" style="background: none; border: none; color: #3b82f6; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 0; font-size: 1rem; cursor: pointer;">
+                    <i data-lucide="chevron-left"></i> Atrás
                 </button>
+                <h3 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Canal de Soporte</h3>
             </div>
             
-            <div style="text-align: center; padding: 0.5rem 0;">
-                <div style="background: #eef2ff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; color: #6366f1;">
-                    <i data-lucide="message-square" style="width: 22px; height: 22px;"></i>
+            <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px;">
+                <div style="text-align: center; padding: 0.5rem 0;">
+                    <div style="background: #eef2ff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; color: #6366f1;">
+                        <i data-lucide="message-square" style="width: 22px; height: 22px;"></i>
+                    </div>
+                    <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">¿Necesitas ayuda con tu pasaje?</h4>
+                    <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; line-height: 1.5;">${supportMsg}</p>
+                    
+                    <div style="background: #f8fafc; border: 1px solid #c7d2fe; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #34d399; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: ${supportPhone}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: ${supportEmail}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.6rem;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
+                            <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Seguridad de Compra Garantizada</span>
+                        </div>
+                    </div>
                 </div>
-                <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">¿Necesitas ayuda con tu pasaje?</h4>
-                <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; line-height: 1.5;">${supportMsg}</p>
-                
-                <div style="background: #f8fafc; border: 1px solid #c7d2fe; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
-                    <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #34d399; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: ${supportPhone}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: ${supportEmail}</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
-                        <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Seguridad de Compra Garantizada</span>
-                    </div>
-                </div>
-                
-                <button type="button" class="b2c-btn-primary btn-close-mobile-modal" style="margin-top: 1.5rem;">
+            </div>
+            
+            <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: white; border-top: 1px solid #f1f5f9; border-radius: 0 0 16px 16px;">
+                <button type="button" class="b2c-btn-primary btn-close-mobile-modal" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 1.1rem;">
                     Entendido
                 </button>
             </div>
@@ -1931,8 +1921,11 @@ function showHelpModal() {
         // Listener cerrar modal
         overlay.querySelectorAll(".btn-close-mobile-modal").forEach(btn => {
             btn.addEventListener("click", () => {
-                overlay.remove();
-                setActiveTab("tab-home");
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    overlay.remove();
+                    setActiveTab("tab-home");
+                }, 300);
             });
         });
     }
