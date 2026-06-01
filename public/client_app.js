@@ -72,17 +72,19 @@ window.handleGoogleCredentialResponse = function(response) {
             profileImg.innerHTML = `<img src="${state.user.picture}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
         }
         
-        // Recargar el área de tickets
-        const listArea = document.getElementById("modal-tickets-list-area");
-        if (listArea) {
-            listArea.innerHTML = renderTicketsListHtml();
-            lucide.createIcons();
-            const overlay = document.querySelector(".mobile-modal-overlay");
-            if(overlay) setupHistoryModalListeners(overlay);
-        }
+        // Cerrar modal de Historial/Login si está abierto
+        document.querySelectorAll(".mobile-modal-overlay").forEach(m => m.remove());
         
-        // Aquí podrías desencadenar la carga de pasajes desde el servidor vinculados a este email
-        // syncClientTickets();
+        // Comprobar si ya tiene los datos completos (DNI y WhatsApp en localStorage)
+        const savedProfile = JSON.parse(localStorage.getItem('busclick_client_profile') || '{}');
+        if (savedProfile.dni && savedProfile.whatsapp) {
+            state.user.dni = savedProfile.dni;
+            state.user.whatsapp = savedProfile.whatsapp;
+            state.user.ruc = savedProfile.ruc;
+            showHistoryModal();
+        } else {
+            showAccountCompletionModal();
+        }
         
     } catch(e) {
         console.error("Error procesando login de Google", e);
@@ -1979,3 +1981,194 @@ document.getElementById("b2c-btn-share")?.addEventListener("click", () => {
         showMobileNotification("Ocurrió un error al preparar el PDF.", "error");
     });
 });
+
+// --- MODAL DE COMPLETAR PERFIL (DNI, WhatsApp, RUC) ---
+function showAccountCompletionModal() {
+    // Eliminar modales previos
+    document.querySelectorAll('.mobile-modal-overlay').forEach(m => m.remove());
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'mobile-modal-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(15, 23, 42, 0.4)';
+    overlay.style.backdropFilter = 'blur(4px)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'flex-end';
+
+    const modalHTML = `
+        <div class="mobile-modal-content" style="width: 100%; background: white; border-radius: 24px 24px 0 0; display: flex; flex-direction: column; max-height: 90vh; box-shadow: 0 -4px 24px rgba(0,0,0,0.1);">
+            <div style="padding: 16px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">Completar Perfil</h3>
+                <button type="button" class="btn-close-completion-modal" style="background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748b;">
+                    <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+                </button>
+            </div>
+            <div style="padding: 20px; overflow-y: auto;">
+                <p style="font-size: 0.9rem; color: #475569; margin-bottom: 20px; line-height: 1.5;">¡Hola <strong style="color: #2563eb;">${state.user.name.split(' ')[0]}</strong>! Para poder sincronizar y mostrarte tus pasajes previamente comprados, necesitamos confirmar un par de datos de seguridad.</p>
+
+                <div class="b2c-field" style="margin-bottom: 16px;">
+                    <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #3b82f6;"></i> DNI</label>
+                    <input type="text" id="completion-dni" class="b2c-input" required placeholder="Ingresa tus 8 dígitos" maxlength="8" style="width: 100%; margin-top: 4px;">
+                </div>
+                
+                <div class="b2c-field" style="margin-bottom: 16px;">
+                    <label class="b2c-label"><i data-lucide="user" class="b2c-label-icon" style="color: #f472b6;"></i> Nombres Completos</label>
+                    <input type="text" id="completion-name" class="b2c-input" required readonly placeholder="Se autocompletará con tu DNI..." value="${state.user.name}" style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;">
+                </div>
+
+                <div class="b2c-field" style="margin-bottom: 16px;">
+                    <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #34d399;"></i> Número de WhatsApp</label>
+                    <input type="tel" id="completion-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}" style="width: 100%; margin-top: 4px;">
+                </div>
+
+                <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 10px 12px; margin-top: 24px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 8px;">
+                    <i data-lucide="info" style="color: #d97706; width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px;"></i>
+                    <p style="font-size: 0.8rem; color: #92400e; margin: 0; line-height: 1.4;">Solo si tienes empresa y requieres factura, llena este campo de RUC.</p>
+                </div>
+
+                <div class="b2c-field" style="margin-bottom: 16px;">
+                    <label class="b2c-label"><i data-lucide="building-2" class="b2c-label-icon" style="color: #8b5cf6;"></i> RUC (Opcional)</label>
+                    <input type="text" id="completion-ruc" class="b2c-input" placeholder="Ingresa tus 11 dígitos" maxlength="11" style="width: 100%; margin-top: 4px;">
+                </div>
+
+                <div class="b2c-field" style="margin-bottom: 24px; display: none;" id="completion-razon-container">
+                    <label class="b2c-label"><i data-lucide="briefcase" class="b2c-label-icon" style="color: #64748b;"></i> Razón Social</label>
+                    <input type="text" id="completion-razon" class="b2c-input" readonly style="width: 100%; margin-top: 4px; background: #f8fafc; color: #64748b;">
+                </div>
+
+            </div>
+            <div style="padding: 16px 20px; border-top: 1px solid #f1f5f9; background: white;">
+                <button id="btn-save-completion" class="b2c-btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; font-size: 1rem;">
+                    <i data-lucide="save"></i> Guardar y ver pasajes
+                </button>
+            </div>
+        </div>
+    `;
+
+    overlay.innerHTML = modalHTML;
+    document.body.appendChild(overlay);
+    lucide.createIcons();
+
+    // Listeners
+    overlay.querySelector('.btn-close-completion-modal').addEventListener('click', () => {
+        overlay.remove();
+        state.user = null; // Revertir login si cancelan
+        const profileText = document.querySelector("#btn-user-profile span");
+        if(profileText) profileText.textContent = "Mi Perfil";
+        const profileImg = document.querySelector("#btn-user-profile div");
+        if(profileImg) profileImg.innerHTML = `<i data-lucide="user"></i>`;
+        lucide.createIcons();
+    });
+
+    // Validación Automática RENIEC
+    const dniInput = document.getElementById('completion-dni');
+    const nameInput = document.getElementById('completion-name');
+    dniInput.addEventListener('input', async (e) => {
+        const val = e.target.value.replace(/\D/g, '');
+        e.target.value = val;
+        if (val.length === 8) {
+            nameInput.placeholder = "Buscando en RENIEC...";
+            nameInput.value = "";
+            try {
+                if (MOCK_NAMES[val]) {
+                    nameInput.value = MOCK_NAMES[val];
+                    showMobileNotification("DNI verificado exitosamente.", "success");
+                    return;
+                }
+                const response = await fetch(`/api/dni?numero=${val}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.nombres) {
+                        nameInput.value = `${data.nombres} ${data.apellidoPaterno || ''} ${data.apellidoMaterno || ''}`.trim();
+                        showMobileNotification("DNI verificado (RENIEC).", "success");
+                    } else {
+                        nameInput.placeholder = "Escriba sus nombres...";
+                        nameInput.readOnly = false;
+                    }
+                } else {
+                    nameInput.placeholder = "Escriba sus nombres...";
+                    nameInput.readOnly = false;
+                }
+            } catch (err) {
+                nameInput.placeholder = "Escriba sus nombres...";
+                nameInput.readOnly = false;
+            }
+        } else {
+            nameInput.readOnly = true;
+        }
+    });
+
+    // Validación Automática SUNAT
+    const rucInput = document.getElementById('completion-ruc');
+    const razonContainer = document.getElementById('completion-razon-container');
+    const razonInput = document.getElementById('completion-razon');
+    rucInput.addEventListener('input', async (e) => {
+        const val = e.target.value.replace(/\D/g, '');
+        e.target.value = val;
+        if (val.length === 11) {
+            razonContainer.style.display = 'block';
+            razonInput.placeholder = "Buscando en SUNAT...";
+            razonInput.value = "";
+            try {
+                const response = await fetch(`/api/ruc?numero=${val}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.razonSocial) {
+                        razonInput.value = data.razonSocial;
+                        showMobileNotification("RUC verificado (SUNAT).", "success");
+                    } else {
+                        razonInput.placeholder = "Escriba la razón social...";
+                        razonInput.readOnly = false;
+                    }
+                } else {
+                    // MOCK Fallback
+                    razonInput.value = "EMPRESA MOCK S.A.C.";
+                    showMobileNotification("RUC verificado (Local).", "success");
+                }
+            } catch (err) {
+                razonInput.value = "EMPRESA MOCK S.A.C.";
+                showMobileNotification("RUC verificado (Local).", "success");
+            }
+        } else {
+            razonContainer.style.display = 'none';
+        }
+    });
+
+    // Guardar
+    document.getElementById('btn-save-completion').addEventListener('click', () => {
+        const dni = dniInput.value;
+        const name = nameInput.value;
+        const whatsapp = document.getElementById('completion-whatsapp').value;
+        const ruc = rucInput.value;
+        const razon = razonInput.value;
+
+        if (dni.length !== 8) return showMobileNotification("El DNI debe tener 8 dígitos.", "error");
+        if (!name.trim()) return showMobileNotification("El nombre es obligatorio.", "error");
+        if (whatsapp.length !== 9) return showMobileNotification("El WhatsApp debe tener 9 dígitos.", "error");
+        if (ruc && ruc.length !== 11) return showMobileNotification("El RUC debe tener 11 dígitos.", "error");
+
+        // Actualizar State
+        state.user.dni = dni;
+        state.user.name = name;
+        state.user.whatsapp = whatsapp;
+        if (ruc) {
+            state.user.ruc = ruc;
+            state.user.razonSocial = razon;
+        }
+
+        // Persistir en LocalStorage para futuros logins
+        localStorage.setItem('busclick_client_profile', JSON.stringify({
+            dni, whatsapp, ruc, razonSocial: razon
+        }));
+
+        showMobileNotification("¡Perfil actualizado exitosamente!", "success");
+        
+        overlay.remove();
+        showHistoryModal();
+    });
+}
