@@ -1427,7 +1427,7 @@ function showHistoryModal() {
     overlay.style.height = "100%";
     overlay.style.background = "rgba(15, 23, 42, 0.4)";
     overlay.style.backdropFilter = "blur(8px)";
-    overlay.style.zIndex = "900";
+    overlay.style.zIndex = "1100";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
     overlay.style.animation = "fadeInOverlay 0.25s ease";
@@ -1435,8 +1435,8 @@ function showHistoryModal() {
     const ticketsListHtml = renderTicketsListHtml();
     
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 80%; padding: 1.5rem; box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-shrink: 0;">
                 <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #fef3c7; color: #fbbf24; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
                     <i data-lucide="x" style="width: 14px; height: 14px;"></i>
@@ -1481,7 +1481,7 @@ function showHelpModal() {
     overlay.style.height = "100%";
     overlay.style.background = "rgba(15, 23, 42, 0.4)";
     overlay.style.backdropFilter = "blur(8px)";
-    overlay.style.zIndex = "900";
+    overlay.style.zIndex = "1100";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
     overlay.style.animation = "fadeInOverlay 0.25s ease";
@@ -1492,7 +1492,7 @@ function showHelpModal() {
     const supportMsg = activeComp.supportMessage || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
 
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; box-sizing: border-box; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                 <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #e0f2fe; color: #38bdf8; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
