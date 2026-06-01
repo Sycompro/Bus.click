@@ -217,7 +217,7 @@ function renderCompanyPaymentMethods() {
             bgStyle = 'background: #d1fae5; color: #059669;'; // Verde Efectivo
         } else if (normMethod.includes('yape') || normMethod.includes('plin') || normMethod.includes('billetera') || normMethod.includes('billeteras')) {
             iconName = 'smartphone';
-            bgStyle = 'background: #ede9fe; color: #7c3aed;'; // Morado Yape
+            bgStyle = 'background: #eff6ff; color: #3b82f6;'; // Morado Yape
         } else if (normMethod.includes('transferencia') || normMethod.includes('banco') || normMethod.includes('bancaria')) {
             iconName = 'landmark';
             bgStyle = 'background: #e0f2fe; color: #0284c7;'; // Celeste Banco
@@ -520,13 +520,13 @@ async function handleSearchSubmit() {
         renderAvailableBuses();
     } catch (e) {
         routesList.innerHTML = `
-            <div style="text-align: center; padding: 3rem 1.5rem; color: #ef4444; background: #ffffff; border-radius: 20px; border: 1px solid #e0e7ff; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.06);">
+            <div style="text-align: center; padding: 3rem 1.5rem; color: #ef4444; background: #ffffff; border-radius: 20px; border: 1px solid #dbeafe; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.06);">
                 <div style="width: 48px; height: 48px; border-radius: 50%; background: #ffe4e6; color: #fb7185; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto;">
                     <i data-lucide="wifi-off" style="width: 22px; height: 22px;"></i>
                 </div>
                 <div style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">Error de conexión</div>
                 <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.4rem; line-height: 1.4;">No pudimos comunicarnos con el servidor. Por favor, inténtalo de nuevo.</div>
-                <button type="button" class="b2c-btn-back" onclick="handleSearchSubmit()" style="margin: 1.25rem auto 0 auto; display: inline-flex; gap: 0.4rem; border-color: #e0e7ff; color: #fb7185; background: #ffe4e6;">
+                <button type="button" class="b2c-btn-back" onclick="handleSearchSubmit()" style="margin: 1.25rem auto 0 auto; display: inline-flex; gap: 0.4rem; border-color: #dbeafe; color: #fb7185; background: #ffe4e6;">
                     <i data-lucide="refresh-cw" style="width: 13px; height: 13px;"></i> Reintentar
                 </button>
             </div>
@@ -542,7 +542,7 @@ function renderAvailableBuses() {
     
     if (state.availableBuses.length === 0) {
         container.innerHTML = `
-            <div style="text-align: center; padding: 3.5rem 1.5rem; background: #ffffff; border-radius: 20px; border: 1px solid #e0e7ff; box-shadow: 0 4px 16px rgba(99, 102, 241, 0.06);">
+            <div style="text-align: center; padding: 3.5rem 1.5rem; background: #ffffff; border-radius: 20px; border: 1px solid #dbeafe; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.06);">
                 <div style="width: 52px; height: 52px; border-radius: 50%; background: #fef3c7; color: #fbbf24; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem auto;">
                     <i data-lucide="alert-circle" style="width: 26px; height: 26px;"></i>
                 </div>
@@ -608,7 +608,7 @@ function renderAvailableBuses() {
                 <span>08:30 AM <span style="color:#64748b; font-weight:500;">➔</span> 04:30 PM</span>
             </div>
             
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; border-top: 1px solid #e0e7ff; padding-top: 0.65rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.75rem; border-top: 1px solid #dbeafe; padding-top: 0.65rem;">
                 <span style="font-size: 0.72rem; font-weight: 600; color: #64748b;">
                     Placa: <strong style="color: #1e293b; font-weight: 700;">${bus.plate}</strong>
                 </span>
@@ -617,14 +617,14 @@ function renderAvailableBuses() {
                 </span>
             </div>
             
-            <div class="bus-route-price" style="font-size: 1.15rem; font-weight: 900; color: #6366f1; position: absolute; right: 1.25rem; top: 1.1rem;">
+            <div class="bus-route-price" style="font-size: 1.15rem; font-weight: 900; color: #2563eb; position: absolute; right: 1.25rem; top: 1.1rem;">
                 S/ ${parseFloat(bus.price).toFixed(2)}
             </div>
             
             <div class="bus-features-row" style="margin-top: 0.65rem; display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                <span class="bus-feature-badge" style="background: #f1f5f9; border: 1px solid #e0e7ff; color: #475569; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="wifi" style="width: 9px; height: 9px; color:#f59e0b;"></i> WiFi</span>
-                <span class="bus-feature-badge" style="background: #f1f5f9; border: 1px solid #e0e7ff; color: #475569; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="battery-charging" style="width: 9px; height: 9px; color:#14b8a6;"></i> USB</span>
-                <span class="bus-feature-badge" style="background: #f1f5f9; border: 1px solid #e0e7ff; color: #475569; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="wind" style="width: 9px; height: 9px; color:#10b981;"></i> Aire A.</span>
+                <span class="bus-feature-badge" style="background: #f1f5f9; border: 1px solid #dbeafe; color: #475569; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="wifi" style="width: 9px; height: 9px; color:#f59e0b;"></i> WiFi</span>
+                <span class="bus-feature-badge" style="background: #f1f5f9; border: 1px solid #dbeafe; color: #475569; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="battery-charging" style="width: 9px; height: 9px; color:#14b8a6;"></i> USB</span>
+                <span class="bus-feature-badge" style="background: #f1f5f9; border: 1px solid #dbeafe; color: #475569; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px;"><i data-lucide="wind" style="width: 9px; height: 9px; color:#10b981;"></i> Aire A.</span>
             </div>
         `;
         
@@ -1141,7 +1141,7 @@ function populateVirtualTicket(ticket) {
                     text: `https://wa.me/${cleanPhone}?text=Hola,%20adjunto%20comprobante%20de%20pago%20de%20mi%20pasaje%20${ticket.id}`,
                     width: 76,
                     height: 76,
-                    colorDark: "#7c3aed",
+                    colorDark: "#3b82f6",
                     colorLight: "#ffffff",
                     correctLevel: QRCode.CorrectLevel.M
                 });
@@ -1248,10 +1248,10 @@ function showMobileNotification(message, type = "success") {
     let icon = "check-circle";
     let color = "#10b981";
     let bg = "rgba(16, 185, 129, 0.12)";
-    let border = "#e0e7ff";
-    if (type === "warning") { icon = "alert-triangle"; color = "#f59e0b"; bg = "rgba(245, 158, 11, 0.12)"; border = "#e0e7ff"; }
-    if (type === "error") { icon = "x-circle"; color = "#ef4444"; bg = "rgba(239, 68, 68, 0.12)"; border = "#e0e7ff"; }
-    if (type === "info") { icon = "info"; color = "#f59e0b"; bg = "rgba(245, 158, 11, 0.12)"; border = "#e0e7ff"; }
+    let border = "#dbeafe";
+    if (type === "warning") { icon = "alert-triangle"; color = "#f59e0b"; bg = "rgba(245, 158, 11, 0.12)"; border = "#dbeafe"; }
+    if (type === "error") { icon = "x-circle"; color = "#ef4444"; bg = "rgba(239, 68, 68, 0.12)"; border = "#dbeafe"; }
+    if (type === "info") { icon = "info"; color = "#f59e0b"; bg = "rgba(245, 158, 11, 0.12)"; border = "#dbeafe"; }
     
     toast.innerHTML = `
         <div style="background: #ffffff; border: 1.5px solid ${border}; box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 0.75rem 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 0.6rem; max-width: 340px; animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
@@ -1368,9 +1368,9 @@ function renderTicketsListHtml() {
             if (parts.length === 3) displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
             
             ticketsListHtml += `
-                <div style="background: #ffffff; border: 1px solid #e0e7ff; border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.06); position: relative;">
+                <div style="background: #ffffff; border: 1px solid #dbeafe; border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.06); position: relative;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.72rem; font-weight: 800; color: #6366f1;"><i data-lucide="bus" style="width: 11px; height: 11px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i> ${company.name}</span>
+                        <span style="font-size: 0.72rem; font-weight: 800; color: #2563eb;"><i data-lucide="bus" style="width: 11px; height: 11px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i> ${company.name}</span>
                         <span style="font-size: 0.65rem; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #34d399; padding: 2px 8px; border-radius: 20px;">Válido</span>
                     </div>
                     
@@ -1378,14 +1378,14 @@ function renderTicketsListHtml() {
                         ${ticket.routeFrom || state.selectedOrigin} ➔ ${ticket.routeTo || state.selectedDestination}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.72rem; color: #64748b; border-top: 1px solid #e0e7ff; padding-top: 0.5rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.72rem; color: #64748b; border-top: 1px solid #dbeafe; padding-top: 0.5rem;">
                         <div>Fecha: <strong style="color:#1e293b;">${displayDate}</strong></div>
-                        <div>Asiento: <strong style="color:#6366f1;">N° ${ticket.seatNum} (Piso ${ticket.floor})</strong></div>
+                        <div>Asiento: <strong style="color:#2563eb;">N° ${ticket.seatNum} (Piso ${ticket.floor})</strong></div>
                         <div>Pasajero: <strong style="color:#1e293b;">${ticket.passengerName}</strong></div>
                         <div>DNI: <strong style="color:#1e293b;">${ticket.passengerDni}</strong></div>
                     </div>
                     
-                    <button type="button" class="b2c-btn-back btn-view-ticket-qr" data-id="${ticket.id}" style="margin-top: 0.75rem; width: 100%; justify-content: center; border-color: #e0e7ff; color: #6366f1; background: #ede9fe;">
+                    <button type="button" class="b2c-btn-back btn-view-ticket-qr" data-id="${ticket.id}" style="margin-top: 0.75rem; width: 100%; justify-content: center; border-color: #dbeafe; color: #2563eb; background: #eff6ff;">
                         <i data-lucide="qr-code" style="width: 12px; height: 12px;"></i> Ver Boleto QR
                     </button>
                 </div>
@@ -1448,7 +1448,7 @@ function showHistoryModal() {
     const ticketsListHtml = renderTicketsListHtml();
     
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(37, 99, 235, 0.1); border-top: 1px solid #dbeafe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-shrink: 0;">
                 <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #fef3c7; color: #fbbf24; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
@@ -1505,7 +1505,7 @@ function showHelpModal() {
     const supportMsg = activeComp.supportMessage || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
 
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #e0e7ff; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(37, 99, 235, 0.1); border-top: 1px solid #dbeafe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                 <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #e0f2fe; color: #38bdf8; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
@@ -1520,7 +1520,7 @@ function showHelpModal() {
                 <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">¿Necesitas ayuda con tu pasaje?</h4>
                 <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; line-height: 1.5;">${supportMsg}</p>
                 
-                <div style="background: #f8fafc; border: 1px solid #e0e7ff; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="background: #f8fafc; border: 1px solid #dbeafe; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #34d399; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: ${supportPhone}</span>
@@ -1530,7 +1530,7 @@ function showHelpModal() {
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: ${supportEmail}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #ede9fe; color: #8b5cf6; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Seguridad de Compra Garantizada</span>
                     </div>
                 </div>
