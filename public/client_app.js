@@ -1750,15 +1750,21 @@ function updateHistoryTabBadge() {
         badge.className = "tab-badge";
         badge.textContent = state.myTickets.length;
         badge.style.position = "absolute";
-        badge.style.top = "4px";
-        badge.style.right = "24%";
-        badge.style.background = "#f59e0b";
-        badge.style.color = "#000000";
-        badge.style.fontSize = "8px";
-        badge.style.fontWeight = "900";
-        badge.style.padding = "1px 5px";
-        badge.style.borderRadius = "10px";
-        badge.style.border = "1.5px solid #000000";
+        badge.style.top = "2px";
+        badge.style.left = "calc(50% + 5px)"; // Se posiciona flotando en la esquina superior derecha del icono centrado
+        badge.style.background = "#ef4444"; // Rojo de notificación premium vibrante
+        badge.style.color = "#ffffff"; // Texto blanco de alto contraste
+        badge.style.fontSize = "10px";
+        badge.style.fontWeight = "800";
+        badge.style.minWidth = "17px";
+        badge.style.height = "17px";
+        badge.style.borderRadius = "50%";
+        badge.style.border = "1.5px solid #ffffff"; // Borde blanco fino y elegante que separa del icono sin verse tosco
+        badge.style.display = "flex";
+        badge.style.alignItems = "center";
+        badge.style.justifyContent = "center";
+        badge.style.padding = "0 3px";
+        badge.style.boxShadow = "0 2px 8px rgba(239, 68, 68, 0.4)";
         tabHistory.appendChild(badge);
     }
 }
