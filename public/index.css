@@ -5777,3 +5777,7 @@ svg, i[data-lucide], .lucide {
 
 /* SEPARACION BOTON COMPRAR OTRO PASAJE */
 .btn-new-booking { margin-bottom: 2.5rem !important; }
+
+/* REDIMENSIONAR CALENDARIO Y BOTONES */
+.datepicker-footer-btn { font-size: 14px !important; padding: 10px 14px !important; border-radius: 6px !important; }
+@media (max-width: 640px) { .datepicker-calendar-popover { width: 94% !important; max-width: 380px !important; padding: 1.5rem !important; } }
