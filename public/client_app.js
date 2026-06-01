@@ -43,7 +43,50 @@ const state = {
     // Pasajes comprados localmente en esta sesión (almacenados en localStorage)
     myTickets: JSON.parse(localStorage.getItem('busclick_client_tickets') || '[]'),
     
-    user: null // Estado de autenticación del usuario (mock para UI Google)
+    user: null // Estado de autenticación del usuario
+};
+
+// --- GOOGLE OAUTH CALLBACK ---
+window.handleGoogleCredentialResponse = function(response) {
+    try {
+        // Decodificar JWT (el payload es la segunda parte separada por punto)
+        const base64Url = response.credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const payload = JSON.parse(jsonPayload);
+        
+        // Guardar sesión
+        state.user = {
+            name: payload.name,
+            email: payload.email,
+            picture: payload.picture
+        };
+        
+        // Actualizar UI del perfil en la barra superior
+        const profileText = document.querySelector("#btn-user-profile span");
+        if(profileText) profileText.textContent = state.user.name;
+        const profileImg = document.querySelector("#btn-user-profile div");
+        if(profileImg && state.user.picture) {
+            profileImg.innerHTML = `<img src="${state.user.picture}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+        }
+        
+        // Recargar el área de tickets
+        const listArea = document.getElementById("modal-tickets-list-area");
+        if (listArea) {
+            listArea.innerHTML = renderTicketsListHtml();
+            lucide.createIcons();
+            const overlay = document.querySelector(".mobile-modal-overlay");
+            if(overlay) setupHistoryModalListeners(overlay);
+        }
+        
+        // Aquí podrías desencadenar la carga de pasajes desde el servidor vinculados a este email
+        // syncClientTickets();
+        
+    } catch(e) {
+        console.error("Error procesando login de Google", e);
+    }
 };
 
 // --- LISTADO AUXILIAR DNI RENIEC (FALLBACK) ---
@@ -1360,10 +1403,7 @@ function renderTicketsListHtml() {
                 <h3 style="font-size: 1.15rem; font-weight: 800; color: #1e293b; margin-bottom: 0.5rem;">Protegemos tus Pasajes</h3>
                 <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem; line-height: 1.5; max-width: 280px;">Inicia sesión de forma segura para ver, descargar y gestionar los boletos que has comprado.</p>
                 
-                <button type="button" class="btn-mock-google-login" style="display: flex; align-items: center; gap: 12px; background: white; border: 1px solid #cbd5e1; padding: 10px 16px; border-radius: 8px; font-weight: 600; color: #334155; font-size: 0.9rem; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: all 0.2s ease; width: 100%; justify-content: center;">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google" style="width: 18px; height: 18px;">
-                    Continuar con Google
-                </button>
+                <div id="google-btn-container" style="display: flex; justify-content: center; width: 100%; min-height: 44px;"></div>
             </div>
         `;
     }
@@ -1446,25 +1486,18 @@ function setupHistoryModalListeners(overlay) {
         });
     });
     
-    // Listener para mock de Google Login
-    overlay.querySelectorAll(".btn-mock-google-login").forEach(btn => {
-        btn.addEventListener("click", () => {
-            // Simulamos inicio de sesión
-            state.user = { name: "Cliente VIP", email: "cliente@gmail.com" };
-            
-            // Actualizar la interfaz (nombre en el menú, etc.)
-            const profileText = document.querySelector("#btn-user-profile span");
-            if(profileText) profileText.textContent = state.user.name;
-            
-            // Recargar la lista
-            const listArea = document.getElementById("modal-tickets-list-area");
-            if (listArea) {
-                listArea.innerHTML = renderTicketsListHtml();
-                lucide.createIcons();
-                setupHistoryModalListeners(overlay);
-            }
+    // Renderizar botón de Google real si está el contenedor
+    const googleBtnContainer = document.getElementById("google-btn-container");
+    if (googleBtnContainer && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+        google.accounts.id.initialize({
+            client_id: "794712381168-4nau3n8ag7ilhhil9a5lbqmvjekjq7qk.apps.googleusercontent.com",
+            callback: handleGoogleCredentialResponse
         });
-    });
+        google.accounts.id.renderButton(
+            googleBtnContainer,
+            { theme: "outline", size: "large", width: 280, text: "continue_with" }
+        );
+    }
 }
 
 // --- MOSTRAR MODAL DE HISTORIAL DE COMPRAS (MIS PASAJES) ---
