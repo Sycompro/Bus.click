@@ -6130,17 +6130,17 @@ svg, i[data-lucide], .lucide {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Campos de entrada: Más altos, color serio (negro/pizarra con degradados) */
+/* Campos de entrada: Más altos, fondo blanco (degradado sutil) y borde oscuro serio (líneas negras) */
 .b2c-select.has-icon, .b2c-input.has-icon {
     min-height: 56px !important;
     padding: 0.95rem 1rem 0.95rem 3rem !important;
-    background: linear-gradient(135deg, #1e293b, #0f172a) !important; /* Negro pizarra degradado serio */
-    border: 1.5px solid #334155 !important;
+    background: linear-gradient(135deg, #ffffff, #fafafa) !important; /* Blanco premium con degradado ultra sutil */
+    border: 2px solid #0f172a !important; /* Borde oscuro (línea negra seria) */
     border-radius: 16px !important;
-    color: #f8fafc !important; /* Texto claro */
+    color: #0f172a !important; /* Texto oscuro serio */
     font-size: 0.98rem !important;
     font-weight: 600 !important;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     outline: none !important;
 }
