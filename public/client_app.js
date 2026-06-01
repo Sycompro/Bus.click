@@ -1,10 +1,23 @@
 // --- FALLBACK DEFENSIVO CONTRA CAÍDAS O LATENCIA EN EL CDN DE LUCIDE ---
-if (typeof window.lucide === 'undefined') {
-    window.lucide = {
-        createIcons: () => {
-            console.warn("SW: Lucide no está disponible en la red en este momento.");
+window.renderIconsSafe = function() {
+    if (typeof window.lucide !== 'undefined' && window.lucide !== window.lucide_dummy && typeof window.lucide.createIcons === 'function') {
+        try { window.lucide.createIcons(); } catch(e) {}
+    } else {
+        window.lucideRetry = (window.lucideRetry || 0) + 1;
+        if (window.lucideRetry < 100) { // Retry for up to 10 seconds (100 * 100ms)
+            setTimeout(window.renderIconsSafe, 100);
         }
-    };
+    }
+};
+
+window.lucide_dummy = {
+    createIcons: function() {
+        window.renderIconsSafe();
+    }
+};
+
+if (typeof window.lucide === 'undefined') {
+    window.lucide = window.lucide_dummy;
 }
 
 // --- ESTADO GLOBAL DE LA APP MÓVIL ---
