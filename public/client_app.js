@@ -1433,13 +1433,14 @@ function showHistoryModal() {
     
     const overlay = document.createElement("div");
     overlay.className = "mobile-modal-overlay";
-    overlay.style.position = "absolute";
+    overlay.style.position = "fixed";
     overlay.style.top = "0";
     overlay.style.left = "0";
     overlay.style.width = "100%";
     overlay.style.height = "100%";
-    overlay.style.background = "rgba(15, 23, 42, 0.4)";
-    overlay.style.backdropFilter = "blur(8px)";
+    overlay.style.background = "rgba(15, 23, 42, 0.6)";
+    overlay.style.backdropFilter = "blur(12px)";
+    overlay.style.webkitBackdropFilter = "blur(12px)";
     overlay.style.zIndex = "1100";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
@@ -1487,13 +1488,14 @@ function showHelpModal() {
     
     const overlay = document.createElement("div");
     overlay.className = "mobile-modal-overlay";
-    overlay.style.position = "absolute";
+    overlay.style.position = "fixed";
     overlay.style.top = "0";
     overlay.style.left = "0";
     overlay.style.width = "100%";
     overlay.style.height = "100%";
-    overlay.style.background = "rgba(15, 23, 42, 0.4)";
-    overlay.style.backdropFilter = "blur(8px)";
+    overlay.style.background = "rgba(15, 23, 42, 0.6)";
+    overlay.style.backdropFilter = "blur(12px)";
+    overlay.style.webkitBackdropFilter = "blur(12px)";
     overlay.style.zIndex = "1100";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
