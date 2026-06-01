@@ -79,9 +79,14 @@ window.handleGoogleCredentialResponse = function(response) {
             state.user.razonSocial = savedProfile.razonSocial;
             
             showMobileNotification("Sesión iniciada correctamente", "success");
-            const sidebar = document.getElementById('profile-sidebar');
-            if (sidebar && typeof openSidebar === 'function') {
-                openSidebar();
+            const tabProfile = document.querySelector("[data-tab='tab-profile']");
+            if (tabProfile && tabProfile.classList.contains("active")) {
+                showProfileModal();
+            } else {
+                const sidebar = document.getElementById('profile-sidebar');
+                if (sidebar && typeof openSidebar === 'function') {
+                    openSidebar();
+                }
             }
         } else {
             showMobileNotification("Por favor completa tu perfil para continuar", "info");
@@ -718,12 +723,7 @@ function setupEventListeners() {
         tabProfile.addEventListener("click", () => {
             closeActiveModals();
             setActiveTab("tab-profile");
-            if (state.user && state.user.email) {
-                showEditProfileModal();
-            } else {
-                showHistoryModal();
-                showMobileNotification("Inicia sesión para gestionar tu perfil.", "info");
-            }
+            showProfileModal();
         });
     }
     
@@ -1823,37 +1823,9 @@ function renderTicketsListHtml() {
         `;
     }
 
-    // Widget premium de información del perfil del usuario (en línea)
-    const userPhoto = state.user.picture || '';
-    const userEmail = state.user.email || '';
-    const userName = state.user.name || 'Pasajero';
-    
-    let photoHtml = `<div style="width: 48px; height: 48px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center; border: 2px solid #3b82f6;"><i data-lucide="user" style="width: 22px; height: 22px;"></i></div>`;
-    if (userPhoto) {
-        photoHtml = `<img src="${userPhoto}" alt="Usuario" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #3b82f6; object-fit: cover;">`;
-    }
-
     ticketsListHtml += `
-        <div style="background: linear-gradient(135deg, #f8fafc, #eff6ff); border: 1px solid #bfdbfe; border-radius: 20px; padding: 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.04);">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                ${photoHtml}
-                <div style="flex: 1; min-width: 0;">
-                    <h4 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${userName}</h4>
-                    <p style="font-size: 0.75rem; color: #64748b; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${userEmail}</p>
-                </div>
-            </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <button type="button" id="btn-edit-profile-inline" class="b2c-btn-back" style="padding: 10px; justify-content: center; font-size: 0.78rem; font-weight: 700; border-color: #bfdbfe; color: #2563eb; background: #ffffff; cursor: pointer;">
-                    <i data-lucide="user-cog" style="width: 14px; height: 14px;"></i> Mi Perfil
-                </button>
-                <button type="button" id="btn-logout-inline" class="b2c-btn-back" style="padding: 10px; justify-content: center; font-size: 0.78rem; font-weight: 700; border-color: #fca5a5; color: #ef4444; background: #fef2f2; cursor: pointer;">
-                    <i data-lucide="log-out" style="width: 14px; height: 14px;"></i> Salir
-                </button>
-            </div>
-        </div>
-        
         <h3 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px;">
-            <i data-lucide="ticket" style="width: 16px; height: 16px; color: #3b82f6;"></i> Mis Pasajes Comprados
+            <i data-lucide="ticket" style="width: 16px; height: 16px; color: #0f172a;"></i> Mis Pasajes Comprados
         </h3>
     `;
 
@@ -3008,3 +2980,120 @@ window.renderWelcomeHeader = function() {
 
     welcomeSubtitleEl.textContent = subtitleText;
 };
+
+// --- MOSTRAR MODAL DE PERFIL B2C ---
+function showProfileModal() {
+    document.querySelectorAll(".mobile-modal-overlay").forEach(m => m.remove());
+    
+    const overlay = document.createElement("div");
+    overlay.className = "mobile-modal-overlay";
+    
+    if (!state.user) {
+        overlay.innerHTML = `
+            <div class="mobile-modal" style="height: 100%; width: 100%; display: flex; flex-direction: column; position: relative; border-radius: 0;">
+                <div class="mobile-modal-header" style="flex-shrink: 0; padding: 16px 20px; display: flex; align-items: center; justify-content: flex-start; gap: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px));">
+                    <button class="btn-close-mobile-modal" style="background: none; border: none; color: #0f172a; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 0; font-size: 1rem; cursor: pointer;">
+                        <i data-lucide="chevron-left"></i> Atrás
+                    </button>
+                    <h3 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Mi Perfil</h3>
+                </div>
+                
+                <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding-bottom: 100px;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto; box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);">
+                        <i data-lucide="user" style="width: 32px; height: 32px;"></i>
+                    </div>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 0.5rem;">Tu Perfil Personal</h3>
+                    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 1.5rem; line-height: 1.5; max-width: 280px;">Inicia sesión de forma segura para gestionar tus datos personales y agilizar tus compras.</p>
+                    
+                    <div id="profile-google-btn-container" style="display: flex; justify-content: center; width: 100%; min-height: 44px;"></div>
+                </div>
+            </div>
+        `;
+    } else {
+        const userPhoto = state.user.picture || '';
+        const userEmail = state.user.email || '';
+        const userName = state.user.name || 'Pasajero';
+        
+        let photoHtml = `<div style="width: 64px; height: 64px; border-radius: 50%; background: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; border: 2px solid #0f172a; margin-bottom: 12px;"><i data-lucide="user" style="width: 28px; height: 28px;"></i></div>`;
+        if (userPhoto) {
+            photoHtml = `<img src="${userPhoto}" alt="Usuario" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid #0f172a; object-fit: cover; margin-bottom: 12px;">`;
+        }
+        
+        overlay.innerHTML = `
+            <div class="mobile-modal" style="height: 100%; width: 100%; display: flex; flex-direction: column; position: relative; border-radius: 0;">
+                <div class="mobile-modal-header" style="flex-shrink: 0; padding: 16px 20px; display: flex; align-items: center; justify-content: flex-start; gap: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px));">
+                    <button class="btn-close-mobile-modal" style="background: none; border: none; color: #0f172a; font-weight: 600; display: flex; align-items: center; gap: 4px; padding: 0; font-size: 1rem; cursor: pointer;">
+                        <i data-lucide="chevron-left"></i> Atrás
+                    </button>
+                    <h3 style="font-weight: 800; font-size: 1.25rem; margin: 0;">Mi Perfil</h3>
+                </div>
+                
+                <div class="mobile-modal-body" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 100px;">
+                    <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid var(--border-soft); border-radius: 24px; padding: 2rem 1.5rem; width: 100%; max-width: 380px; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-soft);">
+                        ${photoHtml}
+                        <h4 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0; margin-bottom: 4px;">${userName}</h4>
+                        <p style="font-size: 0.85rem; color: #64748b; margin: 0; margin-bottom: 24px;">${userEmail}</p>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                            <button type="button" id="btn-profile-edit" class="b2c-btn-primary" style="width: 100%; padding: 12px; font-weight: 700; border-radius: 12px; cursor: pointer; justify-content: center; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="user-cog" style="width: 18px; height: 18px;"></i> Mi Perfil
+                            </button>
+                            <button type="button" id="btn-profile-logout" class="b2c-btn-back" style="width: 100%; padding: 12px; font-weight: 700; border-radius: 12px; border-color: #fca5a5; color: #ef4444; background: #fef2f2; cursor: pointer; justify-content: center; display: flex; align-items: center; gap: 6px;">
+                                <i data-lucide="log-out" style="width: 18px; height: 18px;"></i> Salir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    const wrapper = document.querySelector(".b2c-app-container");
+    if (wrapper) {
+        wrapper.appendChild(overlay);
+        setTimeout(() => overlay.classList.add('show'), 10);
+        lucide.createIcons();
+        
+        overlay.querySelector(".btn-close-mobile-modal").addEventListener("click", () => {
+            overlay.classList.remove('show');
+            setTimeout(() => {
+                overlay.remove();
+                setActiveTab("tab-home");
+            }, 300);
+        });
+        
+        if (!state.user) {
+            setTimeout(() => {
+                const profileGoogleContainer = document.getElementById("profile-google-btn-container");
+                if (profileGoogleContainer && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                    google.accounts.id.renderButton(
+                        profileGoogleContainer,
+                        { theme: "outline", size: "large", width: 280, text: "continue_with" }
+                    );
+                }
+            }, 50);
+        } else {
+            document.getElementById("btn-profile-edit").addEventListener("click", () => {
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    overlay.remove();
+                    showEditProfileModal();
+                }, 300);
+            });
+            
+            document.getElementById("btn-profile-logout").addEventListener("click", () => {
+                state.user = null;
+                localStorage.removeItem('busclick_client_profile');
+                localStorage.removeItem('busclick_user_session');
+                
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                    google.accounts.id.disableAutoSelect();
+                }
+                
+                showMobileNotification("Sesión cerrada exitosamente", "success");
+                updateSidebarUI();
+                showProfileModal(); // Recargar el modal
+            });
+        }
+    }
+}
