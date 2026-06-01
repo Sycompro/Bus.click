@@ -196,6 +196,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     setupEventListeners();
     
+    // Renderizar Saludo Header
+    renderWelcomeHeader();
+    
     // Cargar el historial de pasajes si existe en el tab
     updateHistoryTabBadge();
     
@@ -2934,5 +2937,43 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    renderWelcomeHeader();
 });
 
+// --- FUNCION DE SALUDO DINAMICO ---
+window.renderWelcomeHeader = function() {
+    const welcomeNameEl = document.getElementById('welcome-name');
+    const welcomeSubtitleEl = document.getElementById('welcome-subtitle');
+    
+    if (!welcomeNameEl || !welcomeSubtitleEl) return;
+
+    let userName = "";
+    if (state.user && state.user.name) {
+        // Tomar el primer y segundo nombre
+        const nameParts = state.user.name.split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts.length > 1 ? " " + nameParts[1] : "";
+        userName = ", " + firstName + lastName;
+    }
+
+    welcomeNameEl.textContent = userName + ".";
+
+    const hour = new Date().getHours();
+    let greeting = "";
+    if (hour >= 0 && hour < 12) {
+        greeting = "Buenos días";
+    } else if (hour >= 12 && hour < 19) {
+        greeting = "Buenas tardes";
+    } else {
+        greeting = "Buenas noches";
+    }
+
+    let subtitleText = greeting;
+    if (userName) {
+        subtitleText += ", bienvenido de vuelta...";
+    } else {
+        subtitleText += ", ¿a dónde viajamos hoy?";
+    }
+
+    welcomeSubtitleEl.textContent = subtitleText;
+};
