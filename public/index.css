@@ -6246,7 +6246,7 @@ svg, i[data-lucide], .lucide {
 
 /* Campo Origen (Focus: Verde Esmeralda) */
 .b2c-input-wrapper:has(#search-origin):focus-within .b2c-select {
-    background: #f0fdf4 !important; /* Fondo verde ultra suave */
+    background: #ffffff !important; /* Fondo blanco limpio */
     border-color: #10b981 !important; /* Borde verde esmeralda */
     box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12), 0 8px 20px rgba(16, 185, 129, 0.04) !important;
 }
@@ -6258,7 +6258,7 @@ svg, i[data-lucide], .lucide {
 
 /* Campo Destino (Focus: Rosa Vibrante) */
 .b2c-input-wrapper:has(#search-destination):focus-within .b2c-select {
-    background: #fff1f2 !important; /* Fondo rosa ultra suave */
+    background: #ffffff !important; /* Fondo blanco limpio */
     border-color: #f43f5e !important; /* Borde rosa vibrante */
     box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.12), 0 8px 20px rgba(244, 63, 94, 0.04) !important;
 }
@@ -6270,7 +6270,7 @@ svg, i[data-lucide], .lucide {
 
 /* Campo Fecha de Viaje (Focus: Índigo) */
 .b2c-input-wrapper:has(#search-date-display):focus-within .b2c-input {
-    background: #eef2ff !important; /* Fondo índigo ultra suave */
+    background: #ffffff !important; /* Fondo blanco limpio */
     border-color: #6366f1 !important; /* Borde índigo */
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12), 0 8px 20px rgba(99, 102, 241, 0.04) !important;
 }
@@ -6282,7 +6282,7 @@ svg, i[data-lucide], .lucide {
 
 /* Campo Fecha de Retorno (Focus: Violeta) */
 .b2c-input-wrapper:has(#search-date-return-display):focus-within .b2c-input {
-    background: #f5f3ff !important; /* Fondo violeta ultra suave */
+    background: #ffffff !important; /* Fondo blanco limpio */
     border-color: #8b5cf6 !important; /* Borde violeta */
     box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12), 0 8px 20px rgba(139, 92, 246, 0.04) !important;
 }
@@ -6303,7 +6303,7 @@ svg, i[data-lucide], .lucide {
 
 /* Origen Completado (Verde sutil y relajante) */
 .b2c-select.has-icon.completed {
-    background: #f0fdf4 !important;
+    background: #ffffff !important;
     border-color: #a7f3d0 !important;
     box-shadow: 0 2px 8px rgba(16, 185, 129, 0.02) !important;
 }
@@ -6317,7 +6317,7 @@ svg, i[data-lucide], .lucide {
     /* Múltiple selector por ID se aplicará abajo */
 }
 #search-destination.completed {
-    background: #fff1f2 !important;
+    background: #ffffff !important;
     border-color: #fecdd3 !important;
     box-shadow: 0 2px 8px rgba(244, 63, 94, 0.02) !important;
 }
@@ -6328,7 +6328,7 @@ svg, i[data-lucide], .lucide {
 
 /* Fecha de Viaje Completada (Índigo sutil y relajante) */
 #search-date-display.completed {
-    background: #eef2ff !important;
+    background: #ffffff !important;
     border-color: #c7d2fe !important;
     box-shadow: 0 2px 8px rgba(99, 102, 241, 0.02) !important;
 }
@@ -6339,7 +6339,7 @@ svg, i[data-lucide], .lucide {
 
 /* Fecha de Retorno Completada (Violeta sutil y relajante) */
 #search-date-return-display.completed {
-    background: #f5f3ff !important;
+    background: #ffffff !important;
     border-color: #ddd6fe !important;
     box-shadow: 0 2px 8px rgba(139, 92, 246, 0.02) !important;
 }
