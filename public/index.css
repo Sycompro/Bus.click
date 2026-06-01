@@ -5765,9 +5765,9 @@ svg, i[data-lucide], .lucide {
 .b2c-mobile-tabbar { height: calc(65px + env(safe-area-inset-bottom, 0px)) !important; padding-bottom: env(safe-area-inset-bottom, 0px) !important; }
 .b2c-tabbar-item { gap: 4px !important; font-size: 0.7rem !important; font-weight: 500 !important; color: #94a3b8 !important; padding: 6px 12px !important; border-radius: 12px !important; transition: all 0.25s ease !important; }
 .b2c-tabbar-item svg, .b2c-tabbar-item i { width: 22px !important; height: 22px !important; background: transparent !important; margin: 0 !important; stroke-width: 2.2 !important; }
-.b2c-tabbar-item.active { background: #eff6ff !important; color: #2563eb !important; font-weight: 700 !important; padding: 8px 16px !important; border-radius: 20px !important; }
+.b2c-tabbar-item.active { background: #f1f5f9 !important; color: #0f172a !important; font-weight: 700 !important; padding: 8px 16px !important; border-radius: 20px !important; }
 .b2c-tabbar-item.active::after { display: none !important; }
-.b2c-tabbar-item.active svg, .b2c-tabbar-item.active i { color: #2563eb !important; background: transparent !important; stroke-width: 2.2 !important; }
+.b2c-tabbar-item.active svg, .b2c-tabbar-item.active i { color: #0f172a !important; background: transparent !important; stroke-width: 2.2 !important; }
 
 
 /* FORCE SEARCH CARD VISIBILITY & PREMIUM STYLING */
