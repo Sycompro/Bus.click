@@ -2111,7 +2111,7 @@ function showAccountCompletionModal() {
                     const result = await response.json();
                     if (result.success && result.data && result.data.nombres) {
                         const d = result.data;
-                        nameInput.value = \`\${d.nombres} \${d.apellido_paterno || ''} \${d.apellido_materno || ''}\`.trim();
+                        nameInput.value = `${d.nombres} ${d.apellido_paterno || ''} ${d.apellido_materno || ''}`.trim();
                         showMobileNotification("DNI verificado (RENIEC).", "success");
                     } else {
                         nameInput.placeholder = "Escriba sus nombres...";
@@ -2346,7 +2346,7 @@ function showEditProfileModal() {
                     const result = await response.json();
                     if (result.success && result.data && result.data.nombres) {
                         const d = result.data;
-                        nameInput.value = \`\${d.nombres} \${d.apellido_paterno || ''} \${d.apellido_materno || ''}\`.trim();
+                        nameInput.value = `${d.nombres} ${d.apellido_paterno || ''} ${d.apellido_materno || ''}`.trim();
                         showMobileNotification("DNI verificado (RENIEC).", "success");
                     } else {
                         nameInput.placeholder = "Escriba sus nombres...";
