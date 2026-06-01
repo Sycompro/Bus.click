@@ -1248,12 +1248,17 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
                 whatsappApiKey = compRes.rows[0].whatsapp_api_key || whatsappApiKey;
             }
             
-            // Cargar información de la Movilidad/Ruta
-            const movRes = await pool.query('SELECT route_from, route_to, date_str FROM movilidades WHERE id = $1', [movilidadId]);
+            // Cargar información de la Movilidad/Ruta (sin date_str)
+            const movRes = await pool.query('SELECT route_from, route_to FROM movilidades WHERE id = $1', [movilidadId]);
             if (movRes.rows.length > 0) {
                 routeFrom = movRes.rows[0].route_from;
                 routeTo = movRes.rows[0].route_to;
-                travelDate = movRes.rows[0].date_str;
+            }
+            
+            // Cargar información del Ticket (date_str)
+            const ticketRes = await pool.query('SELECT date_str FROM tickets WHERE id = $1', [ticketId]);
+            if (ticketRes.rows.length > 0) {
+                travelDate = ticketRes.rows[0].date_str;
             }
         } else {
             const compObj = localDb.companies.find(c => c.id === companyId);
@@ -1268,7 +1273,11 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
             if (movObj) {
                 routeFrom = movObj.routeFrom || movObj.route_from || routeFrom;
                 routeTo = movObj.routeTo || movObj.route_to || routeTo;
-                travelDate = movObj.dateStr || movObj.date_str || travelDate;
+            }
+            
+            const ticketObj = localDb.tickets.find(t => t.id === ticketId);
+            if (ticketObj) {
+                travelDate = ticketObj.dateStr || ticketObj.date_str || travelDate;
             }
         }
 
