@@ -6117,30 +6117,42 @@ svg, i[data-lucide], .lucide {
     width: 100% !important;
 }
 
-/* Posicionar iconos de Lucide dentro del input/select */
-.b2c-field-icon {
+/* Cuadro contenedor circular del icono (estilo iOS/Android nativo premium) */
+.b2c-field-icon-box {
     position: absolute !important;
-    left: 1.15rem !important;
+    left: 0.65rem !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    width: 20px !important;
-    height: 20px !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
     pointer-events: none !important;
     z-index: 10 !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.2) !important;
 }
 
-/* Campos de entrada: Más altos, fondo blanco (degradado sutil) y borde oscuro serio (líneas negras) */
+/* Posicionar iconos de Lucide dentro del cuadro */
+.b2c-field-icon {
+    width: 22px !important;
+    height: 22px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Campos de entrada: Más altos, fondo blanco (degradado sutil) y borde oscuro serio con espacio para el cuadro */
 .b2c-select.has-icon, .b2c-input.has-icon {
     min-height: 56px !important;
-    padding: 0.95rem 1rem 0.95rem 3rem !important;
+    padding: 0.95rem 1rem 0.95rem 3.5rem !important; /* Espacio expandido de 3.5rem a la izquierda */
     background: linear-gradient(135deg, #ffffff, #fafafa) !important; /* Blanco premium con degradado ultra sutil */
-    border: 2px solid #0f172a !important; /* Borde oscuro (línea negra seria) */
-    border-radius: 16px !important;
+    border: 2.5px solid #0f172a !important; /* Borde oscuro marcado y serio */
+    border-radius: 18px !important; /* Bordes ligeramente más redondeados y elegantes */
     color: #0f172a !important; /* Texto oscuro serio */
     font-size: 0.98rem !important;
-    font-weight: 600 !important;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03) !important;
+    font-weight: 700 !important; /* Texto un poco más marcado y profesional */
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.02) !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     outline: none !important;
 }
@@ -6150,36 +6162,55 @@ svg, i[data-lucide], .lucide {
     color: #64748b !important;
 }
 
+/* Asignar fondos suaves de base a los cuadros de icono (Glassmorphism sutil) */
+.b2c-input-wrapper:has(#search-origin) .b2c-field-icon-box {
+    background: rgba(16, 185, 129, 0.07) !important;
+    border: 1px solid rgba(16, 185, 129, 0.12) !important;
+}
+.b2c-input-wrapper:has(#search-destination) .b2c-field-icon-box {
+    background: rgba(244, 63, 94, 0.07) !important;
+    border: 1px solid rgba(244, 63, 94, 0.12) !important;
+}
+.b2c-input-wrapper:has(#search-date-display, #search-date-return-display) .b2c-field-icon-box {
+    background: rgba(99, 102, 241, 0.07) !important;
+    border: 1px solid rgba(99, 102, 241, 0.12) !important;
+}
+
 /* Efecto de Foco (:focus / Seleccionado por cursor): Color de fondo más claro y suave */
 .b2c-select.has-icon:focus, .b2c-input.has-icon:focus {
-    background: #f1f5f9 !important; /* Fondo suave y legible */
+    background: #f8fafc !important; /* Fondo ultra suave y legible */
     border-color: #3b82f6 !important;
     color: #0f172a !important; /* Texto oscuro */
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.18) !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
 }
 
-/* Cambiar color de icono al hacer foco */
+/* Animación y escalado de la caja del icono al hacer foco en el campo */
+.b2c-input-wrapper:focus-within .b2c-field-icon-box {
+    transform: translateY(-50%) scale(1.08) !important;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.08) !important;
+}
 .b2c-input-wrapper:focus-within .b2c-field-icon {
-    color: #3b82f6 !important;
-    transform: translateY(-50%) scale(1.1) !important;
+    transform: scale(1.1) !important;
 }
 
-/* Cuando ya están COMPLETADOS (tienen opción seleccionada): Fondo azul pastel muy suave */
+/* Cuando ya están COMPLETADOS (tienen opción seleccionada): Fondo azul/gris sumamente suave y relajante */
 .b2c-select.has-icon.completed, .b2c-input.has-icon.completed {
-    background: #eff6ff !important; /* Azul pastel sumamente suave y relajante */
-    border-color: #bfdbfe !important;
-    color: #1e3a8a !important; /* Texto azul marino serio */
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.04) !important;
+    background: #f1f5f9 !important; /* Gris suave premium para no saturar de azul */
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important; 
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.01) !important;
 }
 
-/* Cambiar color de icono a azul de marca cuando está completado */
-.b2c-input-wrapper:has(.completed) .b2c-field-icon {
-    color: #3b82f6 !important;
+/* Animación cuando está completado */
+.b2c-input-wrapper:has(.completed) .b2c-field-icon-box {
+    background: rgba(37, 99, 235, 0.08) !important;
+    border-color: rgba(37, 99, 235, 0.15) !important;
 }
 
 /* Ajustes adicionales del datepicker */
 .datepicker-wrapper .datepicker-icon {
     display: none !important; /* Ocultamos el icono legado a la derecha */
 }
+
 
 

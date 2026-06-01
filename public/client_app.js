@@ -251,11 +251,6 @@ async function loadInitialData() {
                 const secondPart = nameParts.slice(1).join(' ') || "";
                 logoText.innerHTML = `${firstPart}<strong>.${secondPart || 'click'}</strong>`;
             }
-            
-            // Mensaje de bienvenida corporativo
-            setTimeout(() => {
-                showMobileNotification(`Portal oficial de ${foundCompany.name}`, "info");
-            }, 800);
         }
         
         // Poblar selectores de ciudades
