@@ -5771,3 +5771,6 @@ svg, i[data-lucide], .lucide {
 /* REDISENO SWAP BTN V2 */
 .b2c-swap-btn { background: #3b82f6 !important; border: none !important; box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4) !important; }
 .b2c-swap-btn:hover { background: #2563eb !important; box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5) !important; }
+
+/* FORCE REMOVE BENEFIT CARD BORDERS */
+.b2c-benefit:nth-child(1), .b2c-benefit:nth-child(2), .b2c-benefit:nth-child(3) { border-left: 1px solid var(--border-soft) !important; }
