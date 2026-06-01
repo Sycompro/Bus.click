@@ -5810,9 +5810,9 @@ svg, i[data-lucide], .lucide {
 
 /* REDISENO E INTERACCION SWAP BTN */
 .b2c-swap-btn { 
-    background: #ffffff !important; 
-    border: 1px solid #cbd5e1 !important; 
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06) !important; 
+    background: #0f172a !important; 
+    border: 1px solid #0f172a !important; 
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2) !important; 
     width: 38px !important;
     height: 38px !important;
     display: flex !important;
@@ -5821,21 +5821,21 @@ svg, i[data-lucide], .lucide {
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 .b2c-swap-btn i, .b2c-swap-btn svg { 
-    stroke: #475569 !important; 
-    color: #475569 !important; 
+    stroke: #ffffff !important; 
+    color: #ffffff !important; 
     width: 16px !important;
     height: 16px !important;
     transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 .b2c-swap-btn:hover { 
-    background: #f8fafc !important; 
-    border-color: #94a3b8 !important;
+    background: #1e293b !important; 
+    border-color: #1e293b !important;
     transform: translate3d(0,0,0) scale(1.12) !important;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12) !important;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.3) !important;
 }
 .b2c-swap-btn:hover i, .b2c-swap-btn:hover svg {
     transform: rotate(180deg) !important; /* Micro-animación de rotación al pasar cursor */
-    stroke: #0f172a !important;
+    stroke: #ffffff !important;
 }
 
 /* CONTENEDOR DE RETORNO PREMIUM */
