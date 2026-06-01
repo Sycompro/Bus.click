@@ -745,13 +745,23 @@ function goToStep(stepId) {
         if (scrollArea) scrollArea.scrollTop = 0;
     }
     
-    // Mostrar u ocultar el saludo de bienvenida según el paso
+    // Mostrar u ocultar el saludo de bienvenida y el Tabbar según el paso
     const welcomeHeader = document.getElementById("b2c-welcome-header");
+    const mobileTabbar = document.querySelector(".b2c-mobile-tabbar");
+    
     if (welcomeHeader) {
         if (stepId === "step-search") {
             welcomeHeader.style.display = "";
         } else {
             welcomeHeader.style.display = "none";
+        }
+    }
+    
+    if (mobileTabbar) {
+        if (stepId === "step-search" || stepId === "step-routes") {
+            mobileTabbar.style.display = "flex";
+        } else {
+            mobileTabbar.style.display = "none";
         }
     }
     
