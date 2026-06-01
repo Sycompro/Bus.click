@@ -1571,6 +1571,7 @@ function showHistoryModal() {
     const wrapper = document.querySelector(".b2c-app-container");
     if (wrapper) {
         wrapper.appendChild(overlay);
+        setTimeout(() => overlay.classList.add('show'), 10);
         lucide.createIcons();
         
         setupHistoryModalListeners(overlay);
@@ -1651,6 +1652,7 @@ function showHelpModal() {
     const wrapper = document.querySelector(".b2c-app-container");
     if (wrapper) {
         wrapper.appendChild(overlay);
+        setTimeout(() => overlay.classList.add('show'), 10);
         lucide.createIcons();
         
         // Listener cerrar modal
@@ -2074,6 +2076,7 @@ function showAccountCompletionModal() {
 
     overlay.innerHTML = modalHTML;
     document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.add('show'), 10);
     lucide.createIcons();
 
     // Listeners
