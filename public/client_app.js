@@ -1724,30 +1724,33 @@ function renderTicketsListHtml() {
         const reversedTickets = [...state.myTickets].reverse();
         reversedTickets.forEach(ticket => {
             const company = state.companies.find(c => c.id === ticket.companyId) || { name: "Herrera Trans" };
+            const mobility = state.movilidades.find(m => m.id === ticket.movilidadId);
+            const origin = mobility ? mobility.routeFrom : (ticket.routeFrom || state.selectedOrigin || "Origen");
+            const destination = mobility ? mobility.routeTo : (ticket.routeTo || state.selectedDestination || "Destino");
             
             let displayDate = ticket.date;
             const parts = ticket.date.split('-');
             if (parts.length === 3) displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
             
             ticketsListHtml += `
-                <div style="background: #ffffff; border: 1px solid #dbeafe; border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.06); position: relative;">
+                <div style="background: #ffffff; border: 1px solid #c7d2fe; border-radius: 16px; padding: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.06); position: relative;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.72rem; font-weight: 800; color: #2563eb;"><i data-lucide="bus" style="width: 11px; height: 11px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i> ${company.name}</span>
-                        <span style="font-size: 0.65rem; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #34d399; padding: 2px 8px; border-radius: 20px;">Válido</span>
+                        <span style="font-size: 0.72rem; font-weight: 800; color: #6366f1;"><i data-lucide="bus" style="width: 11px; height: 11px; display: inline-block; vertical-align: middle; margin-right: 3px;"></i> ${company.name}</span>
+                        <span style="font-size: 0.65rem; font-weight: 800; background: rgba(16, 185, 129, 0.12); color: #10b981; padding: 2px 8px; border-radius: 20px;">Válido</span>
                     </div>
                     
                     <div style="font-size: 0.9rem; font-weight: 800; color: #1e293b;">
-                        ${ticket.routeFrom || state.selectedOrigin} ➔ ${ticket.routeTo || state.selectedDestination}
+                        ${origin} ➔ ${destination}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.72rem; color: #64748b; border-top: 1px solid #dbeafe; padding-top: 0.5rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.72rem; color: #6b7280; border-top: 1px solid #c7d2fe; padding-top: 0.5rem;">
                         <div>Fecha: <strong style="color:#1e293b;">${displayDate}</strong></div>
-                        <div>Asiento: <strong style="color:#2563eb;">N° ${ticket.seatNum} (Piso ${ticket.floor})</strong></div>
+                        <div>Asiento: <strong style="color:#6366f1;">N° ${ticket.seatNum} (Piso ${ticket.floor})</strong></div>
                         <div>Pasajero: <strong style="color:#1e293b;">${ticket.passengerName}</strong></div>
                         <div>DNI: <strong style="color:#1e293b;">${ticket.passengerDni}</strong></div>
                     </div>
                     
-                    <button type="button" class="b2c-btn-back btn-view-ticket-qr" data-id="${ticket.id}" style="margin-top: 0.75rem; width: 100%; justify-content: center; border-color: #dbeafe; color: #2563eb; background: #eff6ff;">
+                    <button type="button" class="b2c-btn-back btn-view-ticket-qr" data-id="${ticket.id}" style="margin-top: 0.75rem; width: 100%; justify-content: center; border-color: #c7d2fe; color: #6366f1; background: #eef2ff;">
                         <i data-lucide="qr-code" style="width: 12px; height: 12px;"></i> Ver Boleto QR
                     </button>
                 </div>
@@ -1818,7 +1821,6 @@ function showHistoryModal() {
     overlay.style.height = "100%";
     overlay.style.background = "rgba(15, 23, 42, 0.75)";
     overlay.style.zIndex = "999";
-    overlay.style.paddingBottom = "75px";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
     overlay.style.animation = "fadeInOverlay 0.25s ease";
@@ -1826,9 +1828,9 @@ function showHistoryModal() {
     const ticketsListHtml = renderTicketsListHtml();
     
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(37, 99, 235, 0.1); border-top: 1px solid #dbeafe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; max-height: 90vh; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #c7d2fe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-shrink: 0;">
-                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #fef3c7; color: #fbbf24; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="ticket" style="width: 16px; height: 16px;"></i></div> Mis Boletos Digitales</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
                     <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                 </button>
@@ -1873,7 +1875,6 @@ function showHelpModal() {
     overlay.style.height = "100%";
     overlay.style.background = "rgba(15, 23, 42, 0.75)";
     overlay.style.zIndex = "999";
-    overlay.style.paddingBottom = "75px";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
     overlay.style.animation = "fadeInOverlay 0.25s ease";
