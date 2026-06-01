@@ -5761,3 +5761,6 @@ svg, i[data-lucide], .lucide {
 .b2c-swap-btn { background: #6d28d9 !important; color: #ffffff !important; }
 .b2c-swap-btn i, .b2c-swap-btn svg { stroke: #ffffff !important; color: #ffffff !important; }
 .b2c-swap-btn:hover { background: #5b21b6 !important; }
+
+/* REMOVER BORDES DE GRADIENTE SUPERIOR EN TARJETAS */
+.b2c-summary-card::before, .b2c-ticket::before { display: none !important; }
