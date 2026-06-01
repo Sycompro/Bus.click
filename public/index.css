@@ -3437,7 +3437,7 @@ body {
 
 .sidebar-footer .btn-logout:hover {
     background: #fef2f2;
-    border-color: #fee2e2;
+    border-color: #fee2f2;
 }
 
 .sidebar-premium:not(.expanded) .sidebar-footer .btn-logout {
@@ -3765,7 +3765,7 @@ body {
     margin-bottom: 0.65rem;
 }
 .datepicker-month-title {
-    font-size: var(--text-xs);
+    font-size: 1.05rem; /* Increased size */
     font-weight: 800;
     color: #1e293b;
     text-transform: capitalize;
@@ -3774,8 +3774,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 32px; /* Increased from 24px */
+    height: 32px; /* Increased from 24px */
     background: rgba(241, 245, 249, 0.6);
     border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: var(--radius-sm);
@@ -3797,11 +3797,11 @@ body {
     margin-bottom: 0.5rem;
 }
 .datepicker-weekday {
-    font-size: 9px;
+    font-size: 11px; /* Increased from 9px */
     font-weight: 800;
     text-align: center;
     color: #94a3b8;
-    padding: 4px 0;
+    padding: 6px 0; /* Increased padding */
     text-transform: uppercase;
 }
 .datepicker-day {
@@ -3809,7 +3809,7 @@ body {
     align-items: center;
     justify-content: center;
     aspect-ratio: 1;
-    font-size: var(--text-xxs);
+    font-size: 15px; /* Increased from var(--text-xxs) */
     font-weight: 600;
     color: #334155;
     border-radius: var(--radius-sm);
@@ -3883,7 +3883,7 @@ body {
         border: 1px solid #e2e8f0 !important;
         box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25) !important;
         border-radius: 20px !important;
-        padding: 1.15rem !important;
+        padding: 1.5rem !important;
         z-index: 9999999 !important; /* Altísima prioridad */
         animation: datepickerCenterModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
