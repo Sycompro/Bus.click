@@ -5764,3 +5764,6 @@ svg, i[data-lucide], .lucide {
 
 /* REMOVER BORDES DE GRADIENTE SUPERIOR EN TARJETAS */
 .b2c-summary-card::before, .b2c-ticket::before { display: none !important; }
+
+/* ELIMINAR ESTILO DE TARJETA EN STEP TICKET */
+#step-ticket { background: transparent !important; border: none !important; box-shadow: none !important; }
