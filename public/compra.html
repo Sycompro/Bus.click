@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.32">
+    <link rel="stylesheet" href="index.css?v=4.33">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -54,12 +54,23 @@
                 </button>
             </div>
             
-            <button type="button" class="b2c-nav-btn b2c-user-profile-btn" id="btn-user-profile" style="margin-left: auto; display: flex; align-items: center; gap: 8px; background: transparent; border: none; cursor: pointer; padding: 0 1rem;">
-                <div style="width: 32px; height: 32px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center;">
-                    <i data-lucide="user"></i>
-                </div> 
-                <span style="font-weight: 600; font-size: 0.9rem; color: #1e293b;">Mi Perfil</span>
-            </button>
+            <div class="b2c-profile-dropdown-container" style="margin-left: auto; position: relative;">
+                <button type="button" class="b2c-nav-btn b2c-user-profile-btn" id="btn-user-profile" style="display: flex; align-items: center; gap: 8px; background: transparent; border: none; cursor: pointer; padding: 0 1rem;">
+                    <div style="width: 32px; height: 32px; border-radius: 50%; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                        <i data-lucide="user"></i>
+                    </div> 
+                    <span style="font-weight: 600; font-size: 0.9rem; color: #1e293b;">Mi Perfil</span>
+                </button>
+                
+                <div class="b2c-profile-dropdown" id="user-profile-dropdown">
+                    <button type="button" class="b2c-dropdown-item" id="btn-menu-mi-perfil">
+                        <i data-lucide="user-cog"></i> Mi Perfil
+                    </button>
+                    <button type="button" class="b2c-dropdown-item b2c-text-danger" id="btn-menu-logout" style="display: none;">
+                        <i data-lucide="log-out"></i> Cerrar Sesión
+                    </button>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -430,7 +441,7 @@
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.32"></script>
+    <script src="client_app.js?v=4.33"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {
