@@ -5767,3 +5767,7 @@ svg, i[data-lucide], .lucide {
 
 /* ELIMINAR ESTILO DE TARJETA EN STEP TICKET */
 #step-ticket { background: transparent !important; border: none !important; box-shadow: none !important; }
+
+/* REDISENO SWAP BTN V2 */
+.b2c-swap-btn { background: #7c3aed !important; border: none !important; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4) !important; }
+.b2c-swap-btn:hover { background: #6d28d9 !important; box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5) !important; }
