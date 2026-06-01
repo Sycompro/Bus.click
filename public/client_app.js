@@ -674,10 +674,10 @@ function setupEventListeners() {
     });
     
     // Tab Bar Inferior
-    const tabHome = document.getElementById("tab-home");
-    const tabHistory = document.getElementById("tab-history");
-    const tabHelp = document.getElementById("tab-help");
-    const tabProfile = document.getElementById("tab-profile");
+    const tabHome = document.querySelector("[data-tab='tab-home']");
+    const tabHistory = document.querySelector("[data-tab='tab-history']");
+    const tabHelp = document.querySelector("[data-tab='tab-help']");
+    const tabProfile = document.querySelector("[data-tab='tab-profile']");
     
     // Helper para cerrar modales de apartados activos al cambiar de pestaña
     function closeActiveModals() {
@@ -1704,7 +1704,7 @@ function showMobileNotification(message, type = "success") {
 
 // --- ACTUALIZAR BADGE DE HISTORIAL ---
 function updateHistoryTabBadge() {
-    const tabHistory = document.getElementById("tab-history");
+    const tabHistory = document.querySelector("[data-tab='tab-history']");
     if (!tabHistory) return;
     
     // Eliminar badge previo si existe
