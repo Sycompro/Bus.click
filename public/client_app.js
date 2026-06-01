@@ -63,6 +63,7 @@ window.handleGoogleCredentialResponse = function(response) {
             email: payload.email,
             picture: payload.picture
         };
+        localStorage.setItem('busclick_user_session', JSON.stringify(state.user));
         
         // (La UI del Navbar ya no cambia a la foto/nombre, es un botón fijo de Menú)
         
@@ -76,12 +77,23 @@ window.handleGoogleCredentialResponse = function(response) {
             state.user.whatsapp = savedProfile.whatsapp;
             state.user.ruc = savedProfile.ruc;
             state.user.razonSocial = savedProfile.razonSocial;
-        }
-        
-        // Abrir/Actualizar el Sidebar
-        const sidebar = document.getElementById('profile-sidebar');
-        if (sidebar && typeof openSidebar === 'function') {
-            openSidebar();
+            
+            showMobileNotification("Sesión iniciada correctamente", "success");
+            const sidebar = document.getElementById('profile-sidebar');
+            if (sidebar && typeof openSidebar === 'function') {
+                openSidebar();
+            }
+        } else {
+            showMobileNotification("Por favor completa tu perfil para continuar", "info");
+            if (typeof showEditProfileModal === 'function') {
+                if (typeof closeSidebar === 'function') closeSidebar();
+                showEditProfileModal();
+            } else {
+                const sidebar = document.getElementById('profile-sidebar');
+                if (sidebar && typeof openSidebar === 'function') {
+                    openSidebar();
+                }
+            }
         }
         
     } catch(e) {
@@ -152,6 +164,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
             </style>`;
         return;
+    }
+
+    // Restaurar Sesión de Google
+    const savedSession = localStorage.getItem('busclick_user_session');
+    if (savedSession) {
+        try {
+            state.user = JSON.parse(savedSession);
+            const savedProfile = JSON.parse(localStorage.getItem('busclick_client_profile') || '{}');
+            if (savedProfile.dni && savedProfile.whatsapp) {
+                state.user.dni = savedProfile.dni;
+                state.user.whatsapp = savedProfile.whatsapp;
+                state.user.ruc = savedProfile.ruc;
+                state.user.razonSocial = savedProfile.razonSocial;
+            }
+        } catch(e) {}
     }
 
     // Inicializar iconos de Lucide
@@ -2436,6 +2463,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-logout-sidebar').addEventListener('click', () => {
         state.user = null;
         localStorage.removeItem('busclick_client_profile');
+        localStorage.removeItem('busclick_user_session');
         
         if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
             google.accounts.id.disableAutoSelect();
