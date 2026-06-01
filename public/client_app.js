@@ -1438,10 +1438,9 @@ function showHistoryModal() {
     overlay.style.left = "0";
     overlay.style.width = "100%";
     overlay.style.height = "100%";
-    overlay.style.background = "rgba(15, 23, 42, 0.6)";
-    overlay.style.backdropFilter = "blur(12px)";
-    overlay.style.webkitBackdropFilter = "blur(12px)";
-    overlay.style.zIndex = "1100";
+    overlay.style.background = "rgba(15, 23, 42, 0.75)";
+    overlay.style.zIndex = "999";
+    overlay.style.paddingBottom = "75px";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
     overlay.style.animation = "fadeInOverlay 0.25s ease";
@@ -1493,10 +1492,9 @@ function showHelpModal() {
     overlay.style.left = "0";
     overlay.style.width = "100%";
     overlay.style.height = "100%";
-    overlay.style.background = "rgba(15, 23, 42, 0.6)";
-    overlay.style.backdropFilter = "blur(12px)";
-    overlay.style.webkitBackdropFilter = "blur(12px)";
-    overlay.style.zIndex = "1100";
+    overlay.style.background = "rgba(15, 23, 42, 0.75)";
+    overlay.style.zIndex = "999";
+    overlay.style.paddingBottom = "75px";
     overlay.style.display = "flex";
     overlay.style.alignItems = "flex-end";
     overlay.style.animation = "fadeInOverlay 0.25s ease";
