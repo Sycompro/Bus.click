@@ -6321,30 +6321,28 @@ svg, i[data-lucide], .lucide {
         display: none !important;
     }
     
-    /* Botones de acción fijos en la parte inferior (en el lugar exacto del tabbar) */
+    /* Botones de acción flotantes e independientes en la parte inferior (estilo cápsula/botón premium) */
     #btn-confirm-seat, #btn-mobile-pay {
         position: fixed !important;
-        bottom: 0 !important;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
         left: 50% !important;
         transform: translateX(-50%) !important;
-        width: 100% !important;
-        max-width: 640px !important;
+        width: calc(100% - 32px) !important;
+        max-width: calc(640px - 32px) !important;
         margin: 0 !important;
-        border-radius: 0 !important;
+        border-radius: 16px !important;
         z-index: 99999 !important;
-        height: calc(65px + env(safe-area-inset-bottom, 0px)) !important;
-        padding-bottom: env(safe-area-inset-bottom, 0px) !important;
-        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
+        height: 52px !important;
+        box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25) !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         background: #2563eb !important; /* Azul Empresarial */
         color: white !important;
         font-weight: 700 !important;
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;
         border: none !important;
-        border-top: 1px solid rgba(0, 0, 0, 0.05) !important;
-        transition: background-color 0.25s ease, color 0.25s ease !important;
+        transition: all 0.25s ease !important;
     }
 
     #btn-confirm-seat:disabled {
