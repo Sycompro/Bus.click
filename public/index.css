@@ -5864,3 +5864,6 @@ body.is-home .b2c-hero-sub {
     border-radius: 50%;
     box-shadow: 0 0 8px #4ade80;
 }
+
+/* Quitar lineas de color de beneficios */
+.b2c-benefit { border-left: none !important; }
