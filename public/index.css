@@ -6241,111 +6241,49 @@ svg, i[data-lucide], .lucide {
 }
 
 /* =======================================================
-   ESTADOS DE FOCO INTERACTIVOS PERSONALIZADOS POR CAMPO
+   ESTADOS INTERACTIVOS GENERICOS (NEUTROS Y OSCUROS)
    ======================================================= */
 
-/* Campo Origen (Focus: Verde Esmeralda) */
-.b2c-input-wrapper:has(#search-origin):focus-within .b2c-select {
-    background: #ffffff !important; /* Fondo blanco limpio */
-    border-color: #10b981 !important; /* Borde verde esmeralda */
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.12), 0 8px 20px rgba(16, 185, 129, 0.04) !important;
+/* Estado Focus para cualquier campo */
+.b2c-input-wrapper:focus-within .b2c-select,
+.b2c-input-wrapper:focus-within .b2c-input {
+    background: #ffffff !important;
+    border-color: #475569 !important; /* Gris pizarra oscuro */
+    box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.08), 0 8px 20px rgba(15, 23, 42, 0.04) !important;
 }
-.b2c-input-wrapper:has(#search-origin):focus-within .b2c-field-icon-box {
-    background: rgba(16, 185, 129, 0.15) !important;
-    border-color: rgba(16, 185, 129, 0.3) !important;
+.b2c-input-wrapper:focus-within .b2c-field-icon-box {
+    background: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
     transform: translateY(-50%) scale(1.08) !important;
 }
-
-/* Campo Destino (Focus: Rosa Vibrante) */
-.b2c-input-wrapper:has(#search-destination):focus-within .b2c-select {
-    background: #ffffff !important; /* Fondo blanco limpio */
-    border-color: #f43f5e !important; /* Borde rosa vibrante */
-    box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.12), 0 8px 20px rgba(244, 63, 94, 0.04) !important;
-}
-.b2c-input-wrapper:has(#search-destination):focus-within .b2c-field-icon-box {
-    background: rgba(244, 63, 94, 0.15) !important;
-    border-color: rgba(244, 63, 94, 0.3) !important;
-    transform: translateY(-50%) scale(1.08) !important;
-}
-
-/* Campo Fecha de Viaje (Focus: Índigo) */
-.b2c-input-wrapper:has(#search-date-display):focus-within .b2c-input {
-    background: #ffffff !important; /* Fondo blanco limpio */
-    border-color: #6366f1 !important; /* Borde índigo */
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12), 0 8px 20px rgba(99, 102, 241, 0.04) !important;
-}
-.b2c-input-wrapper:has(#search-date-display):focus-within .b2c-field-icon-box {
-    background: rgba(99, 102, 241, 0.15) !important;
-    border-color: rgba(99, 102, 241, 0.3) !important;
-    transform: translateY(-50%) scale(1.08) !important;
-}
-
-/* Campo Fecha de Retorno (Focus: Violeta) */
-.b2c-input-wrapper:has(#search-date-return-display):focus-within .b2c-input {
-    background: #ffffff !important; /* Fondo blanco limpio */
-    border-color: #8b5cf6 !important; /* Borde violeta */
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.12), 0 8px 20px rgba(139, 92, 246, 0.04) !important;
-}
-.b2c-input-wrapper:has(#search-date-return-display):focus-within .b2c-field-icon-box {
-    background: rgba(139, 92, 246, 0.15) !important;
-    border-color: rgba(139, 92, 246, 0.3) !important;
-    transform: translateY(-50%) scale(1.08) !important;
-}
-
-/* Animación global del icono del campo en foco */
 .b2c-input-wrapper:focus-within .b2c-field-icon {
     transform: scale(1.08) !important;
+    color: #0f172a !important;
 }
 
-/* =======================================================
-   ESTADOS COMPLETADOS PERSONALIZADOS POR CAMPO (VALORES SELECCIONADOS)
-   ======================================================= */
-
-/* Origen Completado (Verde sutil y relajante) */
-.b2c-select.has-icon.completed {
-    background: #ffffff !important;
-    border-color: #a7f3d0 !important;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.02) !important;
-}
-.b2c-input-wrapper:has(#search-origin) .b2c-select.completed ~ .b2c-field-icon-box {
-    background: rgba(16, 185, 129, 0.09) !important;
-    border-color: rgba(16, 185, 129, 0.16) !important;
-}
-
-/* Destino Completado (Rosa sutil y relajante) */
-.b2c-select.has-icon.completed {
-    /* Múltiple selector por ID se aplicará abajo */
-}
-#search-destination.completed {
-    background: #ffffff !important;
-    border-color: #fecdd3 !important;
-    box-shadow: 0 2px 8px rgba(244, 63, 94, 0.02) !important;
-}
-.b2c-input-wrapper:has(#search-destination) .b2c-select.completed ~ .b2c-field-icon-box {
-    background: rgba(244, 63, 94, 0.09) !important;
-    border-color: rgba(244, 63, 94, 0.16) !important;
-}
-
-/* Fecha de Viaje Completada (Índigo sutil y relajante) */
-#search-date-display.completed {
-    background: #ffffff !important;
-    border-color: #c7d2fe !important;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.02) !important;
-}
-.b2c-input-wrapper:has(#search-date-display) .datepicker-input.completed ~ .b2c-field-icon-box {
-    background: rgba(99, 102, 241, 0.09) !important;
-    border-color: rgba(99, 102, 241, 0.16) !important;
-}
-
-/* Fecha de Retorno Completada (Violeta sutil y relajante) */
+/* Estado Completado para cualquier campo */
+.b2c-select.completed, 
+.b2c-input.completed,
+#search-destination.completed,
+#search-date-display.completed,
 #search-date-return-display.completed {
     background: #ffffff !important;
-    border-color: #ddd6fe !important;
-    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.02) !important;
+    border-color: #64748b !important; /* Gris pizarra medio/oscuro */
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02) !important;
 }
-.b2c-input-wrapper:has(#search-date-return-display) .datepicker-input.completed ~ .b2c-field-icon-box {
-    background: rgba(139, 92, 246, 0.09) !important;
-    border-color: rgba(139, 92, 246, 0.16) !important;
+.b2c-select.completed ~ .b2c-field-icon-box,
+.b2c-input.completed ~ .b2c-field-icon-box,
+.datepicker-input.completed ~ .b2c-field-icon-box {
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+.b2c-select.completed ~ .b2c-field-icon-box i,
+.b2c-select.completed ~ .b2c-field-icon-box svg,
+.b2c-input.completed ~ .b2c-field-icon-box i,
+.b2c-input.completed ~ .b2c-field-icon-box svg,
+.datepicker-input.completed ~ .b2c-field-icon-box i,
+.datepicker-input.completed ~ .b2c-field-icon-box svg {
+    color: #334155 !important;
 }
 
 /* Ajustes adicionales del datepicker */
