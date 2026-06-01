@@ -4162,7 +4162,7 @@ body {
 .b2c-btn-primary:hover { box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35); transform: translateY(-1px); }
 .b2c-btn-primary:active { transform: translateY(0); }
 .b2c-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-.b2c-btn-primary i, .b2c-btn-primary svg { width: 20px; height: 20px; flex-shrink: 0; }
+.b2c-btn-primary i, .b2c-btn-primary svg { width: 20px; height: 20px; flex-shrink: 0; fill: none !important; stroke: #ffffff !important; background: transparent !important; transform: translateZ(0); -webkit-transform: translateZ(0); }
 
 /* ── Benefits ── */
 .b2c-benefits {
@@ -5433,6 +5433,7 @@ body {
 /* Animated dot for the search button */
 .b2c-btn-primary i, .b2c-btn-primary svg {
     transition: transform 0.3s ease !important;
+    fill: none !important; stroke: #ffffff !important; background: transparent !important; transform: translateZ(0); -webkit-transform: translateZ(0);
 }
 .b2c-btn-primary:hover i, .b2c-btn-primary:hover svg {
     transform: scale(1.2) !important;
