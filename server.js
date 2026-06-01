@@ -1309,8 +1309,13 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
         console.log(`📱 [WhatsApp API] Despachando notificación automática asíncrona a ${cleanPhone}...`);
         
         // Resolver llave final usando configuraciones dinámicas u overrides de variables de entorno
-        const finalUrl = whatsappUrl || process.env.WHATSAPP_API_URL || 'https://qr-api-wps-production.up.railway.app/api/external/send-message';
+        let finalUrl = whatsappUrl || process.env.WHATSAPP_API_URL || 'https://qr-api-wps-production.up.railway.app/api/external/send-message';
         const finalApiKey = (whatsappApiKey && whatsappApiKey !== 'busclick_master_key') ? whatsappApiKey : (process.env.WHATSAPP_API_KEY || 'busclick_master_key');
+        
+        // Sanear la URL: Si el usuario solo puso el dominio base de qr-api-wps, autocompletar el endpoint
+        if (finalUrl.includes('qr-api-wps') && !finalUrl.includes('/api/external/send-message')) {
+            finalUrl = finalUrl.replace(/\/+$/, '') + '/api/external/send-message';
+        }
         
         console.log(`📱 [WhatsApp API] Usando URL: ${finalUrl}`);
         
@@ -1322,13 +1327,23 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
             },
             body: JSON.stringify({
                 phone: cleanPhone,
+                number: cleanPhone,
                 message: message,
+                text: message,
                 source: 'busclick-saas'
             })
         });
 
-        const resData = await response.json();
-        if (response.ok && resData.success) {
+        // Some WAPI integrations return plain text or different JSON structures
+        const resText = await response.text();
+        let resData = {};
+        try {
+            resData = JSON.parse(resText);
+        } catch(e) {
+            console.log(`[WhatsApp API] Respuesta no JSON recibida:`, resText.substring(0, 50));
+        }
+        
+        if (response.ok) {
             console.log(`✅ [WhatsApp API] Notificación enviada correctamente a ${cleanPhone}. ID Mensaje:`, resData.data?.status || 'sent');
         } else {
             console.error(`❌ [WhatsApp API Error] La API externa devolvió error:`, resData.error || 'unknown');
