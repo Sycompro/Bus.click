@@ -5747,3 +5747,120 @@ svg, i[data-lucide], .lucide {
 .b2c-tabbar-item.active { color: #6d28d9 !important; font-weight: 700 !important; }
 .b2c-tabbar-item.active::after { display: none !important; }
 .b2c-tabbar-item.active svg, .b2c-tabbar-item.active i { background: #f3e8ff !important; color: #6d28d9 !important; }
+
+/* ═══ REDISEÑO HERO Y NAVBAR (HOME STATE) ═══ */
+body.is-home .b2c-navbar {
+    background: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    position: absolute !important;
+    width: 100% !important;
+}
+body.is-home .b2c-logo span, 
+body.is-home .b2c-logo strong {
+    color: #ffffff !important;
+}
+body.is-home .b2c-logo-icon {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+body.is-home .b2c-navbar .b2c-nav-btn {
+    color: #ffffff !important;
+}
+body.is-home .b2c-navbar .b2c-nav-btn.active {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+body.is-home .b2c-navbar .b2c-nav-btn.active svg,
+body.is-home .b2c-navbar .b2c-nav-btn.active i {
+    background: transparent !important;
+    color: #ffffff !important;
+}
+
+body.is-home .b2c-hero {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    color: #ffffff !important;
+    padding: 100px 1.5rem 2.5rem 1.5rem !important;
+    border-radius: 0 0 32px 32px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin-bottom: 2rem !important;
+}
+
+body.is-home .b2c-main {
+    padding-top: 0 !important;
+}
+
+body.is-home .b2c-hero::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-image: radial-gradient(rgba(255,255,255,0.25) 2px, transparent 2px);
+    background-size: 15px 15px;
+}
+
+body.is-home .b2c-hero-bg-overlay {
+    position: absolute;
+    bottom: -15px;
+    right: 15px;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    z-index: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+body.is-home .b2c-hero-bg-overlay::after {
+    content: '';
+    width: 32px;
+    height: 32px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16h16M4 8h16M2 12h20M5 20h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>') no-repeat center;
+    background-size: contain;
+}
+
+body.is-home .b2c-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+body.is-home .b2c-hero-title {
+    color: #ffffff !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+body.is-home .b2c-hero-sub {
+    color: rgba(255,255,255,0.85) !important;
+    font-size: 0.95rem !important;
+}
+
+.b2c-secure-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.b2c-dot-green {
+    width: 6px;
+    height: 6px;
+    background-color: #4ade80;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #4ade80;
+}
