@@ -5944,3 +5944,5 @@ svg, i[data-lucide], .lucide {
 .b2c-sidebar-nav-btn:hover i {
     color: #3b82f6;
 }
+
+.b2c-user-profile-btn:hover { background: #f1f5f9 !important; }
