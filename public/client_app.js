@@ -223,33 +223,39 @@ async function loadInitialData() {
         state.companies = await compRes.json();
         
         // Aplicar filtrado y marca multi-inquilino (Multi-Tenancy SaaS)
+        let foundCompany = null;
         if (state.companyId) {
-            const foundCompany = state.companies.find(c => 
+            foundCompany = state.companies.find(c => 
                 c.id == state.companyId || 
                 c.name.toLowerCase().replace(/\s+/g, '-').trim() === state.companyId.toLowerCase().trim()
             );
+        }
+        
+        // Fallback: Si no se especificó o no se encontró la empresa por URL, tomar la primera de la lista
+        if (!foundCompany && state.companies.length > 0) {
+            foundCompany = state.companies[0];
+        }
+        
+        if (foundCompany) {
+            state.activeCompany = foundCompany;
+            state.companyId = foundCompany.id; // Fijar ID numérico
             
-            if (foundCompany) {
-                state.activeCompany = foundCompany;
-                state.companyId = foundCompany.id; // Fijar ID numérico
-                
-                // Filtrar sedes: Solo las que pertenecen a la empresa seleccionada
-                state.sedes = state.sedes.filter(s => s.companyId == foundCompany.id);
-                
-                // Personalizar dinámicamente la identidad de la Navbar (Marca Blanca)
-                const logoText = document.querySelector(".b2c-logo span");
-                if (logoText) {
-                    const nameParts = foundCompany.name.split(' ');
-                    const firstPart = nameParts[0] || "Empresa";
-                    const secondPart = nameParts.slice(1).join(' ') || "";
-                    logoText.innerHTML = `${firstPart}<strong>.${secondPart || 'click'}</strong>`;
-                }
-                
-                // Mensaje de bienvenida corporativo
-                setTimeout(() => {
-                    showMobileNotification(`Portal oficial de ${foundCompany.name}`, "info");
-                }, 800);
+            // Filtrar sedes: Solo las que pertenecen a la empresa seleccionada
+            state.sedes = state.sedes.filter(s => s.companyId == foundCompany.id);
+            
+            // Personalizar dinámicamente la identidad de la Navbar (Marca Blanca)
+            const logoText = document.querySelector(".b2c-logo span");
+            if (logoText) {
+                const nameParts = foundCompany.name.split(' ');
+                const firstPart = nameParts[0] || "Empresa";
+                const secondPart = nameParts.slice(1).join(' ') || "";
+                logoText.innerHTML = `${firstPart}<strong>.${secondPart || 'click'}</strong>`;
             }
+            
+            // Mensaje de bienvenida corporativo
+            setTimeout(() => {
+                showMobileNotification(`Portal oficial de ${foundCompany.name}`, "info");
+            }, 800);
         }
         
         // Poblar selectores de ciudades
@@ -271,16 +277,12 @@ function renderCompanyPaymentMethods() {
     const company = state.activeCompany;
     if (!company) return;
     
-    // Filtrar los métodos de pago configurados por el admin para mostrar SOLO Yape/Plin/Billeteras en la web
-    const allMethods = company.paymentMethods || [];
-    let methods = allMethods.filter(m => {
-        const lower = m.toLowerCase();
-        return lower.includes('yape') || lower.includes('plin') || lower.includes('billetera');
-    });
+    // Obtener todos los métodos de pago configurados por el administrador de la empresa
+    let methods = company.paymentMethods || [];
     
-    // Fallback de seguridad si el admin no configuró explícitamente "Yape" pero igual cobra por Yape en la web
+    // Fallback de seguridad si el admin no configuró métodos de pago
     if (methods.length === 0) {
-        methods = ['Yape/Plin'];
+        methods = ['Yape/Plin', 'Efectivo'];
     }
     
     container.innerHTML = '';
@@ -1459,7 +1461,13 @@ function populateVirtualTicket(ticket) {
     const statusTitle = document.getElementById("b2c-status-title");
     const statusSubtitle = document.getElementById("b2c-status-subtitle");
 
-    if (ticket.paymentMethod === "Yape/Plin") {
+    const isWalletPayment = ticket.paymentMethod && (
+        ticket.paymentMethod.toLowerCase().includes("yape") ||
+        ticket.paymentMethod.toLowerCase().includes("plin") ||
+        ticket.paymentMethod.toLowerCase().includes("billetera")
+    );
+
+    if (isWalletPayment) {
         // Obtener datos de soporte de la empresa (celular y nombre de la empresa como titular)
         let yapePhone = company.supportPhone || company.support_phone || "987654321";
         // Limpiar formato para wa.me (dejar solo dígitos)
