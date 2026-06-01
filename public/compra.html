@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.53">
+    <link rel="stylesheet" href="index.css?v=5.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -64,6 +64,19 @@
     <div class="b2c-app-container">
         <main class="b2c-main" id="mobile-main-content">
 
+            <!-- Barra de Progreso Wizard -->
+            <div class="b2c-progress-bar no-print" id="b2c-wizard-progress">
+                <div class="b2c-progress-dot active current" data-step="1"></div>
+                <div class="b2c-progress-line" data-line="1"></div>
+                <div class="b2c-progress-dot" data-step="2"></div>
+                <div class="b2c-progress-line" data-line="2"></div>
+                <div class="b2c-progress-dot" data-step="3"></div>
+                <div class="b2c-progress-line" data-line="3"></div>
+                <div class="b2c-progress-dot" data-step="4"></div>
+                <div class="b2c-progress-line" data-line="4"></div>
+                <div class="b2c-progress-dot" data-step="5"></div>
+            </div>
+
             <!-- ═══ PASO 1: BUSCADOR ═══ -->
             <section id="step-search" class="wizard-step">
 
@@ -76,7 +89,7 @@
                 <!-- Formulario de búsqueda -->
                 <form id="form-mobile-search" class="b2c-search-card">
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #34d399;"></i> Origen</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #10b981;"></i> Origen</label>
                         <select id="search-origin" class="b2c-select" required>
                             <option value="" disabled selected>¿Desde dónde sales?</option>
                         </select>
@@ -91,14 +104,14 @@
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #fb7185;"></i> Destino</label>
+                        <label class="b2c-label"><i data-lucide="map-pin" class="b2c-label-icon" style="color: #f43f5e;"></i> Destino</label>
                         <select id="search-destination" class="b2c-select" required>
                             <option value="" disabled selected>¿A dónde vas?</option>
                         </select>
                     </div>
 
                     <div class="b2c-field">
-                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #38bdf8;"></i> Fecha del viaje</label>
+                        <label class="b2c-label"><i data-lucide="calendar" class="b2c-label-icon" style="color: #6366f1;"></i> Fecha del viaje</label>
                         <div class="datepicker-wrapper">
                             <input type="text" class="datepicker-input b2c-input" id="search-date-display" placeholder="Selecciona una fecha" readonly required>
                             <input type="hidden" id="search-date" required>
@@ -542,7 +555,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.53"></script>
+    <script src="client_app.js?v=5.0"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {

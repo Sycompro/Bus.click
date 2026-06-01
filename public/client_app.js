@@ -298,7 +298,7 @@ function renderCompanyPaymentMethods() {
             bgStyle = 'background: #d1fae5; color: #059669;'; // Verde Efectivo
         } else if (normMethod.includes('yape') || normMethod.includes('plin') || normMethod.includes('billetera') || normMethod.includes('billeteras')) {
             iconName = 'smartphone';
-            bgStyle = 'background: #eff6ff; color: #3b82f6;'; // Morado Yape
+            bgStyle = 'background: #eef2ff; color: #6366f1;'; // Morado Yape
         } else if (normMethod.includes('transferencia') || normMethod.includes('banco') || normMethod.includes('bancaria')) {
             iconName = 'landmark';
             bgStyle = 'background: #e0f2fe; color: #0284c7;'; // Celeste Banco
@@ -677,6 +677,40 @@ function goToStep(stepId) {
         if (scrollArea) scrollArea.scrollTop = 0;
     }
     
+    // Actualizar barra de progreso del wizard
+    const stepNumbers = {
+        'step-search': 1,
+        'step-routes': 2,
+        'step-seats': 3,
+        'step-passenger': 4,
+        'step-ticket': 5
+    };
+    const currentStepNum = stepNumbers[stepId];
+    if (currentStepNum) {
+        const dots = document.querySelectorAll('.b2c-progress-dot');
+        const lines = document.querySelectorAll('.b2c-progress-line');
+        
+        dots.forEach(dot => {
+            const dotStep = parseInt(dot.dataset.step);
+            if (dotStep < currentStepNum) {
+                dot.className = 'b2c-progress-dot active';
+            } else if (dotStep === currentStepNum) {
+                dot.className = 'b2c-progress-dot active current';
+            } else {
+                dot.className = 'b2c-progress-dot';
+            }
+        });
+        
+        lines.forEach(line => {
+            const lineStep = parseInt(line.dataset.line);
+            if (lineStep < currentStepNum) {
+                line.className = 'b2c-progress-line active';
+            } else {
+                line.className = 'b2c-progress-line';
+            }
+        });
+    }
+    
     // Sincronizar Lucide Icons
     lucide.createIcons();
 }
@@ -874,7 +908,7 @@ function renderAvailableBuses() {
                 </span>
             </div>
             
-            <div class="bus-route-price" style="font-size: 1.15rem; font-weight: 900; color: #2563eb; position: absolute; right: 1.25rem; top: 1.1rem;">
+            <div class="bus-route-price" style="font-size: 1.15rem; font-weight: 900; color: #6366f1; position: absolute; right: 1.25rem; top: 1.1rem;">
                 S/ ${parseFloat(bus.price).toFixed(2)}
             </div>
             
@@ -1561,9 +1595,9 @@ function showMobileNotification(message, type = "success") {
     let color = "#10b981";
     let bg = "rgba(16, 185, 129, 0.12)";
     let border = "#dbeafe";
-    if (type === "warning") { icon = "alert-triangle"; color = "#f59e0b"; bg = "rgba(245, 158, 11, 0.12)"; border = "#dbeafe"; }
-    if (type === "error") { icon = "x-circle"; color = "#ef4444"; bg = "rgba(239, 68, 68, 0.12)"; border = "#dbeafe"; }
-    if (type === "info") { icon = "info"; color = "#f59e0b"; bg = "rgba(245, 158, 11, 0.12)"; border = "#dbeafe"; }
+    if (type === "warning") { icon = "alert-triangle"; color = "#f59e0b"; bg = "rgba(245, 158, 11, 0.12)"; border = "#e2e8f0"; }
+    if (type === "error") { icon = "x-circle"; color = "#ef4444"; bg = "rgba(239, 68, 68, 0.12)"; border = "#fca5a5"; }
+    if (type === "info") { icon = "info"; color = "#6366f1"; bg = "rgba(99, 102, 241, 0.12)"; border = "#c7d2fe"; }
     
     toast.innerHTML = `
         <div style="background: #ffffff; border: 1.5px solid ${border}; box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 0.75rem 1.25rem; border-radius: 16px; display: flex; align-items: center; gap: 0.6rem; max-width: 340px; animation: slideUpToast 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
@@ -1850,32 +1884,32 @@ function showHelpModal() {
     const supportMsg = activeComp.supportMessage || 'Contáctanos por nuestros canales de soporte oficiales 24/7 para cambios, reprogramaciones o anulaciones de tu viaje.';
 
     overlay.innerHTML = `
-        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(37, 99, 235, 0.1); border-top: 1px solid #dbeafe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="background: #ffffff; border-radius: 24px 24px 0 0; width: 100%; padding: 1.5rem; padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; box-shadow: 0 -10px 40px rgba(99, 102, 241, 0.1); border-top: 1px solid #c7d2fe; animation: slideUpModal 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
-                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #e0f2fe; color: #38bdf8; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
+                <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem; margin: 0;"><div style="width: 32px; height: 32px; border-radius: 8px; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="help-circle" style="width: 16px; height: 16px;"></i></div> Canal de Soporte</h3>
                 <button type="button" class="btn-close-mobile-modal" style="background: #f1f5f9; width: 28px; height: 28px; border-radius: 50%; border: none; color: #475569; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
                     <i data-lucide="x" style="width: 14px; height: 14px;"></i>
                 </button>
             </div>
             
             <div style="text-align: center; padding: 0.5rem 0;">
-                <div style="background: #e0f2fe; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; color: #38bdf8;">
+                <div style="background: #eef2ff; width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto; color: #6366f1;">
                     <i data-lucide="message-square" style="width: 22px; height: 22px;"></i>
                 </div>
                 <h4 style="font-size: 0.95rem; font-weight: 800; color: #1e293b;">¿Necesitas ayuda con tu pasaje?</h4>
                 <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.35rem; line-height: 1.5;">${supportMsg}</p>
                 
-                <div style="background: #f8fafc; border: 1px solid #dbeafe; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="background: #f8fafc; border: 1px solid #c7d2fe; border-radius: 16px; padding: 1.1rem; margin-top: 1.25rem; text-align: left; display: flex; flex-direction: column; gap: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
                         <div style="width: 24px; height: 24px; border-radius: 50%; background: #d1fae5; color: #34d399; display: flex; align-items: center; justify-content: center;"><i data-lucide="phone" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">WhatsApp: ${supportPhone}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #e0f2fe; color: #38bdf8; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="mail" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Correo: ${supportEmail}</span>
                     </div>
                     <div style="display: flex; align-items: center; gap: 0.6rem;">
-                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #eff6ff; color: #3b82f6; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
+                        <div style="width: 24px; height: 24px; border-radius: 50%; background: #eef2ff; color: #6366f1; display: flex; align-items: center; justify-content: center;"><i data-lucide="shield-check" style="width: 12px; height: 12px;"></i></div>
                         <span style="font-size: 0.8rem; font-weight: 700; color: #334155;">Seguridad de Compra Garantizada</span>
                     </div>
                 </div>
