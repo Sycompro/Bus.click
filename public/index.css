@@ -78,9 +78,9 @@
     --color-reserved-border: #fcd34d;
     --color-reserved-text: #78350f;
 
-    --color-selected-bg: #e0f2fe;
-    --color-selected-border: #38bdf8;
-    --color-selected-text: #0c4a6e;
+    --color-selected-bg: #2563eb;
+    --color-selected-border: #1d4ed8;
+    --color-selected-text: #ffffff;
 
     /* 📏 Tipografía */
     --text-xs: 0.7rem;
@@ -5138,16 +5138,17 @@ body {
     box-shadow: var(--shadow-medium) !important;
 }
 
-/* Inputs & Selects */
+/* Inputs & Selects Genéricos Premium */
 .b2c-select, .b2c-input, .b2c-body .datepicker-input {
-    background: #f8fafc !important;
-    border: 1.5px solid var(--border-soft) !important;
-    color: #1e293b !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02) !important;
 }
 .b2c-select:focus, .b2c-input:focus, .b2c-body .datepicker-input:focus {
     background: #ffffff !important;
-    border-color: var(--brand-primary) !important;
-    box-shadow: 0 0 0 3px var(--brand-primary-glow) !important;
+    border-color: #475569 !important;
+    box-shadow: 0 0 0 4px rgba(71, 85, 105, 0.08), 0 8px 20px rgba(15, 23, 42, 0.04) !important;
 }
 .b2c-select option {
     background: #ffffff !important;
@@ -5304,16 +5305,16 @@ body {
 
 /* RENIEC button */
 .b2c-btn-reniec {
-    background: #eef2ff !important;
-    color: #6366f1 !important;
-    border: 1px solid #c7d2fe !important;
+    background: #eff6ff !important;
+    color: #2563eb !important;
+    border: 1px solid #bfdbfe !important;
     transition: all 0.3s ease !important;
 }
 .b2c-btn-reniec:hover {
-    background: linear-gradient(135deg, #6366f1, #4f46e5) !important;
+    background: #2563eb !important;
     color: #ffffff !important;
-    border-color: #6366f1 !important;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
 }
 
 /* Price accent */
@@ -5403,12 +5404,12 @@ body {
     box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15) !important;
 }
 
-/* Floor button active colorful */
+/* Floor button active premium */
 .b2c-floor-btn.active {
-    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    background: #2563eb !important;
     color: #ffffff !important;
-    border-color: #3b82f6 !important;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
 }
 
 /* Summary card top gradient accent with rounded corners */
@@ -5765,9 +5766,9 @@ svg, i[data-lucide], .lucide {
 .b2c-mobile-tabbar { height: calc(65px + env(safe-area-inset-bottom, 0px)) !important; padding-bottom: env(safe-area-inset-bottom, 0px) !important; }
 .b2c-tabbar-item { gap: 4px !important; font-size: 0.7rem !important; font-weight: 500 !important; color: #94a3b8 !important; padding: 6px 12px !important; border-radius: 12px !important; transition: all 0.25s ease !important; }
 .b2c-tabbar-item svg, .b2c-tabbar-item i { width: 22px !important; height: 22px !important; background: transparent !important; margin: 0 !important; stroke-width: 2.2 !important; }
-.b2c-tabbar-item.active { background: #f1f5f9 !important; color: #0f172a !important; font-weight: 700 !important; padding: 8px 16px !important; border-radius: 20px !important; }
+.b2c-tabbar-item.active { background: #eff6ff !important; color: #2563eb !important; font-weight: 700 !important; padding: 8px 16px !important; border-radius: 20px !important; }
 .b2c-tabbar-item.active::after { display: none !important; }
-.b2c-tabbar-item.active svg, .b2c-tabbar-item.active i { color: #0f172a !important; background: transparent !important; stroke-width: 2.2 !important; }
+.b2c-tabbar-item.active svg, .b2c-tabbar-item.active i { color: #2563eb !important; background: transparent !important; stroke-width: 2.2 !important; }
 
 
 /* FORCE SEARCH CARD VISIBILITY & PREMIUM STYLING */
@@ -5780,24 +5781,24 @@ svg, i[data-lucide], .lucide {
     margin-top: 1.5rem !important; 
 }
 
-/* BOTONES PREMIUM CON DEGRADADOS OSCUROS Y SERIOS */
+/* BOTONES PREMIUM CON AZUL EMPRESARIAL */
 .b2c-btn-primary { 
-    background: linear-gradient(135deg, #1e293b, #0f172a) !important; /* Degradado Slate a Negro ultra serio y elegante */
+    background: #2563eb !important; /* Azul Empresarial corporativo y limpio */
     border: none !important;
     color: #ffffff !important;
-    border-radius: 16px !important;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25) !important;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 .b2c-btn-primary:hover { 
-    background: linear-gradient(135deg, #334155, #1e293b) !important; 
+    background: #1d4ed8 !important; /* Un poco más oscuro en hover */
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.28) !important;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35) !important;
 }
 
 /* OTROS ELEMENTOS DE CONTROL */
 .b2c-btn, .b2c-floating-btn, .b2c-stepper-circle, .b2c-secure-badge { 
-    background: #0f172a !important; 
+    background: #2563eb !important; 
 }
 
 .b2c-hero-title, .b2c-gradient-text, .b2c-highlight-text { 
