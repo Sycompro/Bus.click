@@ -218,6 +218,9 @@ async function initializePostgresTables() {
         
         await client.query(`
             ALTER TABLE tickets ADD COLUMN IF NOT EXISTS passenger_whatsapp VARCHAR(50);
+            ALTER TABLE tickets ADD COLUMN IF NOT EXISTS doc_type VARCHAR(50) DEFAULT 'Ticket Simple';
+            ALTER TABLE tickets ADD COLUMN IF NOT EXISTS doc_ruc VARCHAR(20);
+            ALTER TABLE tickets ADD COLUMN IF NOT EXISTS doc_razon_social VARCHAR(250);
         `);
         
         // Tabla Pagos de Suscripción Mensual de Empresas
@@ -1216,7 +1219,7 @@ app.post('/api/tickets/reserve-temporary', async (req, res) => {
 });
 
 /* 📲 INTEGRACIÓN PREMIUM DE NOTIFICACIONES DE WHATSAPP ASÍNCRONAS */
-async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerName, companyId, movilidadId, seatNum, floor, price, paymentMethod) {
+async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerName, companyId, movilidadId, seatNum, floor, price, paymentMethod, docType = 'Ticket Simple') {
     if (!passengerWhatsapp) return;
 
     // Limpiar y sanitizar el número (sólo dígitos, y anteponer el prefijo 51 si es celular peruano de 9 dígitos)
@@ -1283,14 +1286,20 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
         message += `• *Destino:* ${routeTo}\n`;
         message += `• *Fecha:* ${displayDate}\n`;
         message += `• *Asiento:* N° ${seatNum} (Piso ${floor})\n`;
+        message += `• *Comprobante Solicitado:* ${docType}\n`;
         message += `• *Total a Pagar:* S/. ${parseFloat(price).toFixed(2)}\n\n`;
         
-        if (paymentMethod === 'Yape/Plin') {
+        if (paymentMethod === 'Yape/Plin' || paymentMethod.toLowerCase().includes('yape')) {
             message += `📲 *Instrucciones para completar tu Pago (Yape/Plin):*\n`;
             message += `1. Realiza el yapeo de *S/. ${parseFloat(price).toFixed(2)}* al número:\n`;
             message += `   👉 *${yapePhone}*\n`;
             message += `   *(Titular: ${companyName})*\n`;
             message += `2. Envía la captura del comprobante respondiendo a este mensaje de WhatsApp.\n\n`;
+            
+            if (docType !== 'Ticket Simple') {
+                message += `📝 *Nota:* El comprobante electrónico (${docType}) será enviado por este mismo medio una vez confirmado tu pago.\n\n`;
+            }
+            
             message += `*¡Tu pasaje se validará automáticamente al recibir el comprobante!* 🚚✨`;
         } else {
             message += `💳 *Método de Pago:* ${paymentMethod}\n`;
@@ -1331,12 +1340,12 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
 
 // --- CONFIRMAR RESERVA TEMPORAL OMNICANAL A VENTA DIRECTA ---
 app.put('/api/tickets/confirm-temporary', async (req, res) => {
-    const { movilidadId, seatNum, floor, passengerName, passengerDni, passengerWhatsapp, paymentMethod, price } = req.body;
+    const { movilidadId, seatNum, floor, passengerName, passengerDni, passengerWhatsapp, paymentMethod, price, docType, docRuc, docRazonSocial } = req.body;
     if (usePostgres) {
         try {
             const result = await pool.query(
-                'UPDATE tickets SET status = \'Ocupado\', passenger_name = $1, passenger_dni = $2, payment_method = $3, price = $4, passenger_whatsapp = $5, created_at = CURRENT_TIMESTAMP WHERE movilidad_id = $6 AND seat_num = $7 AND floor = $8 AND status = \'Reservado_Temporal\' RETURNING id, company_id',
-                [passengerName, passengerDni, paymentMethod, parseFloat(price), passengerWhatsapp || '', movilidadId, seatNum, floor]
+                'UPDATE tickets SET status = \'Ocupado\', passenger_name = $1, passenger_dni = $2, payment_method = $3, price = $4, passenger_whatsapp = $5, doc_type = $6, doc_ruc = $7, doc_razon_social = $8, created_at = CURRENT_TIMESTAMP WHERE movilidad_id = $9 AND seat_num = $10 AND floor = $11 AND status = \'Reservado_Temporal\' RETURNING id, company_id',
+                [passengerName, passengerDni, paymentMethod, parseFloat(price), passengerWhatsapp || '', docType || 'Ticket Simple', docRuc || null, docRazonSocial || null, movilidadId, seatNum, floor]
             );
             if (result.rows.length > 0) {
                 const compId = result.rows[0].company_id;
@@ -1363,7 +1372,7 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
                 }
 
                 // Disparar envío asíncrono de WhatsApp sin retrasar la respuesta REST
-                sendWhatsappNotification(ticketId, passengerWhatsapp, passengerName, compId, movilidadId, seatNum, floor, price, paymentMethod);
+                sendWhatsappNotification(ticketId, passengerWhatsapp, passengerName, compId, movilidadId, seatNum, floor, price, paymentMethod, docType);
 
                 res.json({ success: true, id: ticketId });
             } else {
@@ -1381,6 +1390,9 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
             ticket.passengerWhatsapp = passengerWhatsapp || '';
             ticket.paymentMethod = paymentMethod;
             ticket.price = parseFloat(price);
+            ticket.docType = docType || 'Ticket Simple';
+            ticket.docRuc = docRuc || null;
+            ticket.docRazonSocial = docRazonSocial || null;
             ticket.createdAt = new Date().toISOString();
             
             // Lógica de Flota Flotante Adaptable
@@ -1395,7 +1407,7 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
             saveLocalDb();
 
             // Disparar envío asíncrono de WhatsApp sin retrasar la respuesta REST
-            sendWhatsappNotification(ticket.id, passengerWhatsapp, passengerName, ticket.companyId, movilidadId, seatNum, floor, price, paymentMethod);
+            sendWhatsappNotification(ticket.id, passengerWhatsapp, passengerName, ticket.companyId, movilidadId, seatNum, floor, price, paymentMethod, docType);
 
             res.json({ success: true, id: ticket.id });
         } else {

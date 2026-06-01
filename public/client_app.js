@@ -271,8 +271,8 @@ function renderCompanyPaymentMethods() {
     const company = state.activeCompany;
     if (!company) return;
     
-    // Obtener los métodos de pago configurados (fallback a Efectivo y Yape/Plin si no hay ninguno)
-    const methods = company.paymentMethods || ['Efectivo', 'Yape/Plin'];
+    // Forzar único método de pago para ventas por web: Yape / Plin
+    const methods = ['Yape/Plin'];
     
     container.innerHTML = '';
     
@@ -431,9 +431,86 @@ function setupEventListeners() {
                     const resData = await response.json();
                     if (response.ok) {
                         showMobileNotification("Asiento congelado por 10 minutos para completar tu pago.", "info");
-                        // Renderizar de forma ultra-fresca los métodos de pago de la empresa
-                        renderCompanyPaymentMethods();
-                        goToStep("step-passenger");
+                        
+                        if (state.isRoundTrip && !state.outboundReservation) {
+                            // Guardar reserva de IDA
+                            state.outboundReservation = {
+                                seat: state.selectedSeat,
+                                floor: state.selectedFloor,
+                                bus: bus,
+                                date: state.selectedDate,
+                                price: bus.price,
+                                ticketId: resData.id // Si el backend retorna ID temporal
+                            };
+                            
+                            // Preparar búsqueda de VUELTA
+                            showMobileNotification("Selecciona ahora tu pasaje de retorno", "success");
+                            
+                            const tempFrom = state.searchFrom;
+                            state.searchFrom = state.searchTo;
+                            state.searchTo = tempFrom;
+                            state.selectedDate = state.returnDate;
+                            
+                            // Limpiar selección actual
+                            state.selectedSeat = null;
+                            state.selectedFloor = 1;
+                            state.selectedBus = null;
+                            
+                            // Buscar rutas de retorno
+                            await loadRoutesMobile();
+                            goToStep("step-routes");
+                        } else {
+                            if (state.isRoundTrip && state.outboundReservation) {
+                                state.returnReservation = {
+                                    seat: state.selectedSeat,
+                                    floor: state.selectedFloor,
+                                    bus: bus,
+                                    date: state.selectedDate,
+                                    price: bus.price
+                                };
+                            }
+                            // Renderizar de forma ultra-fresca los métodos de pago de la empresa
+                            renderCompanyPaymentMethods();
+                            
+                            // Poblar resumen de compra
+                            const summaryIda = document.getElementById("checkout-summary-ida");
+                            const summaryVuelta = document.getElementById("checkout-summary-vuelta");
+                            const checkoutPrice = document.getElementById("passenger-total-price");
+                            
+                            let total = 0;
+                            
+                            if (summaryIda) {
+                                const idaRes = state.outboundReservation || { bus: state.selectedBus, seat: state.selectedSeat, date: state.selectedDate, price: state.selectedBus.price };
+                                summaryIda.innerHTML = `
+                                    <div style="font-weight: 600; color: #1e293b; margin-bottom: 2px;">IDA: ${idaRes.bus.routeFrom} <i data-lucide="arrow-right" style="width:12px; height:12px; display:inline;"></i> ${idaRes.bus.routeTo}</div>
+                                    <div>📅 ${idaRes.date} | 🕒 ${idaRes.bus.time}</div>
+                                    <div>💺 Asiento ${idaRes.seat} | S/ ${parseFloat(idaRes.price).toFixed(2)}</div>
+                                `;
+                                total += parseFloat(idaRes.price);
+                            }
+                            
+                            if (summaryVuelta) {
+                                if (state.isRoundTrip && state.returnReservation) {
+                                    const vueltaRes = state.returnReservation;
+                                    summaryVuelta.style.display = 'block';
+                                    summaryVuelta.innerHTML = `
+                                        <div style="font-weight: 600; color: #1e293b; margin-bottom: 2px;">VUELTA: ${vueltaRes.bus.routeFrom} <i data-lucide="arrow-right" style="width:12px; height:12px; display:inline;"></i> ${vueltaRes.bus.routeTo}</div>
+                                        <div>📅 ${vueltaRes.date} | 🕒 ${vueltaRes.bus.time}</div>
+                                        <div>💺 Asiento ${vueltaRes.seat} | S/ ${parseFloat(vueltaRes.price).toFixed(2)}</div>
+                                    `;
+                                    total += parseFloat(vueltaRes.price);
+                                } else {
+                                    summaryVuelta.style.display = 'none';
+                                }
+                            }
+                            
+                            if (checkoutPrice) {
+                                checkoutPrice.textContent = `S/ ${total.toFixed(2)}`;
+                            }
+                            
+                            lucide.createIcons();
+                            goToStep("step-passenger");
+                        }
                     } else {
                         showMobileNotification(resData.error || "El asiento ya ha sido tomado por otro canal. Seleccione otro.", "error");
                         // Recargar asientos frescos
@@ -457,6 +534,67 @@ function setupEventListeners() {
     if (btnReniec) {
         btnReniec.addEventListener("click", async () => {
             await consultDniRENIEC();
+        });
+    }
+
+    // Lógica de Comprobante
+    const docTypeSelect = document.getElementById("passenger-document-type");
+    const rucContainer = document.getElementById("factura-ruc-container");
+    const rucInput = document.getElementById("passenger-ruc");
+
+    if (docTypeSelect && rucContainer) {
+        docTypeSelect.addEventListener("change", (e) => {
+            if (e.target.value === "Factura") {
+                rucContainer.style.display = "block";
+                rucInput.setAttribute("required", "required");
+                if (state.user && state.user.ruc) {
+                    rucInput.value = state.user.ruc;
+                    const razonSocialInput = document.getElementById("passenger-razon-social");
+                    if (razonSocialInput && state.user.razonSocial) {
+                        razonSocialInput.value = state.user.razonSocial;
+                    }
+                }
+            } else {
+                rucContainer.style.display = "none";
+                rucInput.removeAttribute("required");
+            }
+        });
+    }
+
+    // Consulta RUC (Paso 4)
+    const btnRuc = document.getElementById("btn-mobile-ruc");
+    if (btnRuc) {
+        btnRuc.addEventListener("click", async () => {
+            const val = document.getElementById("passenger-ruc").value.trim();
+            if (val.length === 11) {
+                const razonInput = document.getElementById("passenger-razon-social");
+                btnRuc.innerHTML = '<div style="width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>';
+                try {
+                    const response = await fetch('/api/consultar-ruc', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ ruc: val })
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.razon_social) {
+                            razonInput.value = data.razon_social;
+                            showMobileNotification("RUC encontrado", "success");
+                        } else {
+                            showMobileNotification("No se encontró Razón Social", "warning");
+                        }
+                    } else {
+                        showMobileNotification("Error al consultar RUC", "error");
+                    }
+                } catch(e) {
+                    showMobileNotification("Error de red", "error");
+                } finally {
+                    btnRuc.innerHTML = '<i data-lucide="search"></i>';
+                    lucide.createIcons();
+                }
+            } else {
+                showMobileNotification("Ingrese un RUC de 11 dígitos válidos", "warning");
+            }
         });
     }
     
@@ -1028,6 +1166,9 @@ async function processPaymentAndBooking() {
     const whatsapp = document.getElementById("passenger-whatsapp") ? document.getElementById("passenger-whatsapp").value.trim() : "";
     const paymentRadio = document.querySelector('input[name="mobile-payment"]:checked');
     const paymentMethod = paymentRadio ? paymentRadio.value : "Yape/Plin";
+    const docType = document.getElementById("passenger-document-type") ? document.getElementById("passenger-document-type").value : "Ticket Simple";
+    const ruc = document.getElementById("passenger-ruc") ? document.getElementById("passenger-ruc").value.trim() : "";
+    const razonSocial = document.getElementById("passenger-razon-social") ? document.getElementById("passenger-razon-social").value.trim() : "";
     
     if (!dni || !name || !whatsapp) {
         showMobileNotification("Complete todos los datos, incluyendo tu WhatsApp.", "warning");
@@ -1036,6 +1177,11 @@ async function processPaymentAndBooking() {
     
     if (whatsapp.length !== 9 || !whatsapp.startsWith('9') || isNaN(whatsapp)) {
         showMobileNotification("Por favor, ingresa un número de WhatsApp celular válido de 9 dígitos.", "warning");
+        return;
+    }
+
+    if (docType === "Factura" && (!ruc || ruc.length !== 11)) {
+        showMobileNotification("Para emitir Factura, ingresa un RUC válido de 11 dígitos.", "warning");
         return;
     }
     
@@ -1050,62 +1196,89 @@ async function processPaymentAndBooking() {
     // Simular pequeña latencia de pago de 1.5 segundos para wow factor móvil premium
     await new Promise(r => setTimeout(r, 1500));
     
-    const bus = state.selectedBus;
+    const reservationsToProcess = [];
+    if (state.outboundReservation) {
+        reservationsToProcess.push(state.outboundReservation);
+    } else if (state.selectedBus) {
+        reservationsToProcess.push({
+            bus: state.selectedBus,
+            seat: state.selectedSeat,
+            floor: state.selectedFloor,
+            date: state.selectedDate,
+            price: state.selectedBus.price
+        });
+    }
+
+    if (state.isRoundTrip && state.returnReservation) {
+        reservationsToProcess.push(state.returnReservation);
+    }
     
     try {
-        const payload = {
-            movilidadId: bus.id,
-            seatNum: state.selectedSeat,
-            floor: state.selectedFloor,
-            passengerName: name,
-            passengerDni: dni,
-            passengerWhatsapp: whatsapp,
-            paymentMethod: paymentMethod,
-            price: bus.price
-        };
-        
-        const response = await fetch('/api/tickets/confirm-temporary', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok && result.success) {
-            // ¡Ticket inyectado en Postgres de forma exitosa!
-            const finalTicket = {
-                id: result.id,
-                companyId: bus.companyId,
-                sedeId: bus.sedeId,
-                movilidadId: bus.id,
-                seatNum: state.selectedSeat,
-                floor: state.selectedFloor,
+        const finalTickets = [];
+        let hasError = false;
+
+        for (const res of reservationsToProcess) {
+            const payload = {
+                movilidadId: res.bus.id,
+                seatNum: res.seat,
+                floor: res.floor,
                 passengerName: name,
                 passengerDni: dni,
                 passengerWhatsapp: whatsapp,
-                status: "Ocupado",
                 paymentMethod: paymentMethod,
-                price: bus.price,
-                date: state.selectedDate
+                price: res.price,
+                docType: docType,
+                docRuc: docType === 'Factura' ? ruc : null,
+                docRazonSocial: docType === 'Factura' ? razonSocial : null
             };
             
-            // Guardar pasaje localmente en el historial
-            state.myTickets.push(finalTicket);
+            const response = await fetch('/api/tickets/confirm-temporary', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok && result.success) {
+                finalTickets.push({
+                    id: result.id,
+                    companyId: res.bus.companyId,
+                    sedeId: res.bus.sedeId,
+                    movilidadId: res.bus.id,
+                    seatNum: res.seat,
+                    floor: res.floor,
+                    passengerName: name,
+                    passengerDni: dni,
+                    passengerWhatsapp: whatsapp,
+                    status: "Ocupado",
+                    paymentMethod: paymentMethod,
+                    price: res.price,
+                    date: res.date
+                });
+            } else {
+                hasError = true;
+                break;
+            }
+        }
+        
+        if (!hasError && finalTickets.length > 0) {
+            // Guardar pasajes localmente en el historial
+            state.myTickets.push(...finalTickets);
             localStorage.setItem('busclick_client_tickets', JSON.stringify(state.myTickets));
             updateHistoryTabBadge();
             
-            // Poblar el Boleto Virtual de Paso 5
-            populateVirtualTicket(finalTicket);
+            // Poblar el Boleto Virtual de Paso 5 (mostramos el primero por ahora)
+            populateVirtualTicket(finalTickets[0]);
             
             // Transición a la confirmación exitosa
             goToStep("step-ticket");
-            showMobileNotification("¡Excelente! Boleto emitido correctamente.", "success");
+            showMobileNotification(`¡Excelente! ${finalTickets.length > 1 ? 'Boletos emitidos' : 'Boleto emitido'} correctamente.`, "success");
         } else {
-            showMobileNotification("No pudimos emitir el pasaje. Seleccione otro asiento.", "error");
+            showMobileNotification("No pudimos emitir uno de los pasajes. Intente nuevamente.", "error");
             btnPay.disabled = false;
             btnPay.innerHTML = origText;
-            goToStep("step-seats");
+            //goToStep("step-seats"); // Might not be safe if part of round trip failed.
         }
     } catch (err) {
         console.error("Error al procesar la reserva física:", err);

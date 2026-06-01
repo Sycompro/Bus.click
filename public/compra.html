@@ -19,7 +19,7 @@
     <title>Bus.click - Compra de Pasajes</title>
     <meta name="description" content="Compra tus pasajes de bus en línea de forma rápida y segura. Rutas nacionales con las mejores empresas de transporte.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="index.css?v=4.49">
+    <link rel="stylesheet" href="index.css?v=4.50">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.435.0/umd/lucide.min.js"></script>
     <script>
         if (typeof lucide === 'undefined') {
@@ -217,6 +217,22 @@
                     </button>
                 </div>
 
+                <div class="b2c-passenger-card" style="margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px;">
+                    <h3 style="font-size: 14px; font-weight: 600; color: #334155; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <i data-lucide="shopping-cart" style="width: 16px; height: 16px; color: #3b82f6;"></i> Resumen de Compra
+                    </h3>
+                    <div id="checkout-summary-ida" style="font-size: 13px; color: #475569; margin-bottom: 8px;">
+                        <!-- JS injected -->
+                    </div>
+                    <div id="checkout-summary-vuelta" style="font-size: 13px; color: #475569; margin-bottom: 12px; display: none; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+                        <!-- JS injected -->
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 8px;">
+                        <span style="font-size: 14px; font-weight: 600; color: #1e293b;">Total a Pagar</span>
+                        <span id="passenger-total-price" style="font-size: 18px; font-weight: 700; color: #10b981;">S/ 0.00</span>
+                    </div>
+                </div>
+
                 <form id="form-mobile-passenger" class="b2c-passenger-card">
                     <div class="b2c-field">
                         <label class="b2c-label"><i data-lucide="fingerprint" class="b2c-label-icon" style="color: #3b82f6;"></i> DNI del Pasajero</label>
@@ -236,6 +252,26 @@
                     <div class="b2c-field">
                         <label class="b2c-label"><i data-lucide="phone" class="b2c-label-icon" style="color: #34d399;"></i> WhatsApp del Pasajero (para recibir tu boleto)</label>
                         <input type="tel" id="passenger-whatsapp" class="b2c-input" required placeholder="Ej: 987654321" maxlength="9" pattern="9[0-9]{8}">
+                    </div>
+
+                    <div class="b2c-field">
+                        <label class="b2c-label"><i data-lucide="file-text" class="b2c-label-icon" style="color: #6366f1;"></i> ¿Qué comprobante deseas?</label>
+                        <select id="passenger-document-type" class="b2c-select">
+                            <option value="Ticket Simple" selected>Ticket Simple (Por defecto)</option>
+                            <option value="Boleta">Boleta de Venta</option>
+                            <option value="Factura">Factura</option>
+                        </select>
+                    </div>
+
+                    <div class="b2c-field" id="factura-ruc-container" style="display: none; animation: fadeIn 0.3s ease; background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px; margin-top: -10px; margin-bottom: 1rem;">
+                        <label class="b2c-label" style="color: #b45309;"><i data-lucide="building" class="b2c-label-icon" style="color: #d97706;"></i> RUC de la Empresa</label>
+                        <div class="b2c-dni-row">
+                            <input type="text" id="passenger-ruc" class="b2c-input" placeholder="Ej: 20123456789" maxlength="11" style="background: white;">
+                            <button type="button" id="btn-mobile-ruc" class="b2c-btn-reniec" style="background: #f59e0b; color: white;">
+                                <i data-lucide="search"></i>
+                            </button>
+                        </div>
+                        <input type="text" id="passenger-razon-social" class="b2c-input" placeholder="Razón Social" readonly style="margin-top: 8px; background: #fef3c7; border-color: #fde68a;">
                     </div>
 
                     <div class="b2c-field">
@@ -468,7 +504,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="client_app.js?v=4.49"></script>
+    <script src="client_app.js?v=4.50"></script>
     <script>
         // Sincronizar tab bar móvil con la de arriba
         document.querySelectorAll('.b2c-tabbar-item').forEach(btn => {
