@@ -2102,11 +2102,16 @@ function showAccountCompletionModal() {
                     showMobileNotification("DNI verificado exitosamente.", "success");
                     return;
                 }
-                const response = await fetch(`/api/dni?numero=${val}`);
+                const response = await fetch('/api/consultar-dni', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dni: val })
+                });
                 if (response.ok) {
-                    const data = await response.json();
-                    if (data.nombres) {
-                        nameInput.value = `${data.nombres} ${data.apellidoPaterno || ''} ${data.apellidoMaterno || ''}`.trim();
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.nombres) {
+                        const d = result.data;
+                        nameInput.value = \`\${d.nombres} \${d.apellido_paterno || ''} \${d.apellido_materno || ''}\`.trim();
                         showMobileNotification("DNI verificado (RENIEC).", "success");
                     } else {
                         nameInput.placeholder = "Escriba sus nombres...";
@@ -2137,11 +2142,15 @@ function showAccountCompletionModal() {
             razonInput.placeholder = "Buscando en SUNAT...";
             razonInput.value = "";
             try {
-                const response = await fetch(`/api/ruc?numero=${val}`);
+                const response = await fetch('/api/consultar-ruc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ruc: val })
+                });
                 if (response.ok) {
-                    const data = await response.json();
-                    if (data.razonSocial) {
-                        razonInput.value = data.razonSocial;
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.nombre_o_razon_social) {
+                        razonInput.value = result.data.nombre_o_razon_social;
                         showMobileNotification("RUC verificado (SUNAT).", "success");
                     } else {
                         razonInput.placeholder = "Escriba la razón social...";
@@ -2328,11 +2337,16 @@ function showEditProfileModal() {
                     showMobileNotification("DNI verificado exitosamente.", "success");
                     return;
                 }
-                const response = await fetch(`/api/dni?numero=${val}`);
+                const response = await fetch('/api/consultar-dni', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ dni: val })
+                });
                 if (response.ok) {
-                    const data = await response.json();
-                    if (data.nombres) {
-                        nameInput.value = `${data.nombres} ${data.apellidoPaterno || ''} ${data.apellidoMaterno || ''}`.trim();
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.nombres) {
+                        const d = result.data;
+                        nameInput.value = \`\${d.nombres} \${d.apellido_paterno || ''} \${d.apellido_materno || ''}\`.trim();
                         showMobileNotification("DNI verificado (RENIEC).", "success");
                     } else {
                         nameInput.placeholder = "Escriba sus nombres...";
@@ -2362,11 +2376,15 @@ function showEditProfileModal() {
             razonInput.placeholder = "Buscando en SUNAT...";
             razonInput.value = "";
             try {
-                const response = await fetch(`/api/ruc?numero=${val}`);
+                const response = await fetch('/api/consultar-ruc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ruc: val })
+                });
                 if (response.ok) {
-                    const data = await response.json();
-                    if (data.razonSocial) {
-                        razonInput.value = data.razonSocial;
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.nombre_o_razon_social) {
+                        razonInput.value = result.data.nombre_o_razon_social;
                         showMobileNotification("RUC verificado (SUNAT).", "success");
                     } else {
                         razonInput.placeholder = "Escriba la razón social...";
