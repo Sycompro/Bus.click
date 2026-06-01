@@ -59,7 +59,6 @@ const MOCK_NAMES = {
     "87654321": "Milagros Cáceres Rivas"
 };// --- AL CARGAR EL DOCUMENTO ---
 document.addEventListener("DOMContentLoaded", async () => {
-    document.body.classList.add("is-home");
     // Detección estricta de procedencia de WhatsApp
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isWhatsAppUA = /WhatsApp/i.test(userAgent);
@@ -435,8 +434,6 @@ function setupEventListeners() {
 
 // --- TRANSICIÓN DE PASOS DEL WIZARD ---
 function goToStep(stepId) {
-    if (stepId === "step-search") document.body.classList.add("is-home");
-    else document.body.classList.remove("is-home");
     document.querySelectorAll(".wizard-step").forEach(step => {
         step.classList.add("hidden");
     });
