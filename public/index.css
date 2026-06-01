@@ -5756,3 +5756,8 @@ svg, i[data-lucide], .lucide {
 .b2c-btn-primary, .b2c-btn, .b2c-floating-btn, .b2c-stepper-circle, .b2c-secure-badge { background: #6d28d9 !important; }
 .b2c-btn-primary:hover, .b2c-btn:hover { background: #5b21b6 !important; }
 .b2c-hero-title, .b2c-gradient-text, .b2c-highlight-text { background: transparent !important; color: #6d28d9 !important; -webkit-text-fill-color: initial !important; -webkit-background-clip: initial !important; background-clip: initial !important; }
+
+/* REDISENO SWAP BTN */
+.b2c-swap-btn { background: #6d28d9 !important; color: #ffffff !important; }
+.b2c-swap-btn i, .b2c-swap-btn svg { stroke: #ffffff !important; color: #ffffff !important; }
+.b2c-swap-btn:hover { background: #5b21b6 !important; }
