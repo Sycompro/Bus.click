@@ -393,7 +393,7 @@ function setupEventListeners() {
             try {
                 const ticketsRes = await fetch('/api/tickets');
                 const allTickets = await ticketsRes.json();
-                const tempTicket = allTickets.find(t => t.movilidadId === state.selectedBus.id && t.seatNum === state.selectedSeat && t.floor === state.selectedFloor && t.status === 'Reservado_Temporal');
+                const tempTicket = allTickets.find(t => t.movilidadId === state.selectedBus.id && t.seatNum === state.selectedSeat && t.floor === state.selectedFloor && t.date === state.selectedDate && t.status === 'Reservado_Temporal');
                 if (tempTicket) {
                     await fetch(`/api/tickets/${tempTicket.id}`, { method: 'DELETE' });
                     console.log(`❄ Reserva temporal ${tempTicket.id} liberada al volver atrás.`);
@@ -1273,6 +1273,7 @@ async function processPaymentAndBooking() {
                 passengerWhatsapp: whatsapp,
                 paymentMethod: paymentMethod,
                 price: res.price,
+                date: res.date,
                 docType: docType,
                 docRuc: docType === 'Factura' ? ruc : null,
                 docRazonSocial: docType === 'Factura' ? razonSocial : null

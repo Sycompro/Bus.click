@@ -1175,8 +1175,8 @@ app.post('/api/tickets/reserve-temporary', async (req, res) => {
         try {
             // Verificar si el asiento ya está ocupado, reservado o reservado temporalmente
             const check = await pool.query(
-                'SELECT id FROM tickets WHERE movilidad_id = $1 AND seat_num = $2 AND floor = $3 AND status IN (\'Ocupado\', \'Reservado\', \'Reservado_Temporal\')',
-                [movilidadId, seatNum, floor]
+                'SELECT id FROM tickets WHERE movilidad_id = $1 AND seat_num = $2 AND floor = $3 AND date_str = $4 AND status IN (\'Ocupado\', \'Reservado\', \'Reservado_Temporal\')',
+                [movilidadId, seatNum, floor, date]
             );
             if (check.rows.length > 0) {
                 return res.status(400).json({ error: 'Asiento no disponible. Ya se encuentra vendido o reservado.' });
@@ -1191,7 +1191,7 @@ app.post('/api/tickets/reserve-temporary', async (req, res) => {
             res.status(500).json({ error: e.message });
         }
     } else {
-        const exists = (localDb.tickets || []).some(t => t.movilidadId === movilidadId && t.seatNum === seatNum && t.floor === floor && ['Ocupado', 'Reservado', 'Reservado_Temporal'].includes(t.status));
+        const exists = (localDb.tickets || []).some(t => t.movilidadId === movilidadId && t.seatNum === seatNum && t.floor === floor && t.date === date && ['Ocupado', 'Reservado', 'Reservado_Temporal'].includes(t.status));
         if (exists) {
             return res.status(400).json({ error: 'Asiento no disponible. Ya se encuentra vendido o reservado.' });
         }
@@ -1364,12 +1364,12 @@ async function sendWhatsappNotification(ticketId, passengerWhatsapp, passengerNa
 
 // --- CONFIRMAR RESERVA TEMPORAL OMNICANAL A VENTA DIRECTA ---
 app.put('/api/tickets/confirm-temporary', async (req, res) => {
-    const { movilidadId, seatNum, floor, passengerName, passengerDni, passengerWhatsapp, paymentMethod, price, docType, docRuc, docRazonSocial } = req.body;
+    const { movilidadId, seatNum, floor, passengerName, passengerDni, passengerWhatsapp, paymentMethod, price, docType, docRuc, docRazonSocial, date } = req.body;
     if (usePostgres) {
         try {
             const result = await pool.query(
-                'UPDATE tickets SET status = \'Ocupado\', passenger_name = $1, passenger_dni = $2, payment_method = $3, price = $4, passenger_whatsapp = $5, doc_type = $6, doc_ruc = $7, doc_razon_social = $8, created_at = CURRENT_TIMESTAMP WHERE movilidad_id = $9 AND seat_num = $10 AND floor = $11 AND status = \'Reservado_Temporal\' RETURNING id, company_id',
-                [passengerName, passengerDni, paymentMethod, parseFloat(price), passengerWhatsapp || '', docType || 'Ticket Simple', docRuc || null, docRazonSocial || null, movilidadId, seatNum, floor]
+                'UPDATE tickets SET status = \'Ocupado\', passenger_name = $1, passenger_dni = $2, payment_method = $3, price = $4, passenger_whatsapp = $5, doc_type = $6, doc_ruc = $7, doc_razon_social = $8, created_at = CURRENT_TIMESTAMP WHERE movilidad_id = $9 AND seat_num = $10 AND floor = $11 AND date_str = $12 AND status = \'Reservado_Temporal\' RETURNING id, company_id',
+                [passengerName, passengerDni, paymentMethod, parseFloat(price), passengerWhatsapp || '', docType || 'Ticket Simple', docRuc || null, docRazonSocial || null, movilidadId, seatNum, floor, date]
             );
             if (result.rows.length > 0) {
                 const compId = result.rows[0].company_id;
@@ -1406,7 +1406,7 @@ app.put('/api/tickets/confirm-temporary', async (req, res) => {
             res.status(500).json({ error: e.message });
         }
     } else {
-        const ticket = (localDb.tickets || []).find(t => t.movilidadId === movilidadId && t.seatNum === seatNum && t.floor === floor && t.status === 'Reservado_Temporal');
+        const ticket = (localDb.tickets || []).find(t => t.movilidadId === movilidadId && t.seatNum === seatNum && t.floor === floor && t.date === date && t.status === 'Reservado_Temporal');
         if (ticket) {
             ticket.status = 'Ocupado';
             ticket.passengerName = passengerName;
